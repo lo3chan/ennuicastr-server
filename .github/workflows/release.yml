@@ -9,9 +9,11 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker Image
         run: docker build -t ennuicastr:latest .
@@ -21,7 +23,7 @@ jobs:
           zip -r ennuicastr-server.zip . -x ".git/*" -x ".github/*"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ github.run_number }}"
           name: "Release v${{ github.run_number }}"

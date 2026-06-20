@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y python3-distutils \
     python3 ca-certificates jq nginx \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 18.x (LTS)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+# Install Node.js 24.x (Current LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,7 +34,7 @@ COPY --chown=ennuicastr:ennuicastr . /app/ennuicastr-server
 USER ennuicastr
 WORKDIR /app/ennuicastr-server
 
-# Patch package.json dependencies to be compatible with Node 18
+# Patch package.json dependencies to be compatible with modern Node versions
 RUN node -e " \
   const fs = require('fs'); \
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); \
