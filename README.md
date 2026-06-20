@@ -18,65 +18,52 @@ web:    The web page
 cook:   Tools used to process raw audio into usable formats.
 
 
-Some very light documentation on running your own instance of Ennuicastr is
-provided in [docs/INSTALL.md](docs/INSTALL.md).
+# Running the Server
 
+Ennuicastr provides a unified, bundled Docker deployment strategy, which significantly simplifies the installation process. The Dockerfile completely packages the server, the web client, Nginx, the required Node.js environments, SQLite databases, and `cloudflared` for easy remote tunneling.
 
-# Server requirements
+## Deploying with Docker
 
-The server has two main components: The Ennuicastr protocol server, and the web
-components. The web components use
-[nodejs-server-pages](https://github.com/Yahweasel/nodejs-server-pages), so
-you'll need to set up your web server of choice to use that.
+This is the recommended and simplest way to run Ennuicastr. Configuration is done via environment variables at runtime.
 
-For nodejs-server-pages WebSockets to work, your web server needs to delegate
-/ws accesses to it. In nginx, for example:
-```
-        location ~ /ws$ {
-                proxy_pass http://unix:/tmp/nodejs-server-pages-ws.sock;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection "Upgrade";
-                proxy_set_header Host $host;
-                proxy_read_timeout 86400;
-                proxy_send_timeout 86400;
-                send_timeout 86400;
-        }
+### Prerequisites
+- Docker installed on your host.
+- (Optional but highly recommended) A Cloudflare account and a generated Tunnel Token to automatically route traffic securely without setting up port forwarding or LetsEncrypt/SSL manually.
+
+### 1: Build the Image
+
+The Dockerfile is included in the root of the repository. Running the build command will download all system dependencies, override legacy requirements safely, fetch the client code, extract precompiled WebAssembly components (`libav.js`), and compile both the server and the web interface.
+
+```bash
+docker build -t ennuicastr .
 ```
 
-For the AudioWorkletProcessor to be able to use SharedArrayBuffer, you need the
-correct "security" features. For instance, in nginx:
-```
-        add_header 'Cross-Origin-Opener-Policy' 'same-origin';
-        add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
+### 2: Run the Server
+
+If you are using **Cloudflare Tunnels**, you can run the container by just providing your token and domain:
+
+```bash
+docker run -d \
+  -e TUNNEL_TOKEN="your_cloudflare_tunnel_token_here" \
+  -e DOMAIN="yourdomain.com" \
+  --name ennuicastr \
+  ennuicastr
 ```
 
-The client uses Jitsi to communicate, so you'll need to set up a Jitsi server.
-If the client is at https://weca.st/ , then Jitsi must be at
-https://jitsi.weca.st/ . That is, it must be at jitsi.X, where X is the domain
-used for the client.
+Your `config.json` and Nginx configurations are dynamically generated at launch based on the provided `DOMAIN`. The tunnel securely exposes port `80` from Nginx directly to your Cloudflare domain.
 
-You can hide the actual Jitsi interface, since Ennuicastr provides its own. In
-nginx, for example:
-```
-    location = / {
-        return 301 https://ecastr.com/;
-    }
+**Local / Manual Configuration**
+If you wish to test locally without a tunnel or manually manage your reverse proxy, omit the `TUNNEL_TOKEN` and expose the internal port 80:
 
-...
-
-    location @root_path {
-        #rewrite ^/(.*)$ / break;
-        return 301 https://ecastr.com/;
-    }
+```bash
+docker run -d \
+  -p 8080:80 \
+  -e DOMAIN="localhost:8080" \
+  -e PROTOCOL="http" \
+  --name ennuicastr \
+  ennuicastr
 ```
 
-Jitsi will also need correct CORS so that it can be connected to from another
-domain. For instance, with nginx and weca.st:
-```
-    location = /http-bind {
-...
-        add_header 'Access-Control-Allow-Origin' 'https://weca.st';
-        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-    }
-```
+## Legacy / Manual Installation (Not Recommended)
+
+If you must install Ennuicastr manually directly onto a server (without Docker), you can consult the historical configuration logic in [docs/INSTALL.md](docs/INSTALL.md).
