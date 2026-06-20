@@ -18,70 +18,99 @@
 const cproc = require("child_process");
 const fs = require("fs");
 
-const VAD = require("node-vad");
+const VADReq = require("@ozymandiasthegreat/vad");
 
 const trackNo = +process.argv[2];
 const trackFile  = process.argv[3];
-
-// Prepare the VADs at different aggressiveness levels
-const vads = [
-    new VAD(VAD.Mode.NORMAL),
-    new VAD(VAD.Mode.AGGRESSIVE),
-    new VAD(VAD.Mode.VERY_AGGRESSIVE)
-];
 
 // Helpful blanks
 const blank1ms = Buffer.alloc(32);
 const blank2s = Buffer.alloc(32000);
 
-// Helper function to run the VAD over a chunk of audio
-async function runVAD(curChunks, max, acceptNoise = false) {
-    for (const vad of vads) {
-        let firstIn = 1/0;
-        let lastOut = max;
-        let vadTime = 0;
+async function main() {
+    const VADCls = await VADReq.default();
+    const VADEvent = VADReq.VADEvent;
 
-        // Reset the VAD with some blank audio
-        while (true) {
-            const vres = await vad.processAudio(blank2s, 16000);
-            if (vres === VAD.Event.SILENCE || vres === VAD.Event.ERROR)
-                break;
-        }
-        await vad.processAudio(blank2s, 16000);
+    // Prepare the VADs at different aggressiveness levels
+    const vads = [
+        new VADCls(VADReq.VADMode.NORMAL, 16000),
+        new VADCls(VADReq.VADMode.AGGRESSIVE, 16000),
+        new VADCls(VADReq.VADMode.VERY_AGGRESSIVE, 16000)
+    ];
 
-        // Go through each chunk
-        for (const chunk of curChunks) {
-            // One millisecond at a time
-            for (let si = 0; si < chunk.length; si += 16) {
-                const sub = chunk.slice(si, si + 16);
+    // Helper function to run the VAD over a chunk of audio
+    async function runVAD(curChunks, max, acceptNoise = false) {
+        for (const vad of vads) {
+            let firstIn = 1/0;
+            let lastOut = max;
+            let vadTime = 0;
 
-                // Process this chunk
-                const vres = await vad.processAudio(Buffer.from(sub.buffer), 16000);
-                if (vres === VAD.Event.VOICE || (acceptNoise && vres === VAD.Event.NOISE)) {
-                    if (vadTime < firstIn)
-                        firstIn = vadTime;
-                } else if (vres === VAD.Event.NOISE || vres === VAD.Event.SILENCE) {
-                    lastOut = Math.min(vadTime + sub.length, max);
+            // Reset the VAD with some blank audio
+            // processBuffer requires specific buffer lengths: 10, 20 or 30ms.
+            // Using 30ms chunks for resetting. 30ms of 16kHz 16-bit = 480 samples = 960 bytes.
+            const blank30ms = Buffer.alloc(960);
+            for (let i = 0; i < 32000 / 960; i++) {
+                const vres = vad.processBuffer(blank30ms);
+                if (vres === VADEvent.SILENCE || vres === VADEvent.ERROR)
+                    break;
+            }
+            vad.processBuffer(blank30ms);
+
+            // Go through each chunk
+            for (const chunk of curChunks) { // chunk is Int16Array
+                // To use @ozymandiasthegreat/vad, we need to process in 10, 20 or 30ms frames.
+                // We'll use 10ms (160 samples, 320 bytes) for fine granularity.
+                for (let si = 0; si < chunk.length; si += 160) {
+                    let sub = chunk.subarray(si, si + 160);
+
+                    // Pad if necessary to make it exactly 160 samples
+                    if (sub.length < 160) {
+                        const padded = new Int16Array(160);
+                        padded.set(sub);
+                        sub = padded;
+                    }
+
+                    // Create a Buffer from the underlying 16-bit integer array.
+                    // Important: create a new Buffer based on the typed array elements, not the
+                    // underlying shared pool chunk.buffer.
+                    const buffer = Buffer.alloc(320);
+                    for (let i = 0; i < 160; i++) {
+                        buffer.writeInt16LE(sub[i], i * 2);
+                    }
+
+                    // Process this chunk
+                    const vres = vad.processBuffer(buffer);
+
+                    // Because we process in 10ms blocks, we check every 10ms instead of 1ms.
+                    // Note: vadTime is in samples (since we increment by 160 for 10ms * 16 kHz),
+                    // so we compute the offset in samples. ms runs 0..9 and each ms is 16 samples.
+                    for (let ms = 0; ms < 10; ms++) {
+                        // The old library used NOISE and VOICE. @ozymandiasthegreat/vad only emits VOICE, SILENCE, ERROR
+                        // It does not emit NOISE. Therefore, if acceptNoise is true and it's not SILENCE (or ERROR), we can consider it VOICE.
+                        if (vres === VADEvent.VOICE || (acceptNoise && vres !== VADEvent.SILENCE && vres !== VADEvent.ERROR)) {
+                            if (vadTime + (ms * 16) < firstIn)
+                                firstIn = vadTime + (ms * 16);
+                        } else if (vres === VADEvent.SILENCE || (!acceptNoise && vres !== VADEvent.VOICE)) {
+                            lastOut = Math.min(vadTime + (ms * 16) + 16, max);
+                        }
+                    }
+                    vadTime += 160; // 160 samples (10ms * 16 samples/ms)
+                    if (vadTime >= max)
+                        break;
                 }
-                vadTime += sub.length;
                 if (vadTime >= max)
                     break;
             }
-            if (vadTime >= max)
-                break;
+
+            if (lastOut > firstIn) {
+                // VAD found something
+                return [firstIn, lastOut];
+            }
         }
 
-        if (lastOut > firstIn) {
-            // VAD found something
-            return [firstIn, lastOut];
-        }
+        // None of the VADs hit
+        return [1/0, -1];
     }
-
-    // None of the VADs hit
-    return [1/0, -1];
-}
-
-async function main() {
     // Read the Whisper caption data from stdin
     let captions = "";
     process.stdin.setEncoding("utf8");
@@ -168,20 +197,22 @@ async function main() {
                     await readChunk();
                 }
 
-                if (curStart + curChunks[0].length <= capStart) {
-                    // This chunk is too early, skip it
-                    curStart += curChunks[0].length;
-                    curChunks.shift();
-
-                } else {
-                    // This chunk includes the time we need
-                    curChunks[0] = curChunks[0].subarray(capStart - curStart);
-                    curStart = capStart;
-
-                }
-
-                if (stdoutEnded)
+                if (stdoutEnded && (!curChunks || !curChunks.length))
                     break;
+
+                if (curChunks && curChunks.length) {
+                    if (curStart + curChunks[0].length <= capStart) {
+                        // This chunk is too early, skip it
+                        curStart += curChunks[0].length;
+                        curChunks.shift();
+
+                    } else {
+                        // This chunk includes the time we need
+                        curChunks[0] = curChunks[0].subarray(capStart - curStart);
+                        curStart = capStart;
+
+                    }
+                }
             }
 
             // Get to the end time
