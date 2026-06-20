@@ -3,14 +3,14 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y python3-distutils \
     curl gnupg build-essential zip unzip sqlite3 \
     git ffmpeg flac vorbis-tools fdkaac opus-tools \
     python3 ca-certificates jq nginx \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 18.x (LTS)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+# Install Node.js 22.x (Current LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,7 +34,7 @@ COPY --chown=ennuicastr:ennuicastr . /app/ennuicastr-server
 USER ennuicastr
 WORKDIR /app/ennuicastr-server
 
-# Patch package.json dependencies to be compatible with Node 18
+# Patch package.json dependencies to be compatible with modern Node versions
 RUN node -e " \
   const fs = require('fs'); \
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); \
