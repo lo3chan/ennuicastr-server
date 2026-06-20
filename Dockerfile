@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y python3-distutils \
     curl gnupg build-essential zip unzip sqlite3 \
     git ffmpeg flac vorbis-tools fdkaac opus-tools \
     python3 ca-certificates jq nginx \
