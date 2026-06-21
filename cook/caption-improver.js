@@ -33,8 +33,9 @@ process.on("unhandledRejection", (reason, promise) => {
 
 // General purpose synchronous(ish) data receiver for an exec command
 class Syncy {
-    constructor(cmd) {
+    constructor(cmd, args = []) {
         this.cmd = cmd;
+        this.args = args;
         this.head = 0;
         this.buf = Buffer.alloc(0);
         this.ended = false;
@@ -80,7 +81,7 @@ class Syncy {
 
         // Have we started the command?
         if (!this.proc) {
-            this.proc = cproc.spawn("/bin/sh", ["-c", this.cmd], {
+            this.proc = cproc.spawn("/bin/sh", ["-c", this.cmd, "sh"].concat(this.args), {
                 stdio: ["ignore", "pipe", "ignore"]
             });
             this.stream = this.proc.stdout;
@@ -155,8 +156,9 @@ fastPunct.on("data", text => {
     let meta = "";
 
     let proc = cproc.spawn("/bin/sh", ["-c",
-        `cat ${inBase}header1 ${inBase}header2 ${inBase}data | ` +
-        `${config.repo}/cook/oggmeta`
+        `cat "$2"header1 "$2"header2 "$2"data | ` +
+        `"$1"/cook/oggmeta`,
+        "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     proc.stdout.on("data", chunk => {
         meta = meta + chunk.toString();
@@ -191,8 +193,9 @@ fastPunct.on("data", text => {
     // Get the formats
     let formats = "";
     proc = cproc.spawn("/bin/sh", ["-c",
-        `cat ${inBase}header1 ${inBase}header2 ${inBase}data | ` +
-        `${config.repo}/cook/oggtracks`
+        `cat "$2"header1 "$2"header2 "$2"data | ` +
+        `"$1"/cook/oggtracks`,
+        "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     proc.stdout.on("data", chunk => {
         formats = formats + chunk.toString();
@@ -262,9 +265,10 @@ fastPunct.on("data", text => {
             curId = data.id;
             const format = (formats[curId - 1] === "flac") ? "flac" : "libopus";
             curStream = new Syncy(
-                `cat ${inBase}header1 ${inBase}header2 ${inBase}data ${inBase}header1 ${inBase}header2 ${inBase}data | ` +
-                `${config.repo}/cook/oggcorrect ${curId} | ` +
-                `ffmpeg -c:a ${format} -i - -f s16le -ac 1 -ar 48000 -`
+                `cat "$2"header1 "$2"header2 "$2"data "$2"header1 "$2"header2 "$2"data | ` +
+                `"$1"/cook/oggcorrect ${curId} | ` +
+                `ffmpeg -c:a ${format} -i - -f s16le -ac 1 -ar 48000 -`,
+                [config.repo, inBase]
             );
             vosk.write(JSON.stringify({c: "reset"}) + "\n");
             await new Promise(res => { voskHandler = res; });
