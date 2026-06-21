@@ -38,7 +38,8 @@ async function main() {
     // Get the formats (to get the tracks)
     let formats = "";
     const tp = cproc.spawn("/bin/sh", ["-c",
-        `${config.repo}/cook/oggtracks < ${inBase}header1`
+        '"$1"/cook/oggtracks < "$2"header1',
+        "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     tp.stdout.on("data", chunk => {
         formats = formats + chunk.toString();
@@ -76,10 +77,10 @@ async function main() {
         {
             const p = cproc.spawn("/bin/sh", [
                 "-c",
-                `cat ${inBase}header1 ${inBase}header2 ${inBase}data ${inBase}header1 ${inBase}header2 ${inBase}data | ` +
-                `${config.repo}/cook/oggcorrect ${si + 1} | ` +
-                `ffmpeg -c:a ${format} -i - -f ogg -c:a libopus -ac 1 -ar 16000 -b:a 32k -application lowdelay ` +
-                `${config.apiShare.dir}/${name}`
+                'cat "$1"header1 "$1"header2 "$1"data "$1"header1 "$1"header2 "$1"data | ' +
+                '"$2"/cook/oggcorrect "$3" | ' +
+                'ffmpeg -c:a "$4" -i - -f ogg -c:a libopus -ac 1 -ar 16000 -b:a 32k -application lowdelay "$5"',
+                "sh", inBase, config.repo, String(si + 1), format, `${config.apiShare.dir}/${name}`
             ], {
                 stdio: ["ignore", "ignore", "inherit"]
             });
