@@ -115,22 +115,18 @@ while (true) {
             });
 
             // Delete in all the other tables
-            for (const t of [
+            await Promise.all([
                 "emails", "names", "usernames", "otk", "credits", "defaults",
                 "lobbies2"
-            ]) {
-                await db.runP("DELETE FROM " + t + " WHERE uid=@UID;", {
-                    "@UID": uid
-                });
-            }
+            ].map(t => db.runP("DELETE FROM " + t + " WHERE uid=@UID;", {
+                "@UID": uid
+            })));
 
-            for (const t of [
+            await Promise.all([
                 "recording_share", "lobby_share"
-            ]) {
-                await db.runP("DELETE FROM " + t + " WHERE uid_from=@UID OR uid_to=@UID;", {
-                    "@UID": uid
-                });
-            }
+            ].map(t => db.runP("DELETE FROM " + t + " WHERE uid_from=@UID OR uid_to=@UID;", {
+                "@UID": uid
+            })));
 
             await db.runP("DELETE FROM user_share WHERE uid_shared=@UID OR uid_target=@UID;", {
                 "@UID": uid
