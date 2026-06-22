@@ -20,9 +20,9 @@ if (!uid) return;
 
 const config = require("../config.js");
 const db = require("../db.js").db;
-const creditsj = await include("../credits.jss");
 
-const accountCredits = await creditsj.accountCredits(uid);
+
+
 
 // Check that this user isn't over the simultaneous recording limit (note: 0x30 == finished)
 var recordings = await db.allP("SELECT rid FROM recordings WHERE uid=@UID AND status<0x30;", {"@UID": uid});
@@ -132,9 +132,7 @@ const defaults = await (async function() {
         chk("videoRec", "v");
         alt("videoRec", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Ennuicastr recording application. Video recording is free.");
 
-        const showQual = (accountCredits.subscription >= 2 ||
-                          defaults.format === "flac" ||
-                          defaults.continuous);
+        const showQual = true;
         const showAdvanced = (defaults.jitsiAudio ||
                               defaults.jitsiVideo ||
                               !defaults.rtc ||
@@ -153,9 +151,7 @@ const defaults = await (async function() {
         <div id="quality"<?JS= showQual ? "" : ' style="display: none"' ?>>
         <?JS
 
-        let priceAdvice = " ($2/hr)";
-        if (accountCredits.subscription >= 2)
-            priceAdvice = "";
+        let priceAdvice = "";
 
         l("format", "Recording format", true);
         sel("format", "f", [["opus", "High quality (Opus)"], ["flac", "Ultra quality" + priceAdvice + " (FLAC)"]]);

@@ -52,7 +52,6 @@ await include("../../head.jss", {menu: false, title: "Log in"});
     <p>You may log in to Ennuicastr using an account on any of these online services:</p>
     <p>
     <?JS
-    await include("paypal/button.jss");
     await include("google2/button.jss");
     ?><br/><?JS
     await include("discord/button.jss");

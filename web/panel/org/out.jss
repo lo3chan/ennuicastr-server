@@ -307,7 +307,7 @@ if (mode === "invite") {
 
 } else if (mode === "show") {
     ?>
-    <p>Organizations are accounts shared by a number of users. Organizations have their own subscription and/or credit, and all members of the organization share equal access to recordings and rooms within the organization. Note that this means that organization members may <em>delete</em> recordings and rooms within the organization, as well as create and access them.</p>
+    <p>Organizations are accounts shared by a number of users. All members of the organization share equal access to recordings and rooms within the organization. Note that this means that organization members may <em>delete</em> recordings and rooms within the organization, as well as create and access them.</p>
 
     <p>It is not necessary for guests or regular hosts in recordings to be members of a shared organization. The purpose of an organization is to give multiple parties access to create and download recordings, not to simply participate in them.</p>
 

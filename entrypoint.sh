@@ -29,25 +29,6 @@ cat > ${SERVER_REPO_PATH}/config.json << CONFIG_EOF
     "sock": "/tmp/ennuicastr-server.sock",
     "lobbysock": "/tmp/ennuicastr-lobby-server.sock",
 
-    "creditCost": {
-        "currency": 100,
-        "credits": 3600
-    },
-    "maxCredits": 86400,
-
-    "recCost": {
-        "basic": {
-            "upton": 60,
-            "n": 4,
-            "plus": 12
-        },
-        "hq": {
-            "upton": 120,
-            "n": 4,
-            "plus": 24
-        }
-    },
-
     "limits": {
         "simultaneous": 4,
         "lobbies": 64,
@@ -59,11 +40,6 @@ cat > ${SERVER_REPO_PATH}/config.json << CONFIG_EOF
         "soundNameLength": 512,
         "soundSize": 1073741824,
         "soundDurationTotal": 7200
-    },
-
-    "subscription": {
-        "basic": 1000,
-        "hq": 1500
     }
 }
 CONFIG_EOF

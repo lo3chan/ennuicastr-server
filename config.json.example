@@ -14,27 +14,6 @@
     "sock": "/tmp/ennuicastr-server.sock",
     "lobbysock": "/tmp/ennuicastr-lobby-server.sock",
 
-    "//creditCost": "Cost of credits. Each credit is typically second, and each currency unit is 1 cent. Actual value of credits is given by recCost below.",
-    "creditCost": {
-        "currency": 100,
-        "credits": 3600
-    },
-    "maxCredits": 86400,
-
-    "//recCost": "Cost of a recording, in terms of credits. 'upton' is how much it costs for up to n users, where n is given by 'n'. 'plus' is for each additional user. Costs are credits per minute.",
-    "recCost": {
-        "basic": {
-            "upton": 60,
-            "n": 4,
-            "plus": 12
-        },
-        "hq": {
-            "upton": 120,
-            "n": 4,
-            "plus": 24
-        }
-    },
-
     "//limits": "Various limits on use",
     "limits": {
         "simultaneous": 4,
@@ -47,12 +26,6 @@
         "soundNameLength": 512,
         "soundSize": 1073741824,
         "soundDurationTotal": 7200
-    },
-
-    "//subscription": "Cost, in cents per month, of subscriptions.",
-    "subscription": {
-        "basic": 1000,
-        "hq": 1500
     },
 
     "//apiShare": "Location both locally and online to share files for use in remote API services (in particular, runpod.ai for Whisper transcription)",
@@ -97,28 +70,5 @@
     "facebook": {
         "appId": "",
         "secret": ""
-    },
-
-    "//discord": "API key for Discord login",
-    "discord": {
-        "clientId": "",
-        "secret": ""
-    },
-
-    "//paypal": "API key and configuration info for PayPal login, payments, subscriptions, etc. Use subscription/create-paypal.js to create the subscription metadata. Note that 'minimum' is the minimum payment allowed from PayPal; 200 is reasonable if you've negotiated fees optimized for small transactions.",
-    "paypal": {
-        "minimum": 200,
-        "api": "api.paypal.com",
-        "clientId": "",
-        "secret": "",
-        "subscription": "... replace this string with the output from subscription/create-paypal.js ..."
-    },
-
-    "//stripe": "API key and configuration info for Stripe payments and subscriptions",
-    "stripe": {
-        "minimum": 1000,
-        "public": "",
-        "secret": "",
-        "subscription": "... replace this string with the output from subscription/create-stripe.js ..."
     }
 }

@@ -20,8 +20,6 @@ const reclib = await include("../lib.jss");
 const {rid, recInfo, dlHeader} = arguments[1];
 
 let samplePost = "";
-if (!recInfo.purchased)
-    samplePost = "&s=1";
 
 function formatToName(format) {
     if (format === "aup")
@@ -43,14 +41,7 @@ function showDL(format) {
 
 // We say "sample download" if it's a sample download
 function maybeSample() {
-    if (!recInfo.purchased) {
-        ?>
-        <a name="sample"></a>
-        <header><h2>Sample Download</h2></header>
-        <?JS
-    } else {
-        dlHeader();
-    }
+    dlHeader();
 }
 
 // Determine their platform
@@ -132,7 +123,7 @@ async function showOtherDLs() {
     ?></p>
 
     <?JS
-    if (recInfo.purchased) {
+    if (true) {
         ?><p>Raw audio (NOTE: No audio editor will correctly read this file!): <a href="?i=<?JS= recInfo.rid.toString(36) ?>&f=raw">Raw</a></p><?JS
     }
 }

@@ -18,17 +18,13 @@
 const cproc = require("child_process");
 const fs = require("fs");
 
-const VAD = require("node-vad");
+const VAD = require("@ozymandiasthegreat/vad");
 
 const trackNo = +process.argv[2];
 const trackFile  = process.argv[3];
 
 // Prepare the VADs at different aggressiveness levels
-const vads = [
-    new VAD(VAD.Mode.NORMAL),
-    new VAD(VAD.Mode.AGGRESSIVE),
-    new VAD(VAD.Mode.VERY_AGGRESSIVE)
-];
+let vads = [];
 
 // Helpful blanks
 const blank1ms = Buffer.alloc(32);
@@ -43,11 +39,11 @@ async function runVAD(curChunks, max, acceptNoise = false) {
 
         // Reset the VAD with some blank audio
         while (true) {
-            const vres = await vad.processAudio(blank2s, 16000);
-            if (vres === VAD.Event.SILENCE || vres === VAD.Event.ERROR)
+            const vres = await vad.processBuffer(blank2s, 16000);
+            if (vres === VAD.VADEvent.SILENCE || vres === VAD.VADEvent.ERROR)
                 break;
         }
-        await vad.processAudio(blank2s, 16000);
+        await vad.processBuffer(blank2s, 16000);
 
         // Go through each chunk
         for (const chunk of curChunks) {
@@ -56,11 +52,11 @@ async function runVAD(curChunks, max, acceptNoise = false) {
                 const sub = chunk.slice(si, si + 16);
 
                 // Process this chunk
-                const vres = await vad.processAudio(Buffer.from(sub.buffer), 16000);
-                if (vres === VAD.Event.VOICE || (acceptNoise && vres === VAD.Event.NOISE)) {
+                const vres = await vad.processBuffer(Buffer.from(sub.buffer), 16000);
+                if (vres === VAD.VADEvent.VOICE || (acceptNoise && vres === VAD.VADEvent.NOISE)) {
                     if (vadTime < firstIn)
                         firstIn = vadTime;
-                } else if (vres === VAD.Event.NOISE || vres === VAD.Event.SILENCE) {
+                } else if (vres === VAD.VADEvent.NOISE || vres === VAD.VADEvent.SILENCE) {
                     lastOut = Math.min(vadTime + sub.length, max);
                 }
                 vadTime += sub.length;
@@ -82,6 +78,11 @@ async function runVAD(curChunks, max, acceptNoise = false) {
 }
 
 async function main() {
+    vads = [
+        await VAD.default(VAD.VADMode.NORMAL),
+        await VAD.default(VAD.VADMode.AGGRESSIVE),
+        await VAD.default(VAD.VADMode.VERY_AGGRESSIVE)
+    ];
     // Read the Whisper caption data from stdin
     let captions = "";
     process.stdin.setEncoding("utf8");

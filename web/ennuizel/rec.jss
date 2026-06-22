@@ -41,8 +41,6 @@ const recInfo = await db.getP("SELECT * FROM recordings WHERE rid=@RID;", {"@RID
 if (!recInfo || recInfo.wskey !== key)
     return error("Invalid ID or key");
 
-if (!recInfo.purchased)
-    return error("Only purchased recordings may use this utility");
 
 // Give plenty of time
 response.setTimeLimit(1000*60*60*3);

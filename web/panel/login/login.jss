@@ -44,10 +44,6 @@ async function getUID(login) {
             await db.runP("INSERT INTO users (uid, login) VALUES (@UID, @LOGIN);", {"@UID": uid, "@LOGIN": login});
             newUID = true;
 
-            await db.runP("INSERT INTO credits " +
-                          "( uid,  credits,  purchased,  subscription,  subscription_expiry,  subscription_id) VALUES " +
-                          "(@UID,        0,          0,             0,                   '', '');",
-                          {"@UID": uid});
 
             await db.runP("COMMIT;");
             break;

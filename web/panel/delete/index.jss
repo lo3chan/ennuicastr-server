@@ -19,7 +19,7 @@ const uidX = await include("../uid.jss", {verbose: true});
 if (!uidX) return;
 const {ruid, euid, uid} = uidX;
 
-const creditsj = await include("../credits.jss");
+
 const edb = require("../db.js");
 const db = edb.db;
 const log = edb.log;
@@ -54,17 +54,6 @@ while (true) {
         if (sounds.length) {
             canDelete = false;
             haveSounds = true;
-        }
-
-        // Check if they have a subscription
-        const accountCredits = await creditsj.accountCredits(uid);
-        haveSubscription = false;
-        if (accountCredits.subscription) {
-            // Check if it's canceled
-            if (!/^canceled:/.test(accountCredits.subscription_id)) {
-                canDelete = false;
-                haveSubscription = true;
-            }
         }
 
         // Check if they're the owner of an organization
@@ -116,7 +105,7 @@ while (true) {
 
             // Delete in all the other tables
             for (const t of [
-                "emails", "names", "usernames", "otk", "credits", "defaults",
+                "emails", "names", "usernames", "otk", "defaults",
                 "lobbies2"
             ]) {
                 await db.runP("DELETE FROM " + t + " WHERE uid=@UID;", {
@@ -240,7 +229,7 @@ if (haveOrganizations) { ?>
 
 if (canDelete) { ?>
 <section class="wrapper special style1">
-    <p>Deleting your <?JS= isOrganization?"organization":"account" ?> is <em>permanent and irreversible</em>. If you have remaining credits or subscription time, <em>they will be lost</em>. Are you sure?</p>
+    <p>Deleting your <?JS= isOrganization?"organization":"account" ?> is <em>permanent and irreversible</em>. Are you sure?</p>
 
     <form action="?" method="POST">
         <input type="submit" name="sure" value="Yes" />
