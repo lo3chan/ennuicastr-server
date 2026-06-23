@@ -2405,9 +2405,6 @@
         opacity: 1.0;
     }
 
-    .formerize-placeholder {
-        opacity: 1.0;
-    }
 
     label {
         color: var(--fg-2);
@@ -2475,9 +2472,6 @@
         color: var(--fg-4) !important;
     }
 
-    .formerize-placeholder {
-        color: var(--fg-4) !important;
-    }
 
 /* Icon */
 
@@ -3190,9 +3184,6 @@
                 color: var(--fg-7) !important;
             }
 
-            .wrapper.style1 .formerize-placeholder {
-                color: var(--fg-7) !important;
-            }
 
             .wrapper.style1 ul.alt li {
                 border-top-color: rgba(255, 255, 255, 0.25);
@@ -3428,9 +3419,6 @@
                 color: var(--fg-4) !important;
             }
 
-            .wrapper.style2 .formerize-placeholder {
-                color: var(--fg-4) !important;
-            }
 
             .wrapper.style2 ul.alt li {
                 border-top-color: var(--bg-2);
@@ -3664,9 +3652,6 @@
                 color: var(--fg-3) !important;
             }
 
-            .wrapper.style3 .formerize-placeholder {
-                color: var(--fg-3) !important;
-            }
 
             .wrapper.style3 ul.alt li {
                 border-top-color: var(--bg-2);
