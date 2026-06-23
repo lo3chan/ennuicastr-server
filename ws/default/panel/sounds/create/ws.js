@@ -147,8 +147,7 @@ try {
             })).duration;
             if (curDuration + duration > config.limits.soundDurationTotal) {
                 await db.runP("ROLLBACK;");
-                // FIXME: Generalize message for configurable limit
-                return fail({error: "You are not allowed more than 2 hours of sound files"});
+                return fail({error: `You are not allowed more than ${config.limits.soundDurationTotal / 3600} hours of sound files`});
             }
 
             // Then add it
