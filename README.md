@@ -30,17 +30,19 @@ This is the recommended and simplest way to run Ennuicastr. Configuration is don
 - Docker installed on your host.
 - (Optional but highly recommended) A Cloudflare account and a generated Tunnel Token to automatically route traffic securely without setting up port forwarding or LetsEncrypt/SSL manually.
 
-### 1: Build the Image
+### 1: Get the Image
 
-The Dockerfile is included in the root of the repository. Running the build command will download all system dependencies, override legacy requirements safely, fetch the client code, extract precompiled WebAssembly components (`libav.js`), and compile both the server and the web interface.
+The easiest way is to pull the pre-built image from the GitHub Container Registry (`ghcr.io`):
 
 ```bash
-docker build -t ennuicastr .
+docker pull ghcr.io/<your-github-username>/ennuicastr:latest
 ```
+
+*Alternatively, you can build the image locally from the included `Dockerfile` by running `docker build -t ennuicastr .` in the root of the repository.*
 
 ### 2: Run the Server
 
-If you are using **Cloudflare Tunnels**, you can run the container by just providing your token and domain:
+If you are using **Cloudflare Tunnels**, you can run the container by just providing your token and domain (be sure to use the correct image name, e.g., `ghcr.io/<your-github-username>/ennuicastr:latest` or `ennuicastr` if built locally):
 
 ```bash
 docker run -d \

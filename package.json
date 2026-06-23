@@ -9,12 +9,13 @@
   "author": "Yahweasel",
   "license": "ISC",
   "dependencies": {
-    "@badgateway/oauth2-client": "^2.3.0",
+    "@badgateway/oauth2-client": "^3.3.1",
+    "@entity-access/server-pages": "^1.1.658",
     "@ozymandiasthegreat/vad": "^2.0.7",
     "@roamhq/wrtc": "^0.10.0",
     "boxicons": "^2.1.4",
     "cookie": "^1.1.1",
-    "cyclic-32": "^1.1.0",
+    "cyclic-32": "^1.2.0",
     "firebase-admin": "^14.0.0",
     "google-auth-library": "^10.7.0",
     "node-fastcgi": "^2.0.0",
@@ -23,17 +24,19 @@
     "pauseable": "^0.3.2",
     "rtennui-server": "^0.8.0",
     "sqlite3": "^6.0.1",
-    "tmp-promise": "^3.0.2",
-    "typescript": "^5.2.0",
-    "wrtc": "npm:@roamhq/wrtc@^0.5.0",
-    "ws": "^7.2.1"
+    "tmp-promise": "^3.0.3",
+    "wrtc": "npm:@roamhq/wrtc@^0.10.0",
+    "ws": "^8.21.0"
   },
   "overrides": {
-    "wrtc": "npm:@roamhq/wrtc@^0.5.0"
+    "wrtc": "npm:@roamhq/wrtc@^0.10.0",
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
+    "@types/node": "^18.18.8",
     "chai": "^6.2.2",
     "mocha": "^11.7.6",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "typescript": "^5.2.2"
   }
 }
