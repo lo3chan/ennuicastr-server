@@ -36,8 +36,10 @@ Make sure to replace `ennuicastr` with `ghcr.io/<your-github-username>/ennuicast
 
 ```bash
 docker run -d \
+  -v /path/on/host:/data \
   -e TUNNEL_TOKEN="your_cloudflare_tunnel_token_here" \
   -e DOMAIN="yourdomain.com" \
+  -e PANEL_PASSWORD="your_secure_password" \
   --name ennuicastr \
   ennuicastr
 ```
@@ -45,21 +47,27 @@ docker run -d \
 - `TUNNEL_TOKEN`: Your Cloudflare Tunnel token. The container will automatically launch `cloudflared` to route traffic securely.
 - `DOMAIN`: The primary domain where the application will be hosted (e.g. `testbed.ecastr.com`).
 - `SHORT_DOMAIN` (Optional): A secondary domain primarily used for shorter invite links (defaults to `DOMAIN`).
+- `PANEL_PASSWORD`: The password used to access the Ennuicastr admin control panel (`/panel/`).
+
+**Data Persistence:**
+- `-v /path/on/host:/data`: Maps a directory from your host machine into the container to store the `config.json`, database (`db`), recordings (`rec`), and sounds (`sounds`). This ensures you do not lose data across container restarts or upgrades.
 
 ### Local Testing / Without Tunnel
 If you want to run the container locally without a tunnel, you can expose port 80 and access it via your IP or localhost:
 
 ```bash
 docker run -d \
+  -v /path/on/host:/data \
   -p 8080:80 \
   -e DOMAIN="localhost:8080" \
   -e PROTOCOL="http" \
+  -e PANEL_PASSWORD="your_secure_password" \
   --name ennuicastr \
   ennuicastr
 ```
 
 ## How It Works
 
-1. The `entrypoint.sh` script dynamically generates the `config.json` for the backend using your specified domains.
+1. The `entrypoint.sh` script generates the initial `config.json` in `/data` and symlinks the `db`, `rec`, and `sounds` folders to ensure data persistence.
 2. It sets up an Nginx configuration specifically designed to handle Ennuicastr's strict requirements, including routing WebSocket paths (`/ws`), handling the Node-Server-Pages CGI sockets, and setting mandatory Cross-Origin headers for `SharedArrayBuffer` processing.
 3. It launches the Nginx web server, Node.js applications, and `cloudflared` tunnel securely.

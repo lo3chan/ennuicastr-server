@@ -23,4 +23,9 @@ const config = require("./config.json");
     config[path] = config[path].replace(/~/g, process.env.HOME);
 });
 
+// Allow environment variable to override panelPassword
+if (process.env.PANEL_PASSWORD) {
+    config.panelPassword = process.env.PANEL_PASSWORD;
+}
+
 module.exports = config;
