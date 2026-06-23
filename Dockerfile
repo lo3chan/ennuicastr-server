@@ -88,10 +88,6 @@ USER root
 RUN make install PREFIX=/var/www/rec
 RUN chown -R ennuicastr:ennuicastr /var/www/rec
 
-# Copy server web panel rather than symlinking to avoid Nginx 403 Forbidden traversing permission issues
-RUN cp -R /app/ennuicastr-server/web /var/www/html/panel && \
-    chown -R ennuicastr:ennuicastr /var/www/html/panel
-
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh

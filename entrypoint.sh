@@ -78,7 +78,7 @@ server {
             fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
             include fastcgi_params;
             fastcgi_buffering off;
-            fastcgi_param SCRIPT_FILENAME \$request_filename;
+            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         }
 
         location ~ /ws$ {
@@ -99,7 +99,7 @@ server {
     }
 
     location / {
-        try_files \$uri \$uri/ /index.jss;
+        try_files \$uri \$uri/ =404;
     }
 
     # NJSP handlers for panel and main site
@@ -108,7 +108,7 @@ server {
         fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
         include fastcgi_params;
         fastcgi_buffering off;
-        fastcgi_param SCRIPT_FILENAME \$request_filename;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
     }
 
     location ~ /ws$ {
