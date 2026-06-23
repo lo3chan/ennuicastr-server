@@ -38,7 +38,8 @@ async function main() {
     // Get the formats (to get the tracks)
     let formats = "";
     const tp = cproc.spawn("/bin/sh", ["-c",
-        `${config.repo}/cook/oggtracks < ${inBase}header1`
+        `"$1"/cook/oggtracks < "$2"header1`,
+        "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     tp.stdout.on("data", chunk => {
         formats = formats + chunk.toString();
@@ -65,7 +66,9 @@ async function main() {
             const atp = cproc.spawn("/usr/bin/at", ["now + 24 hours"], {
                 stdio: ["pipe", "ignore", "inherit"]
             });
-            atp.stdin.write(`rm -f ${config.apiShare.dir}/${name}`);
+            const safeDir = config.apiShare.dir.replace(/'/g, "'\\''");
+            const safeName = name.replace(/'/g, "'\\''");
+            atp.stdin.write(`rm -f '${safeDir}'/'${safeName}'`);
             atp.stdin.end();
             const atret = await new Promise(res => atp.on("exit", res));
             if (atret !== 0)
@@ -76,10 +79,11 @@ async function main() {
         {
             const p = cproc.spawn("/bin/sh", [
                 "-c",
-                `cat ${inBase}header1 ${inBase}header2 ${inBase}data ${inBase}header1 ${inBase}header2 ${inBase}data | ` +
-                `${config.repo}/cook/oggcorrect ${si + 1} | ` +
-                `ffmpeg -c:a ${format} -i - -f ogg -c:a libopus -ac 1 -ar 16000 -b:a 32k -application lowdelay ` +
-                `${config.apiShare.dir}/${name}`
+                `cat "$2"header1 "$2"header2 "$2"data "$2"header1 "$2"header2 "$2"data | ` +
+                `"$1"/cook/oggcorrect ${si + 1} | ` +
+                `ffmpeg -c:a ${format} -i - -f ogg -c:a libopus -ac 1 -ar 16000 -b:a 32k -application lowdelay "$3"` +
+                `/"$4"`,
+                "sh", config.repo, inBase, config.apiShare.dir, name
             ], {
                 stdio: ["ignore", "ignore", "inherit"]
             });

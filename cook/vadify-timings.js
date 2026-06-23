@@ -84,7 +84,8 @@ async function main() {
 
     // Convert to mono 16kHz
     const p = cproc.spawn("/bin/sh", ["-c",
-        `ffmpeg -i ${trackFile} -f s16le -ac 1 -ar 16000 -`], {
+        `ffmpeg -i "$1" -f s16le -ac 1 -ar 16000 -`,
+        "sh", trackFile], {
         stdio: ["ignore", "pipe", "ignore"]
     });
 
