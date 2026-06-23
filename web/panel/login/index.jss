@@ -24,7 +24,23 @@ if (request.query.secret) {
 }
 
 const util = require("util");
+const config = require("../../config.js");
 const db = require("../db.js");
+const login = require("./login.jss");
+
+let errorMsg = null;
+
+if (request.method === "POST") {
+    if (!config.panelPassword) {
+        errorMsg = "Panel password is not configured.";
+    } else if (request.body.password === config.panelPassword) {
+        await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
+        redirect("/panel/");
+        return;
+    } else {
+        errorMsg = "Incorrect password.";
+    }
+}
 
 await include("../../head.jss", {menu: false, title: "Log in"});
 ?>
@@ -46,21 +62,41 @@ await include("../../head.jss", {menu: false, title: "Log in"});
         text-align: center;
         vertical-align: middle;
     }
+
+    .login-form input[type="password"] {
+        padding: 0.5em;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-right: 0.5em;
+    }
+
+    .login-form button {
+        padding: 0.5em 1em;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .error-msg {
+        color: red;
+        margin-bottom: 1em;
+    }
 </style>
 
 <section class="wrapper special">
-    <p>You may log in to Ennuicastr using an account on any of these online services:</p>
-    <p>
-    <?JS
-    await include("google2/button.jss");
-    ?><br/><?JS
-    await include("discord/button.jss");
-    ?><br/><?JS
-    await include("firebase/button.jss");
-    ?>
-    </p>
+    <?JS if (!config.panelPassword) { ?>
+        <p class="error-msg">Panel password is not configured. Please set the PANEL_PASSWORD environment variable or configure it in config.json.</p>
+    <?JS } else { ?>
+        <form method="POST" action="?" class="login-form">
+            <?JS if (errorMsg) { ?>
+                <p class="error-msg"><?JS= errorMsg ?></p>
+            <?JS } ?>
+            <p>Please enter the panel password to log in:</p>
+            <input type="password" name="password" placeholder="Password" required autofocus />
+            <button type="submit" class="button">Log in</button>
+        </form>
+    <?JS } ?>
 
-    <p><a href="/">Return to home page</a></p>
+    <p><br/><a href="/">Return to home page</a></p>
 </section>
 
 <?JS

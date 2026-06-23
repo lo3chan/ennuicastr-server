@@ -10,9 +10,25 @@ CLIENT_REPO_PATH="/app/ennuicastr"
 SERVER_REPO_PATH="/app/ennuicastr-server"
 PROTOCOL="https" # Even if local port 80, tunnel provides https
 
-# --- Generate config.json ---
-echo "Generating config.json..."
-cat > ${SERVER_REPO_PATH}/config.json << CONFIG_EOF
+# --- Data Persistence & Configuration ---
+DATA_DIR="/data"
+CONFIG_FILE="${SERVER_REPO_PATH}/config.json"
+
+if [ -d "$DATA_DIR" ]; then
+    echo "Persistent /data volume found. Setting up symlinks..."
+    mkdir -p "${DATA_DIR}/db" "${DATA_DIR}/rec" "${DATA_DIR}/sounds"
+    chown -R ennuicastr:ennuicastr "${DATA_DIR}"
+
+    ln -sfn "${DATA_DIR}/db" "${SERVER_REPO_PATH}/db"
+    ln -sfn "${DATA_DIR}/rec" "${SERVER_REPO_PATH}/rec"
+    ln -sfn "${DATA_DIR}/sounds" "${SERVER_REPO_PATH}/sounds"
+
+    CONFIG_FILE="${DATA_DIR}/config.json"
+fi
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Generating config.json at $CONFIG_FILE..."
+    cat > "$CONFIG_FILE" << CONFIG_EOF
 {
     "//urls": "URLs and paths for Ennuicastr and associated tools",
     "site": "${PROTOCOL}://${DOMAIN}/",
@@ -43,8 +59,14 @@ cat > ${SERVER_REPO_PATH}/config.json << CONFIG_EOF
     }
 }
 CONFIG_EOF
+    chown ennuicastr:ennuicastr "$CONFIG_FILE"
+fi
 
-chown ennuicastr:ennuicastr ${SERVER_REPO_PATH}/config.json
+if [ -d "$DATA_DIR" ]; then
+    if [ ! -f "${SERVER_REPO_PATH}/config.json" ] || [ "$(realpath ${SERVER_REPO_PATH}/config.json)" != "$CONFIG_FILE" ]; then
+        ln -sfn "$CONFIG_FILE" "${SERVER_REPO_PATH}/config.json"
+    fi
+fi
 
 # --- Nginx Configuration ---
 echo "Configuring Nginx..."
@@ -128,8 +150,11 @@ NGINX_EOF
 sed -i 's/user www-data;/user ennuicastr;/g' /etc/nginx/nginx.conf
 
 # --- Ensure necessary directories ---
-mkdir -p ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds
-chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds /var/log/nginx /var/lib/nginx /run
+if [ ! -d "$DATA_DIR" ]; then
+    mkdir -p ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
+    chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
+fi
+chown -R ennuicastr:ennuicastr /var/log/nginx /var/lib/nginx /run
 
 # --- Start Nginx ---
 echo "Starting Nginx..."
