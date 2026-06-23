@@ -99,7 +99,7 @@ server {
     }
 
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files \$uri \$uri/ /index.jss;
     }
 
     # NJSP handlers for panel and main site
@@ -146,11 +146,13 @@ sleep 3
 # --- Start Cloudflare Tunnel ---
 if [ -n "$TUNNEL_TOKEN" ]; then
     echo "Starting cloudflared tunnel..."
-    cloudflared tunnel --no-autoupdate run --token "$TUNNEL_TOKEN" &
+    cloudflared tunnel --no-autoupdate run --token "$TUNNEL_TOKEN" > cloudflared.log 2>&1 &
 else
     echo "No TUNNEL_TOKEN provided. Cloudflare tunnel not started. Running on port 80 locally."
+    touch cloudflared.log
 fi
 
-# Keep container alive
-echo "Ennuicastr is running!"
-sleep infinity
+# Keep container alive and output all logs as a diagnostic hose
+echo "Ennuicastr is running! Starting diagnostic hose..."
+touch /var/log/nginx/access.log /var/log/nginx/error.log ${SERVER_REPO_PATH}/njsp/njsp.log ${SERVER_REPO_PATH}/server/main.log cloudflared.log
+tail -f /var/log/nginx/access.log /var/log/nginx/error.log ${SERVER_REPO_PATH}/njsp/njsp.log ${SERVER_REPO_PATH}/server/main.log cloudflared.log
