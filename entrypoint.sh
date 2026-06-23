@@ -54,7 +54,7 @@ server {
     listen [::]:80 default_server;
     server_name _;
 
-    root /var/www/html;
+    root /app/ennuicastr-server/web;
     index index.jss index.html;
 
     # Basic limits
