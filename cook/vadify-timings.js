@@ -59,23 +59,15 @@ async function runVAD(curChunks, max, acceptNoise = false) {
                 } else if (vres === VAD.VADEvent.NOISE || vres === VAD.VADEvent.SILENCE) {
                     lastOut = Math.min(vadTime + sub.length, max);
                 }
-                vadTime += sub.length;
                 if (vadTime >= max)
                     break;
             }
-            if (vadTime >= max)
-                break;
-        }
 
-        if (lastOut > firstIn) {
-            // VAD found something
-            return [firstIn, lastOut];
+            if (lastOut > firstIn) {
+                // VAD found something
+                return [firstIn, lastOut];
+            }
         }
-    }
-
-    // None of the VADs hit
-    return [1/0, -1];
-}
 
 async function main() {
     vads = [
@@ -169,20 +161,22 @@ async function main() {
                     await readChunk();
                 }
 
-                if (curStart + curChunks[0].length <= capStart) {
-                    // This chunk is too early, skip it
-                    curStart += curChunks[0].length;
-                    curChunks.shift();
-
-                } else {
-                    // This chunk includes the time we need
-                    curChunks[0] = curChunks[0].subarray(capStart - curStart);
-                    curStart = capStart;
-
-                }
-
-                if (stdoutEnded)
+                if (stdoutEnded && (!curChunks || !curChunks.length))
                     break;
+
+                if (curChunks && curChunks.length) {
+                    if (curStart + curChunks[0].length <= capStart) {
+                        // This chunk is too early, skip it
+                        curStart += curChunks[0].length;
+                        curChunks.shift();
+
+                    } else {
+                        // This chunk includes the time we need
+                        curChunks[0] = curChunks[0].subarray(capStart - curStart);
+                        curStart = capStart;
+
+                    }
+                }
             }
 
             // Get to the end time
