@@ -22,7 +22,6 @@ const {ruid, euid, uid} = uidX;
 const providerNames = {
     beta: "a beta account",
     google: "Google",
-    paypal: "PayPal",
     facebook: "Facebook",
     discord: "Discord",
     firebase: "password authentication"
@@ -30,8 +29,8 @@ const providerNames = {
 
 const edb = require("../db.js");
 const db = edb.db;
-const credits = require("../credits.js");
-const creditsj = await include("./credits.jss");
+
+
 const unM = require("../username.js");
 
 const ua = params.HTTP_USER_AGENT || "";
@@ -71,7 +70,7 @@ const email = await (async function() {
     return null;
 })();
 
-const accountCredits = await creditsj.accountCredits(uid);
+
 
 // Make an "as" line based on what they're logged in as
 let asMain = "";
@@ -134,9 +133,6 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
     <script type="text/javascript"><!--
     function showUID() { $("#uidbox")[0].style.display = ""; }
     //--></script>
-
-    <?JS
-    if (accountCredits.credits) { ?><p><?JS= credits.creditsMessage(accountCredits) ?></p><?JS }
 
     if (warning) {
         ?><div style="background-color: #933; color: #fff; text-align: center; border: 2px solid #fff; border-radius: 0.5em; padding: 0.5em; margin: 1em;"><?JS= warning ?></div><?JS

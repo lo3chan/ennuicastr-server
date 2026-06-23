@@ -136,7 +136,7 @@ var connections = [null], masters = [null];
 // All tracks, whether connected or not
 var tracks = [null];
 
-// Whether any given track was present since the last credit check
+// Whether any given track was present
 var presence = [false];
 
 // Whether each track is speaking
@@ -593,7 +593,7 @@ wss.on("connection", (ws, wsreq) => {
 
         if (recInfo.universalMonitor) {
             // Inform them of currently connected users
-            p = prot.parts.user;
+            var p = prot.parts.user;
             for (var i = 1; i < tracks.length; i++) {
                 var otrack = tracks[i];
                 if (id === i || !otrack || !connections[i]) continue;
@@ -618,7 +618,7 @@ wss.on("connection", (ws, wsreq) => {
         }
 
         // Inform masters of their existence
-        p = prot.parts.user;
+        var p = prot.parts.user;
         var nickBuf = Buffer.from(nick, "utf8");
         ret = Buffer.alloc(p.length + nickBuf.length);
         ret.writeUInt32LE(prot.ids.user, 0);
@@ -666,8 +666,6 @@ wss.on("connection", (ws, wsreq) => {
             ws.send(msg);
         }
 
-        // Inform masters for credit rate
-        informMastersCredit();
 
         // Now this connection is totally ready
         sendPings();
@@ -986,24 +984,9 @@ wss.on("connection", (ws, wsreq) => {
             masters.push(null);
         masters[mid] = ws;
 
-        // Inform them of the credit cost
-        var p = prot.parts.info;
-        let ret = Buffer.alloc(p.length + 4);
-        ret.writeUInt32LE(prot.ids.info, 0);
-        ret.writeUInt32LE(prot.info.creditCost, p.key);
-        var neededSubscription = ((recInfo.format==="flac"||recInfo.continuous)?2:1);
-        if (recInfo.subscription >= neededSubscription)
-            ret.writeUInt32LE(0, p.value);
-        else
-            ret.writeUInt32LE(config.creditCost.currency, p.value);
-        ret.writeUInt32LE(config.creditCost.credits, p.value + 4);
-        ws.send(ret);
-
-        // Inform them of the credit situation
-        informMastersCredit({only: mid});
 
         // Inform them of currently connected users
-        p = prot.parts.user;
+        var p = prot.parts.user;
         for (var i = 1; i < tracks.length; i++) {
             var track = tracks[i];
             if (!track) continue;
@@ -1292,12 +1275,12 @@ async function recvRecInfo(r) {
                           "( uid,  rid,  port,  name,  format," +
                           "  continuous,  rtc,  recordOnly,  videoRec," +
                           "  transcription,  key,  master,  wskey,  extra," +
-                          "  status,  init,  expiry,  tracks,  cost, purchased)" +
+                          "  status,  init,  expiry,  tracks)" +
                           " VALUES " +
                           "(@UID, @RID, @PORT, @NAME, @FORMAT," +
                           " @CONTINUOUS, @RTC, @RECORDONLY, @VIDEOREC," +
                           " @TRANSCRIPTION, @KEY, @MASTER, @WSKEY, @EXTRA," +
-                          " 0, datetime('now'), datetime('now', '1 month'), 0, 0, '');", {
+                          " 0, datetime('now'), datetime('now', '1 month'), 0);", {
                 "@UID": r.uid,
                 "@RID": rid,
                 "@PORT": port,
@@ -1317,13 +1300,6 @@ async function recvRecInfo(r) {
 
         } catch (ex) {}
     }
-
-    // Check the user's subscription status for pricing
-    var row = await db.getP("SELECT subscription FROM credits WHERE uid=@UID;", {"@UID": r.uid});
-    if (row)
-        r.subscription = row.subscription;
-    else
-        r.subscription = 0;
 
     // Open all the output files
     function s(footer) {
@@ -1434,10 +1410,6 @@ async function startRec() {
         } catch (ex) {}
     }
 
-    // Start crediting
-    chargeCreditsTimeout = pauseable.setTimeout(chargeCreditsLoop, 1000*60);
-
-    // And log it
     log("recording-start", JSON.stringify(recInfo), {uid: recInfo.uid, rid: recInfo.rid});
 }
 
@@ -1452,10 +1424,6 @@ async function pauseRec() {
     // Record it in the metadata
     recMeta({c: "pause"}, {time: lastPaused});
 
-    // Pause crediting
-    if (chargeCreditsTimeout)
-        chargeCreditsTimeout.pause();
-
     // FIXME: Limit how long you can sit around paused
 }
 
@@ -1469,13 +1437,8 @@ async function resumeRec() {
     // Record it in the metadata
     recMeta({c: "resume"}, {time: lastResumed});
 
-    // Resume crediting
-    if (chargeCreditsTimeout)
-        chargeCreditsTimeout.resume();
 }
-
-/* End the recording. This is distinct from stopRec, because it still has to
- * wait for buffers. */
+/* End the recording. This is distinct from stopRec, because it still has to wait for buffers. */
 function endRec() {
     lastPausedT = curTime();
     lastPaused = curGranule(lastPausedT);
@@ -1503,23 +1466,21 @@ function awaitBuffering() {
 async function stopRec() {
     modeUpdate(prot.mode.finished, curTime());
 
-    // Finish charging credits
-    if (chargeCreditsTimeout) {
-        chargeCreditsTimeout.clear();
-        chargeCreditsTimeout = null;
-        await chargeCredits();
-    }
-
     // Update the status in the database
-    while (true) {
-        try {
-            await db.runP("UPDATE recordings SET status=@MODE, end=datetime('now') WHERE rid=@RID;", {
-                    "@MODE": prot.mode.finished,
-                    "@RID": recInfo.rid
-                    });
-            break;
-        } catch (ex) {}
-    }
+    (async () => {
+        while (true) {
+            try {
+                await db.runP("UPDATE recordings SET status=@MODE, end=datetime('now') WHERE rid=@RID;", {
+                        "@MODE": prot.mode.finished,
+                        "@RID": recInfo.rid
+                        });
+                break;
+            } catch (ex) {}
+        }
+    })();
+
+    // Log it
+    log("recording-end", JSON.stringify(recInfo), {uid: recInfo.uid, rid: recInfo.rid});
 
     // Shut it all down after everyone's disconnected
     var postRecordingInterval = setInterval(function() {
@@ -1542,132 +1503,8 @@ async function stopRec() {
             process.exit(0);
         }, 60000);
     }, 1000*60*5);
-
-    // Log it
-    log("recording-end", JSON.stringify(recInfo), {uid: recInfo.uid, rid: recInfo.rid});
 }
 
-// Calculate the credit rate currently in use
-function calculateCredits(reset?: boolean) {
-    // Count the number of HQ and RQ clients
-    var rq = 0, hq = 0, charge = 0;
-    for (var i = 1; i < connections.length; i++) {
-        if (!presence[i] && !connections[i]) continue;
-        if (reset && !connections[i]) presence[i] = false; // Don't count them next time
-        var track = tracks[i];
-        if (!track) continue;
-        if (track.format === "flac" || track.continuous)
-            hq++;
-        else
-            rq++;
-    }
-
-    // Calculate the base charge
-    if (hq) {
-        charge = config.recCost.hq.upton;
-
-        if (hq < config.recCost.hq.n) {
-            // Move in some of the rq too
-            var ex = config.recCost.hq.n - hq;
-            hq = 0;
-            rq = Math.max(rq - ex, 0);
-
-        } else {
-            hq -= config.recCost.hq.n;
-
-        }
-
-    } else if (rq) {
-        charge = config.recCost.basic.upton;
-        rq = Math.max(rq - config.recCost.basic.n, 0);
-
-    }
-
-    // Add the >n charge
-    charge += hq * config.recCost.hq.plus +
-              rq * config.recCost.basic.plus;
-
-    return charge;
-}
-
-// Inform masters of the credit rate
-async function informMastersCredit(opts: {
-    charge?: number,
-    only?: number
-} = {}) {
-    // Get the total for the recording so far
-    var row = await db.getP("SELECT cost FROM recordings WHERE rid=@RID;", {"@RID": recInfo.rid});
-    var cost = (row?row.cost:0);
-
-    // Determine the charge rate
-    let charge = opts.charge;
-    if (typeof charge === "undefined")
-        charge = calculateCredits();
-
-    // Make the informational command
-    let op = prot.parts.info;
-    let ret = Buffer.alloc(op.length + 4);
-    ret.writeUInt32LE(prot.ids.info, 0);
-    ret.writeUInt32LE(prot.info.creditRate, op.key);
-    ret.writeUInt32LE(cost, op.value);
-    ret.writeUInt32LE(charge, op.value + 4);
-
-    // And inform them
-    if (opts.only) {
-        const master = masters[opts.only];
-        if (master)
-            master.send(ret);
-
-    } else {
-        for (const master of masters) {
-            if (!master)
-                return;
-            master.send(ret);
-        }
-
-    }
-}
-
-// Apply credits for a minute
-async function chargeCredits() {
-    // Calculate the credit charge
-    var charge = calculateCredits(true);
-
-    // Add to the cost
-    while (true) {
-        try {
-            await db.runP("UPDATE recordings SET cost=cost+@CHARGE WHERE rid=@RID;", {
-                "@RID": recInfo.rid,
-                "@CHARGE": charge
-            });
-            break;
-        } catch (ex) {}
-    }
-
-    // Inform masters
-    informMastersCredit({charge});
-}
-
-// Apply credits automatically every minute
-var chargeCreditsTimeout = null;
-async function chargeCreditsLoop() {
-    if (chargeCreditsTimeout) {
-        chargeCreditsTimeout.clear();
-        chargeCreditsTimeout = null;
-    }
-
-    await chargeCredits();
-
-    // Do another round
-    if (recInfo.mode === prot.mode.rec ||
-        recInfo.mode === prot.mode.paused) {
-        chargeCreditsTimeout = pauseable.setTimeout(chargeCreditsLoop, 1000*60);
-        if (recInfo.mode === prot.mode.paused)
-            chargeCreditsTimeout.pause();
-    }
-}
-
-// Update on a speaking status change
 function speechStatus(id, speaking) {
     if (speaking && speakingStatus[id]) {
         // Just bump it
@@ -1699,6 +1536,7 @@ function speechStatus(id, speaking) {
             if (connection)
                 connection.send(ret);
         });
+
     }
 
     if (speaking) {

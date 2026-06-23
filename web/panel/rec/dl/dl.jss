@@ -22,12 +22,6 @@ const fs = require("fs");
 
 const {rid, recInfo, uriName, safeName} = arguments[1];
 
-if (!request.query.s && !recInfo.purchased) {
-    // Trying to do a full download of an un-purchased recording
-    writeHead(402);
-    write("You must purchase this recording before downloading a non-sample version.");
-    return;
-}
 
 // No need for compression, as the download is already compressed
 response.compress(null);

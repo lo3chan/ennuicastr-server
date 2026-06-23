@@ -2,7 +2,7 @@ PRAGMA journal_mode=WAL;
 
 CREATE TABLE IF NOT EXISTS users (
     uid TEXT UNIQUE,
-    /* login should be of the form service_provider:key, such as paypal:24601 */
+    /* login should be of the form service_provider:key, such as discord:24601 */
     login TEXT UNIQUE
 );
 
@@ -63,27 +63,7 @@ CREATE TABLE IF NOT EXISTS otk (
 
 CREATE INDEX IF NOT EXISTS otk_otk ON otk (otk);
 
-CREATE TABLE IF NOT EXISTS credits (
-    uid TEXT PRIMARY KEY,
-    /* How many credits the user currently has remaining */
-    credits BIGINT,
-    /* How many credits the user has ever purchased */
-    purchased BIGINT,
-    /* Subscription level */
-    subscription INTEGER,
-    /* When does the subscription expire? Note that you must check *both*, as
-     * expired subscriptions are left in the DB! */
-    subscription_expiry TEXT,
-    /* What is the ID for the subscription, prefixed with the service, e.g.
-     * paypal:I-... */
-    subscription_id TEXT
-);
 
-/* Preferred payment gateway per account */
-CREATE TABLE IF NOT EXISTS preferred_payment_gateways (
-    uid TEXT PRIMARY KEY,
-    gateway TEXT
-);
 
 /* Recordings that are either active or at least not expired */
 CREATE TABLE IF NOT EXISTS recordings (
@@ -125,10 +105,6 @@ CREATE TABLE IF NOT EXISTS recordings (
     expiry TEXT,
     /* The number of users recorded */
     tracks INTEGER,
-    /* The number of credits that this recording will/did cost to purchase */
-    cost INTEGER,
-    /* When it was purchased, if it's been purchased, or an empty string otherwise */
-    purchased TEXT,
     /* Extra, recording-specific data in JSON format */
     extra TEXT
 );
@@ -145,9 +121,7 @@ CREATE TABLE IF NOT EXISTS old_recordings (
     start TEXT,
     end TEXT,
     expiry TEXT,
-    tracks INTEGER,
-    cost INTEGER,
-    purchased TEXT
+    tracks INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS old_recordings_uid_rid_expiry ON old_recordings (uid, rid, expiry);
@@ -229,9 +203,3 @@ CREATE TABLE IF NOT EXISTS sounds (
 
 CREATE INDEX IF NOT EXISTS sounds_uid ON sounds (uid);
 
-/* Stripe-specific: The log of all successful checkouts, since we don't have a
- * way of lock-and-key finalizing a checkout ourselves. */
-CREATE TABLE IF NOT EXISTS stripe_checkouts (
-    uid TEXT,
-    checkout_id TEXT PRIMARY KEY
-);

@@ -282,9 +282,9 @@ async function del(rid, uid, opts) {
             if (!opts.forget) {
                 await db.runP("INSERT INTO old_recordings " +
                               "( uid,  rid,  name,  init,  start,  end," +
-                              "  expiry,  tracks,  cost,  purchased) VALUES " +
+                              "  expiry,  tracks) VALUES " +
                               "(@UID, @RID, @NAME, @INIT, @START, @END," +
-                              " @EXPIRY, @TRACKS, @COST, @PURCHASED);", {
+                              " @EXPIRY, @TRACKS);", {
                     "@UID": rec.uid,
                     "@RID": rec.rid,
                     "@NAME": rec.name,
@@ -293,8 +293,6 @@ async function del(rid, uid, opts) {
                     "@END": rec.end,
                     "@EXPIRY": rec.expiry,
                     "@TRACKS": rec.tracks,
-                    "@COST": rec.cost,
-                    "@PURCHASED": rec.purchased
                 });
             }
 
