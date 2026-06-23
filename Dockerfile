@@ -40,8 +40,8 @@ RUN node -e " \
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); \
   pkg.dependencies.sqlite3 = '^5.1.7'; \
   pkg.dependencies.typescript = '^5.2.0'; \
-  pkg.dependencies.wrtc = 'npm:@roamhq/wrtc@^0.5.0'; \
-  pkg.overrides = { 'wrtc': 'npm:@roamhq/wrtc@^0.5.0' }; \
+  pkg.dependencies.wrtc = 'npm:@roamhq/wrtc@^0.10.0'; \
+  pkg.overrides = { 'wrtc': 'npm:@roamhq/wrtc@^0.10.0' }; \
   fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2)); \
 " && \
     rm -rf node_modules package-lock.json && \
@@ -87,9 +87,6 @@ RUN make
 USER root
 RUN make install PREFIX=/var/www/rec
 RUN chown -R ennuicastr:ennuicastr /var/www/rec
-
-# Setup server panel symlink
-RUN ln -s /app/ennuicastr-server/web /var/www/html/panel || cp -R /app/ennuicastr-server/web/* /var/www/html/
 
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
