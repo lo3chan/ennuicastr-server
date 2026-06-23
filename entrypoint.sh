@@ -74,9 +74,11 @@ server {
         add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
 
         location ~ \.jss$ {
+            fastcgi_index index.jss;
             fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
             include fastcgi_params;
             fastcgi_buffering off;
+            fastcgi_param SCRIPT_FILENAME \$request_filename;
         }
 
         location ~ /ws$ {
@@ -91,17 +93,22 @@ server {
         }
     }
 
-    # If they are using a short domain, map root to /r/ (optional logic, mapped via alias for simplicity)
+    # Redirect root domain to the main panel
+    location = / {
+        return 302 /panel/;
+    }
+
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files \$uri \$uri/ /index.jss;
     }
 
     # NJSP handlers for panel and main site
     location ~ \.jss$ {
+        fastcgi_index index.jss;
         fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
         include fastcgi_params;
         fastcgi_buffering off;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME \$request_filename;
     }
 
     location ~ /ws$ {
