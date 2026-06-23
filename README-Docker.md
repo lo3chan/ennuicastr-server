@@ -9,9 +9,17 @@ It is designed to simplify deployment by combining all components into a single 
 - Docker installed on your host.
 - A Cloudflare account and a generated Tunnel Token (if using Cloudflare tunnels).
 
-## Building the Docker Image
+## Pulling the Pre-built Image
 
-You can build the image locally. The Dockerfile handles installing all dependencies, compiling the server, and building the web client.
+Pre-built Docker images are automatically created and pushed to the GitHub Container Registry (`ghcr.io`) for each release. You can pull the latest image directly:
+
+```bash
+docker pull ghcr.io/<your-github-username>/ennuicastr:latest
+```
+
+## Building the Docker Image (Optional)
+
+You can build the image locally instead. The Dockerfile handles installing all dependencies, compiling the server, and building the web client.
 
 ```bash
 docker build -t ennuicastr .
@@ -23,6 +31,8 @@ docker build -t ennuicastr .
 
 ### With Cloudflare Tunnel (Recommended)
 You can deploy Ennuicastr easily by utilizing Cloudflare Tunnels (`cloudflared` is bundled inside the container). This removes the need for configuring SSL certificates or port forwarding.
+
+Make sure to replace `ennuicastr` with `ghcr.io/<your-github-username>/ennuicastr:latest` if you pulled the image from the registry.
 
 ```bash
 docker run -d \

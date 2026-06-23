@@ -18,7 +18,7 @@ rec sounds:
 	mkdir -p $@
 
 server/ennuicastr.js server/ennuicastr-beta.js: server/ennuicastr.ts node_modules/.bin/tsc
-	node_modules/.bin/tsc $< --outFile $@.tmp
+	node_modules/.bin/tsc --skipLibCheck $< --outFile $@.tmp
 	mv $@.tmp $@
 
 web/panel/rec/dl/ennuicastr-download-processor.min.js: \
