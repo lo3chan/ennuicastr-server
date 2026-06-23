@@ -16,7 +16,6 @@
  */
 
 const cproc = require("child_process");
-const net = require("net");
 const fs = require("fs");
 const nrcp = require("node-rest-client-promise");
 
