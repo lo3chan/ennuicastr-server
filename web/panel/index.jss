@@ -134,6 +134,7 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
     function showUID() { $("#uidbox")[0].style.display = ""; }
     //--></script>
 
+    <?JS
     if (warning) {
         ?><div style="background-color: #933; color: #fff; text-align: center; border: 2px solid #fff; border-radius: 0.5em; padding: 0.5em; margin: 1em;"><?JS= warning ?></div><?JS
     }
