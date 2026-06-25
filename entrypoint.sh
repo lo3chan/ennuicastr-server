@@ -19,16 +19,19 @@ if [ -d "$DATA_DIR" ]; then
     mkdir -p "${DATA_DIR}/db" "${DATA_DIR}/rec" "${DATA_DIR}/sounds"
     chown -R ennuicastr:ennuicastr "${DATA_DIR}"
 
-    ln -sfn "${DATA_DIR}/db" "${SERVER_REPO_PATH}/db"
-    ln -sfn "${DATA_DIR}/rec" "${SERVER_REPO_PATH}/rec"
-    ln -sfn "${DATA_DIR}/sounds" "${SERVER_REPO_PATH}/sounds"
-
     if [ ! -s "${DATA_DIR}/db/ennuicastr.db" ] || [ ! -s "${DATA_DIR}/db/log.db" ]; then
         echo "Persistent /data/db is empty. Initializing schema..."
         sqlite3 "${DATA_DIR}/db/ennuicastr.db" < "${SERVER_REPO_PATH}/db/ennuicastr.schema"
         sqlite3 "${DATA_DIR}/db/log.db" < "${SERVER_REPO_PATH}/db/log.schema"
         chown -R ennuicastr:ennuicastr "${DATA_DIR}/db"
     fi
+
+    # Remove default directories to replace them with symlinks
+    rm -rf "${SERVER_REPO_PATH}/db" "${SERVER_REPO_PATH}/rec" "${SERVER_REPO_PATH}/sounds"
+
+    ln -sfn "${DATA_DIR}/db" "${SERVER_REPO_PATH}/db"
+    ln -sfn "${DATA_DIR}/rec" "${SERVER_REPO_PATH}/rec"
+    ln -sfn "${DATA_DIR}/sounds" "${SERVER_REPO_PATH}/sounds"
 
     CONFIG_FILE="${DATA_DIR}/config.json"
 fi
