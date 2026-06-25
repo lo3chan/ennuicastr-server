@@ -121,32 +121,6 @@ for (let row of recs) {
     }
 }
 
-// Add any shared lobbies/recordings
-{
-    const sharedLobbies = await db.allP(
-        `SELECT * FROM lobbies2 INNER JOIN lobby_share ON lobbies2.lid = lobby_share.lid
-        WHERE lobby_share.uid_to=@UID
-        AND lobbies2.uid=lobby_share.uid_from;`, {
-        "@UID": uid
-    });
-    if (sharedLobbies.length) {
-        lobbies = lobbies.concat(sharedLobbies).sort((a, b) => {
-            return (a.name < b.name) ? -1 : 1;
-        });
-    }
-
-    const sharedRecs = await db.allP(
-        `SELECT * FROM recordings INNER JOIN recording_share ON recordings.rid = recording_share.rid
-        WHERE recording_share.uid_to=@UID
-        AND recordings.uid=recording_share.uid_from;`, {
-        "@UID": uid
-    });
-    if (sharedRecs.length) {
-        recs = recs.concat(sharedRecs).sort((a, b) => {
-            return (a.init < b.init) ? 1 : -1;
-        });
-    }
-}
 
 // Index the recordings by ID
 let recsById = Object.create(null);
@@ -226,14 +200,12 @@ for (let lobby of lobbies) {
                         // Sharing requires admin
                         if (uidX.level >= 2) {
                         ?>
-                        <a href="share-room/?i=<?JS= lobby.lid.toString(36) ?>" class="button fit"><i class="bx bxs-share"></i> Share</a>
+
                         <?JS
                         }
 
                     } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
                         ?>
-                        <a href="share-room/?i=<?JS= lobby.lid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
                         <?JS
 
                     }
@@ -321,25 +293,17 @@ for (let row of recs) {
 
                         if (uidX.level >= 2 /* admin */) {
                         if (row.lid) {
-                            // This is a lobby, so share in either
                             ?>
-                            <a href="share-room/?i=<?JS= row.lid.toString(36) ?>" class="button fit" style="height: auto"><i class="bx bxs-share"></i> Share<br/>(Room)</a>
                             <?JS
                         }
 
                         ?>
-                        <a href="share/?i=<?JS= row.rid.toString(36) ?>" class="button fit" style="height: auto"><i class="bx bxs-share"></i> Share<?JS=
-                            row.lid ?
-                                "<br/>(Recording)" :
-                                ""
-                        ?></a>
+
                         <?JS
                         }
 
                     } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
                         ?>
-                        <a href="share/?i=<?JS= row.rid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
                         <?JS
 
                     }

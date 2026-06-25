@@ -62,23 +62,9 @@ describe("rec.js Module Tests", function () {
             expect(dbStub.getP.calledOnce).to.be.true;
         });
 
-        it("should check sharing if user is not owner", async function () {
-            const mockRec = { rid: 1, uid: "uid1" };
-            dbStub.getP.onFirstCall().resolves(mockRec);
-            dbStub.getP.onSecondCall().resolves({ rid: 1, uid_from: "uid1", uid_to: "uid2" });
 
-            const result = await recModule.get(1, "uid2");
-            expect(result).to.deep.equal(mockRec);
-        });
 
-        it("should return null if user is not owner and no share exists", async function () {
-            const mockRec = { rid: 1, uid: "uid1" };
-            dbStub.getP.onFirstCall().resolves(mockRec);
-            dbStub.getP.onSecondCall().resolves(null); // No share
 
-            const result = await recModule.get(1, "uid2");
-            expect(result).to.be.null;
-        });
     });
 
     describe("hostUrl(rec, opts)", function () {
