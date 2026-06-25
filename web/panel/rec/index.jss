@@ -231,9 +231,7 @@ for (let lobby of lobbies) {
                         }
 
                     } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
                         ?>
-                        <a href="share-room/?i=<?JS= lobby.lid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
                         <?JS
 
                     }
@@ -321,9 +319,7 @@ for (let row of recs) {
 
                         if (uidX.level >= 2 /* admin */) {
                         if (row.lid) {
-                            // This is a lobby, so share in either
                             ?>
-                            <a href="share-room/?i=<?JS= row.lid.toString(36) ?>" class="button fit" style="height: auto"><i class="bx bxs-share"></i> Share<br/>(Room)</a>
                             <?JS
                         }
 
@@ -337,9 +333,7 @@ for (let row of recs) {
                         }
 
                     } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
                         ?>
-                        <a href="share/?i=<?JS= row.rid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
                         <?JS
 
                     }

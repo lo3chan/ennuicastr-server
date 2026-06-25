@@ -23,6 +23,13 @@ if [ -d "$DATA_DIR" ]; then
     ln -sfn "${DATA_DIR}/rec" "${SERVER_REPO_PATH}/rec"
     ln -sfn "${DATA_DIR}/sounds" "${SERVER_REPO_PATH}/sounds"
 
+    if [ ! -s "${DATA_DIR}/db/ennuicastr.db" ] || [ ! -s "${DATA_DIR}/db/log.db" ]; then
+        echo "Persistent /data/db is empty. Initializing schema..."
+        sqlite3 "${DATA_DIR}/db/ennuicastr.db" < "${SERVER_REPO_PATH}/db/ennuicastr.schema"
+        sqlite3 "${DATA_DIR}/db/log.db" < "${SERVER_REPO_PATH}/db/log.schema"
+        chown -R ennuicastr:ennuicastr "${DATA_DIR}/db"
+    fi
+
     CONFIG_FILE="${DATA_DIR}/config.json"
 fi
 

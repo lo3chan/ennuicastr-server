@@ -19,18 +19,6 @@ const uidX = await include("uid.jss", {verbose: true});
 if (!uidX) return;
 const {ruid, euid, uid} = uidX;
 
-const providerNames = {
-    beta: "a beta account",
-    google: "Google",
-    facebook: "Facebook",
-    discord: "Discord",
-    firebase: "password authentication"
-};
-
-const edb = require("../db.js");
-const db = edb.db;
-
-
 const unM = require("../username.js");
 
 const ua = params.HTTP_USER_AGENT || "";
@@ -48,91 +36,11 @@ if (isSafari) {
     }
 }
 
-// Get other info associated with this account
-const login = await session.get("login");
-const loginProvider = (function() {
-    if (login) {
-        let provider = login.split(":")[0];
-        return providerNames[provider] || provider;
-    }
-    return null;
-})();
-const loginName = await (async function() {
-    var row = await db.getP("SELECT name FROM names WHERE uid=@UID;", {"@UID": ruid});
-    if (row)
-        return row.name;
-    return null;
-})();
-const email = await (async function() {
-    var row = await db.getP("SELECT email FROM emails WHERE uid=@UID;", {"@UID": ruid});
-    if (row)
-        return row.email;
-    return null;
-})();
-
-
-
-// Make an "as" line based on what they're logged in as
-let asMain = "";
-if (await unM.getUsername(ruid)) {
-    asMain = await unM.getDisplay(ruid);
-}
-
-let asDetail = "";
-if (email) {
-    asDetail = email;
-} else if (loginName) {
-    asDetail = loginName;
-}
-
-let asLine = "";
-if (asMain) {
-    asLine = " as " + asMain;
-    if (asDetail)
-        asLine += " (" + asDetail + ")";
-} else if (asDetail) {
-    asLine = " as " + asDetail;
-}
-
 await include("head.jss");
 ?>
 
-<?JS
-if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
-?>
-<script type="text/javascript">
-(function() {
-    // Check for client login
-    if (!window.parent) return;
-    const wUrl = new URL(document.location.href);
-    const pUrl = new URL(window.parent.document.location.href);
-    if (window.parent.ennuicastrClientLogin &&
-        wUrl.origin === pUrl.origin) {
-        window.parent.document.location.href = "/panel/login-client/otk/";
-    }
-})();
-</script>
-<?JS
-}
-?>
-
 <section class="wrapper special">
-    <p onclick="showUID();">You are logged into Ennuicastr using <?JS= loginProvider + asLine ?>.</p>
-
-    <?JS if (euid && euid !== ruid) { ?>
-    <p>You are currently logged into the <a href="/panel/org/">organization account</a> for <?JS= await unM.getDisplay(euid) ?>.</p>
-    <?JS } ?>
-
-    <p style="display: none" id="uidbox">
-        Your UID is <?JS= ruid ?>.
-        <?JS if (euid) { ?>
-        Your OID is <?JS= euid ?>.
-        <?JS } ?>
-    </p>
-
-    <script type="text/javascript"><!--
-    function showUID() { $("#uidbox")[0].style.display = ""; }
-    //--></script>
+    <p>You are logged into Ennuicastr as an Admin.</p>
 
     <?JS
     if (warning) {
@@ -145,14 +53,12 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
     <p style="line-height: 3.25">
     <?JS await include("menu.jss", {
         nomain: true,
-        username: !!(await unM.getUsername(uid)),
+        username: false,
         all: true
     }); ?>
     </p>
 
     <p><a class="button" href="/panel/logout/?all"><i class="bx bx-log-out"></i> Log out on <em>all</em> devices</a></p>
-
-    <p><a class="button" href="/panel/delete/" style="font-size: 0.75em"><i class="bx bxs-trash"></i> Delete account</a></p>
 </section>
 
 <?JS await include("../tail.jss"); ?>

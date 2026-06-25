@@ -17,32 +17,68 @@
 
 await session.init();
 
-if (request.query.secret) {
-    // Beta account. Maybe give them access
-    await include("beta.jss");
-    return;
-}
-
-const util = require("util");
+const crypto = require("crypto");
+const fs = require("fs");
 const config = require("../../config.js");
-const db = require("../db.js");
 const login = require("./login.jss");
 
 let errorMsg = null;
+let isSetup = !config.adminPasswordHash;
+
+function updateConfig(newConfig) {
+    const configPath = require.resolve("../../config.json");
+    let currentConfig = {};
+    try {
+        currentConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    } catch (ex) {}
+
+    Object.assign(currentConfig, newConfig);
+    fs.writeFileSync(configPath, JSON.stringify(currentConfig, null, 4));
+}
+
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString("hex");
+    const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+    return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, storedHash) {
+    if (!storedHash) return false;
+    const [salt, key] = storedHash.split(":");
+    if (!salt || !key) return false;
+    const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+    return key === hash;
+}
 
 if (request.method === "POST") {
-    if (!config.panelPassword) {
-        errorMsg = "Panel password is not configured.";
-    } else if (request.body.password === config.panelPassword) {
-        await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
-        redirect("/panel/");
-        return;
+    const submittedPassword = request.body.password;
+
+    if (isSetup) {
+        // Setup flow
+        if (submittedPassword && submittedPassword.length >= 8) {
+            const hashed = hashPassword(submittedPassword);
+            updateConfig({ adminPasswordHash: hashed });
+            // Reload config for the current process
+            config.adminPasswordHash = hashed;
+            await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
+            redirect("/panel/");
+            return;
+        } else {
+            errorMsg = "Password must be at least 8 characters long.";
+        }
     } else {
-        errorMsg = "Incorrect password.";
+        // Login flow
+        if (verifyPassword(submittedPassword, config.adminPasswordHash)) {
+            await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
+            redirect("/panel/");
+            return;
+        } else {
+            errorMsg = "Incorrect password.";
+        }
     }
 }
 
-await include("../../head.jss", {menu: false, title: "Log in"});
+await include("../../head.jss", {menu: false, title: isSetup ? "Setup Admin" : "Log in"});
 ?>
 
 <style type="text/css">
@@ -77,20 +113,30 @@ await include("../../head.jss", {menu: false, title: "Log in"});
     }
 
     .error-msg {
-        color: red;
+        color: #ff4d4d;
         margin-bottom: 1em;
+        font-weight: bold;
     }
 </style>
 
 <section class="wrapper special">
-    <?JS if (!config.panelPassword) { ?>
-        <p class="error-msg">Panel password is not configured. Please set the PANEL_PASSWORD environment variable or configure it in config.json.</p>
-    <?JS } else { ?>
+    <?JS if (isSetup) { ?>
+        <h2>Welcome to Ennuicastr</h2>
+        <p>This appears to be your first time logging in. Please set an admin password.</p>
         <form method="POST" action="?" class="login-form">
             <?JS if (errorMsg) { ?>
                 <p class="error-msg"><?JS= errorMsg ?></p>
             <?JS } ?>
-            <p>Please enter the panel password to log in:</p>
+            <input type="password" name="password" placeholder="New Password" required autofocus minlength="8" />
+            <button type="submit" class="button">Set Password & Log in</button>
+        </form>
+    <?JS } else { ?>
+        <h2>Admin Login</h2>
+        <form method="POST" action="?" class="login-form">
+            <?JS if (errorMsg) { ?>
+                <p class="error-msg"><?JS= errorMsg ?></p>
+            <?JS } ?>
+            <p>Please enter your admin password:</p>
             <input type="password" name="password" placeholder="Password" required autofocus />
             <button type="submit" class="button">Log in</button>
         </form>
