@@ -39,7 +39,6 @@ docker run -d \
   -v /path/on/host:/data \
   -e TUNNEL_TOKEN="your_cloudflare_tunnel_token_here" \
   -e DOMAIN="yourdomain.com" \
-  -e PANEL_PASSWORD="your_secure_password" \
   --name ennuicastr \
   ennuicastr
 ```
@@ -47,7 +46,6 @@ docker run -d \
 - `TUNNEL_TOKEN`: Your Cloudflare Tunnel token. The container will automatically launch `cloudflared` to route traffic securely.
 - `DOMAIN`: The primary domain where the application will be hosted (e.g. `testbed.ecastr.com`).
 - `SHORT_DOMAIN` (Optional): A secondary domain primarily used for shorter invite links (defaults to `DOMAIN`).
-- `PANEL_PASSWORD`: The password used to access the Ennuicastr admin control panel (`/panel/`).
 
 **Data Persistence:**
 - `-v /path/on/host:/data`: Maps a directory from your host machine into the container to store the `config.json`, database (`db`), recordings (`rec`), and sounds (`sounds`). This ensures you do not lose data across container restarts or upgrades.
@@ -61,10 +59,17 @@ docker run -d \
   -p 8080:80 \
   -e DOMAIN="localhost:8080" \
   -e PROTOCOL="http" \
-  -e PANEL_PASSWORD="your_secure_password" \
   --name ennuicastr \
   ennuicastr
 ```
+
+
+## First-Time Setup
+
+1. Once the container is running, navigate to your domain's panel at `https://yourdomain.com/panel/`.
+2. You will be prompted to create an admin password. This password is saved to `config.json` inside your `/data` volume.
+3. Subsequent logins will prompt you for this password to grant admin access.
+4. You can edit the configuration and change the password from within the panel itself under the **Configuration** menu.
 
 ## How It Works
 
