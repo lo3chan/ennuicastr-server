@@ -52,8 +52,8 @@ RUN make
 
 # Generate schemas
 WORKDIR /app/ennuicastr-server/db
-RUN sqlite3 ennuicastr.db < ennuicastr.schema && \
-    sqlite3 log.db < log.schema
+RUN sqlite3 ennuicastr.db < ../db-schema/ennuicastr.schema && \
+    sqlite3 log.db < ../db-schema/log.schema
 
 # --- Build Client ---
 USER ennuicastr
