@@ -19,13 +19,6 @@ if [ -d "$DATA_DIR" ]; then
     mkdir -p "${DATA_DIR}/db" "${DATA_DIR}/rec" "${DATA_DIR}/sounds"
     chown -R ennuicastr:ennuicastr "${DATA_DIR}"
 
-    if [ ! -s "${DATA_DIR}/db/ennuicastr.db" ] || [ ! -s "${DATA_DIR}/db/log.db" ]; then
-        echo "Persistent /data/db is empty. Initializing schema..."
-        sqlite3 "${DATA_DIR}/db/ennuicastr.db" < "${SERVER_REPO_PATH}/db/ennuicastr.schema"
-        sqlite3 "${DATA_DIR}/db/log.db" < "${SERVER_REPO_PATH}/db/log.schema"
-        chown -R ennuicastr:ennuicastr "${DATA_DIR}/db"
-    fi
-
     # Remove default directories to replace them with symlinks
     rm -rf "${SERVER_REPO_PATH}/db" "${SERVER_REPO_PATH}/rec" "${SERVER_REPO_PATH}/sounds"
 
@@ -35,6 +28,27 @@ if [ -d "$DATA_DIR" ]; then
 
     CONFIG_FILE="${DATA_DIR}/config.json"
 fi
+
+# Ensure necessary directories exist
+mkdir -p ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
+
+# Initialize database schemas if tables are missing
+DB_DIR="${SERVER_REPO_PATH}/db"
+ENNUICASTR_DB="$DB_DIR/ennuicastr.db"
+LOG_DB="$DB_DIR/log.db"
+
+# Check if users table exists, if not assume empty and initialize
+if ! sqlite3 "$ENNUICASTR_DB" "SELECT name FROM sqlite_master WHERE type='table' AND name='users';" | grep -q "users"; then
+    echo "Database ennuicastr.db is missing tables. Initializing schema..."
+    sqlite3 "$ENNUICASTR_DB" < "${SERVER_REPO_PATH}/db-schema/ennuicastr.schema"
+fi
+
+if ! sqlite3 "$LOG_DB" "SELECT name FROM sqlite_master WHERE type='table' AND name='log';" | grep -q "log"; then
+    echo "Database log.db is missing tables. Initializing schema..."
+    sqlite3 "$LOG_DB" < "${SERVER_REPO_PATH}/db-schema/log.schema"
+fi
+
+chown -R ennuicastr:ennuicastr "$DB_DIR"
 
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "Generating config.json at $CONFIG_FILE..."
@@ -160,10 +174,7 @@ NGINX_EOF
 sed -i 's/user www-data;/user ennuicastr;/g' /etc/nginx/nginx.conf
 
 # --- Ensure necessary directories ---
-if [ ! -d "$DATA_DIR" ]; then
-    mkdir -p ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
-    chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
-fi
+chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
 chown -R ennuicastr:ennuicastr /var/log/nginx /var/lib/nginx /run
 
 # --- Start Nginx ---
