@@ -20,7 +20,7 @@ await session.init();
 const crypto = require("crypto");
 const fs = require("fs");
 const config = require("../../config.js");
-const login = require("./login.jss");
+const login = await include("login.jss");
 
 let errorMsg = null;
 let isSetup = !config.adminPasswordHash;
@@ -61,7 +61,7 @@ if (request.method === "POST") {
             // Reload config for the current process
             config.adminPasswordHash = hashed;
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
-            redirect("/panel/");
+            writeHead(302, {"location": "/panel/"});
             return;
         } else {
             errorMsg = "Password must be at least 8 characters long.";
@@ -70,7 +70,7 @@ if (request.method === "POST") {
         // Login flow
         if (verifyPassword(submittedPassword, config.adminPasswordHash)) {
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
-            redirect("/panel/");
+            writeHead(302, {"location": "/panel/"});
             return;
         } else {
             errorMsg = "Incorrect password.";
