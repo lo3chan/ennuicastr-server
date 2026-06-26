@@ -25,9 +25,9 @@
     "rtennui-server": "^0.8.0",
     "sqlite3": "^5.1.7",
     "tmp-promise": "^3.0.3",
+    "typescript": "^5.2.0",
     "wrtc": "npm:@roamhq/wrtc@^0.10.0",
-    "ws": "^8.21.0",
-    "typescript": "^5.2.0"
+    "ws": "^8.21.0"
   },
   "overrides": {
     "wrtc": "npm:@roamhq/wrtc@^0.10.0"
