@@ -70,7 +70,7 @@ describe("login/index.jss Server Page", function () {
 
         // mock include so that it simulates `await include("login.jss")`
         const localInclude = async (f, arg) => {
-            if (f === "login.jss") return { login: async () => "123" };
+            if (f === "login.jss" || f === "./login.jss") return { login: async () => "123" };
             return mockInclude(f, arg);
         };
 
