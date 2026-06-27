@@ -20,7 +20,7 @@ await session.init();
 const crypto = require("crypto");
 const fs = require("fs");
 const config = require("../../config.js");
-const login = await include("login.jss");
+const login = await include("./login.jss");
 
 let errorMsg = null;
 let isSetup = !config.adminPasswordHash;
