@@ -6,5 +6,8 @@ let root = {
     "default": "../ws/default"
 };
 
-njsp.createServer({errDB: "nodejs-server-pages-error.db"});
-njsp.createWSServer({root, errDB: "nodejs-server-pages-error.db"});
+const path = require("path");
+const dbPath = path.join(__dirname, "nodejs-server-pages.db");
+const errDbPath = path.join(__dirname, "nodejs-server-pages-error.db");
+njsp.createServer({errDB: errDbPath, db: dbPath});
+njsp.createWSServer({root, errDB: errDbPath, db: dbPath});

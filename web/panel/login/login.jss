@@ -17,10 +17,10 @@
 
 const util = require("util");
 
-const edb = require("../db.js");
+const edb = require("../../db.js");
 const db = edb.db;
 const log = edb.log;
-const id36 = require("../id36.js");
+const id36 = require("../../id36.js");
 
 function genUID() {
     return id36.genID(32);
