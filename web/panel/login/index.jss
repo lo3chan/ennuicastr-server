@@ -51,9 +51,39 @@ function verifyPassword(password, storedHash) {
 }
 
 if (request.method === "POST") {
-    const submittedPassword = request.body.password;
+    let submittedPassword = null;
+    let rawStr = "";
+    if (request.body && request.body.password) {
+        submittedPassword = request.body.password;
+    } else if (request.bodyRaw) {
+        rawStr = request.bodyRaw.toString("utf8");
+        try {
+            submittedPassword = JSON.parse(rawStr).password;
+        } catch (e) {
+            try {
+                // Parse it out manually since qs is sometimes complaining about redeclaration in compiled code context
+                const pairs = rawStr.split("&");
+                for (const pair of pairs) {
+                    const kv = pair.split("=");
+                    if (kv[0] === "password") {
+                        submittedPassword = decodeURIComponent(kv[1] || "");
+                        break;
+                    }
+                }
+            } catch (e2) {}
+        }
+    }
 
-    if (isSetup) {
+    // Fallback: search raw string globally if it's there but parsing failed
+    if (!submittedPassword && request.bodyRaw) {
+        const rawStr = request.bodyRaw.toString("utf8");
+        const match = rawStr.match(/password=([^&]+)/);
+        if (match) {
+            submittedPassword = decodeURIComponent(match[1]);
+        }
+    }
+
+        if (isSetup) {
         // Setup flow
         if (submittedPassword && submittedPassword.length >= 8) {
             const hashed = hashPassword(submittedPassword);

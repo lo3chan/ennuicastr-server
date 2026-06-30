@@ -1,6 +1,6 @@
 <?JS!
 const config = (arguments[1] || {});
-const econfig = require("../config.js");
+const econfig = require("../../config.js");
 const uid = await include("uid.jss", {verbose: true});
 
 let org = "";

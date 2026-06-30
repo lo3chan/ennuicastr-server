@@ -21,7 +21,7 @@ await session.init();
 let uid = await session.get("uid");
 let level = 3;
 
-const db = require("../db.js").db;
+const db = require("../../db.js").db;
 
 // Check that the UID is valid
 let row;
