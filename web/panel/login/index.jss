@@ -19,14 +19,14 @@ await session.init();
 
 const crypto = require("crypto");
 const fs = require("fs");
-const config = require("../../config.js");
+const config = require(__dirname + "/../../../config.js");
 const login = await include("./login.jss");
 
 let errorMsg = null;
 let isSetup = !config.adminPasswordHash;
 
 function updateConfig(newConfig) {
-    const configPath = require.resolve("../../config.json");
+    const configPath = require.resolve(__dirname + "/../../../config.json");
     let currentConfig = {};
     try {
         currentConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -51,6 +51,7 @@ function verifyPassword(password, storedHash) {
 }
 
 if (request.method === "POST") {
+
     let submittedPassword = null;
     let rawStr = "";
     if (request.body && request.body.password) {

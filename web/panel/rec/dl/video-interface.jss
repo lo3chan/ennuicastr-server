@@ -15,7 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const config = require("../config.js");
+const config = require(__dirname + "/../../../../config.js");
 
 const {rid, recInfo} = arguments[1];
 ?>

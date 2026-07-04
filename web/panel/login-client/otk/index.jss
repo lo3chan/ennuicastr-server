@@ -18,8 +18,8 @@
 const uid = await include("../../uid.jss");
 if (!uid) return;
 
-const db = require("../db.js").db;
-const id36 = require("../id36.js");
+const db = require(__dirname + "/../../../../db.js").db;
+const id36 = require(__dirname + "/../../../../id36.js");
 
 // Create a one-time key for them
 let otk;

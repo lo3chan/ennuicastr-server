@@ -17,9 +17,9 @@
 
 const fs = require("fs");
 
-const config = require("../config.js");
-const db = require("../db.js").db;
-const id36 = require("../id36.js");
+const config = require(__dirname + "/../../config.js");
+const db = require(__dirname + "/../../db.js").db;
+const id36 = require(__dirname + "/../../id36.js");
 
 function fail() {
     writeHead(302, {"location": config.site});

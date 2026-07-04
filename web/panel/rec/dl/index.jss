@@ -29,13 +29,13 @@ const noRedirect = !!request.query.noredirect;
 const cp = require("child_process");
 const fs = require("fs");
 
-const config = require("../config.js");
-const edb = require("../db.js");
+const config = require(__dirname + "/../../../../config.js");
+const edb = require(__dirname + "/../../../../db.js");
 const db = edb.db;
 const log = edb.log;
 
 const reclib = await include("../lib.jss");
-const recM = require("../rec.js");
+const recM = require(__dirname + "/../../../../rec.js");
 
 
 

@@ -8,8 +8,8 @@ if (!uidX) return;
 
 const fs = require("fs");
 const crypto = require("crypto");
-const configPath = require.resolve("../../config.json");
-const appConfig = require("../../config.js");
+const configPath = require.resolve(__dirname + "/../../../config.json");
+const appConfig = require(__dirname + "/../../../config.js");
 let errorMsg = null;
 let successMsg = null;
 

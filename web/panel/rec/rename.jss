@@ -18,10 +18,10 @@
 const uid = await include("../uid.jss");
 if (!uid) return;
 
-const config = require("../config.js");
-const edb = require("../db.js");
+const config = require(__dirname + "/../../../config.js");
+const edb = require(__dirname + "/../../../db.js");
 const db = edb.db;
-const recM = require("../rec.js");
+const recM = require(__dirname + "/../../../rec.js");
 
 function fail(msg) {
     writeHead(500, {"content-type": "application/json"});

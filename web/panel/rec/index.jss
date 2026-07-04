@@ -21,13 +21,13 @@ const uid = uidX.uid;
 
 const net = require("net");
 
-const config = require("../config.js");
+const config = require(__dirname + "/../../../config.js");
 
 
-const edb = require("../db.js");
+const edb = require(__dirname + "/../../../db.js");
 const db = edb.db;
 const log = edb.log;
-const recM = require("../rec.js");
+const recM = require(__dirname + "/../../../rec.js");
 
 
 

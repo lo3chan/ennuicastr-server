@@ -15,8 +15,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const db = require("../db.js").db;
-const recM = require("../rec.js");
+const db = require(__dirname + "/../../../db.js").db;
+const recM = require(__dirname + "/../../../rec.js");
 
 function fail(msg) {
     writeHead(500, {"content-type": "application/json"});

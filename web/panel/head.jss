@@ -1,12 +1,12 @@
 <?JS!
 const config = (arguments[1] || {});
-const econfig = require("../../config.js");
+const econfig = require(__dirname + "/../../config.js");
 const uid = await include("uid.jss", {verbose: true});
 
 let org = "";
 if (uid && uid.euid && uid.euid !== uid.ruid) {
     // Logged into an organization account
-    const unM = require("../username.js");
+    const unM = require(__dirname + "/../../username.js");
     org = " (" + (await unM.getUsername(uid.euid)) + ")";
 }
 
