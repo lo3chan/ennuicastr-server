@@ -16,7 +16,7 @@
  */
 
 const config = (arguments[1] || {});
-const econfig = require("../config.js");
+const econfig = require(__dirname + "/../../config.js");
 
 const uidX = await include("uid.jss", {noRedirect: true, verbose: true});
 const {ruid, euid, uid} = uidX;

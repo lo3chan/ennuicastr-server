@@ -20,9 +20,9 @@ if (!uid) return;
 
 const fs = require("fs");
 
-const config = require("../config.js");
-const db = require("../db.js").db;
-const recM = require("../rec.js");
+const config = require(__dirname + "/../../../../config.js");
+const db = require(__dirname + "/../../../../db.js").db;
+const recM = require(__dirname + "/../../../../rec.js");
 const reclib = await include("../lib.jss");
 
 if (!request.query.i) {

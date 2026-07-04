@@ -19,8 +19,8 @@ const uid = await include("../uid.jss");
 if (!uid) return;
 
 const fs = require("fs");
-const config = require("../config.js");
-const edb = require("../db.js");
+const config = require(__dirname + "/../../../config.js");
+const edb = require(__dirname + "/../../../db.js");
 const db = edb.db;
 const log = edb.log;
 

@@ -24,7 +24,7 @@ if (request.query.secret) {
 }
 
 const util = require("util");
-const db = require("../db.js");
+const db = require(__dirname + "/../../../db.js");
 
 await include("../../head.jss", {menu: false, title: "Log in"});
 ?>

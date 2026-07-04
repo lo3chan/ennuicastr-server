@@ -63,7 +63,7 @@ describe("login/index.jss Server Page", function () {
         const myRequire = (mod) => {
             if (mod === "crypto") return crypto;
             if (mod === "fs") return { readFileSync: () => JSON.stringify({}), writeFileSync: () => {} };
-            if (mod === "../../config.js") return configMock;
+            if (mod === "../../config.js" || mod === __dirname + "/../../../config.js" || mod === "/app/web/panel/login/../../../config.js") return configMock;
             return {};
         };
         myRequire.resolve = () => "/app/config.json";
@@ -75,9 +75,9 @@ describe("login/index.jss Server Page", function () {
         };
 
         const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
-        const func = new AsyncFunction("require", "write", "writeHead", "session", "request", "response", "include", script);
+        const func = new AsyncFunction("require", "write", "writeHead", "session", "request", "response", "include", "__dirname", script);
 
-        await func(myRequire, mockResponse.write, mockResponse.writeHead, mockSession, mockRequest, mockResponse, localInclude);
+        await func(myRequire, mockResponse.write, mockResponse.writeHead, mockSession, mockRequest, mockResponse, localInclude, "/app/web/panel/login");
     };
 
     it("should show setup screen if no adminPasswordHash is set", async () => {

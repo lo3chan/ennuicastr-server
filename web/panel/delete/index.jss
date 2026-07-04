@@ -19,7 +19,7 @@ const uidX = await include("../uid.jss", {verbose: true});
 if (!uidX) return;
 const {ruid, uid} = uidX;
 
-const edb = require("../db.js");
+const edb = require(__dirname + "/../../../db.js");
 const db = edb.db;
 const log = edb.log;
 const logout = await include("../logout/logout.jss");

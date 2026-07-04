@@ -20,8 +20,8 @@ if (!uid) return;
 
 const fs = require("fs");
 
-const config = require("../config.js");
-const db = require("../db.js").db;
+const config = require(__dirname + "/../../../config.js");
+const db = require(__dirname + "/../../../db.js").db;
 
 function fail(msg) {
     writeHead(404);

@@ -4,6 +4,7 @@
   "description": "",
   "main": "config.js",
   "scripts": {
+    "start": "./entrypoint.sh",
     "test": "npx mocha tests/**/*.test.js"
   },
   "author": "Yahweasel",
