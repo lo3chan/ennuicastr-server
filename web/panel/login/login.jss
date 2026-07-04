@@ -30,7 +30,7 @@ async function getUID(login) {
     var uid, newUID = false;
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
             var row = await db.getP("SELECT uid FROM users WHERE login=@LOGIN;", {"@LOGIN": login});
             if (row) {
                 // Already registered
@@ -49,6 +49,7 @@ async function getUID(login) {
             break;
         } catch (ex) {
             await db.runP("ROLLBACK;");
+            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 
@@ -64,7 +65,7 @@ async function setEmail(uid, email) {
     var newEmail = false;
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
             var row = await db.getP("SELECT email FROM emails WHERE uid=@UID;", {"@UID": uid});
             if (row && row.email === email) {
                 // Email already set
@@ -83,6 +84,7 @@ async function setEmail(uid, email) {
             break;
         } catch (ex) {
             await db.runP("ROLLBACK;");
+            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 
@@ -96,7 +98,7 @@ async function setName(uid, name) {
     var newName = false;
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
             var row = await db.getP("SELECT name FROM names WHERE uid=@UID;", {"@UID": uid});
             if (row && row.name === name) {
                 await db.runP("COMMIT;");
@@ -113,6 +115,7 @@ async function setName(uid, name) {
             break;
         } catch (ex) {
             await db.runP("ROLLBACK;");
+            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 

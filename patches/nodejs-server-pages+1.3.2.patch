@@ -1,0 +1,38 @@
+diff --git a/node_modules/nodejs-server-pages/session.js b/node_modules/nodejs-server-pages/session.js
+index 54bf460..215f9aa 100644
+--- a/node_modules/nodejs-server-pages/session.js
++++ b/node_modules/nodejs-server-pages/session.js
+@@ -89,7 +89,7 @@ Session.prototype.init = async function(config) {
+             sid = part() + part() + part();
+
+             try {
+-                await this.run("BEGIN TRANSACTION;");
++                await this.run("BEGIN IMMEDIATE TRANSACTION;");
+                 row = await this.dbGet("SELECT * FROM session WHERE sid=@SID;", {"@SID": sid});
+                 if (!row) {
+                     await this.run("INSERT INTO session VALUES (@SID, @KEY, @VALUE, datetime('now','" + config.expiry + " seconds'));", {
+@@ -105,6 +105,7 @@ Session.prototype.init = async function(config) {
+
+             } catch (ex) {
+                 await rollback(this.db);
++                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
+             }
+         }
+     }
+@@ -150,7 +151,7 @@ Session.prototype.set = async function(key, value) {
+         return;
+     while (true) {
+         try {
+-            await this.run("BEGIN TRANSACTION;");
++            await this.run("BEGIN IMMEDIATE TRANSACTION;");
+             await this.run("DELETE FROM session WHERE sid=@SID AND key=@KEY;", {
+                 "@SID": this.sid,
+                 "@KEY": key
+@@ -164,6 +165,7 @@ Session.prototype.set = async function(key, value) {
+             break;
+         } catch (ex) {
+             await rollback(this.db);
++                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
+         }
+     }
+ }
