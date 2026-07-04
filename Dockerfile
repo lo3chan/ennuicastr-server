@@ -59,7 +59,7 @@ RUN sqlite3 ennuicastr.db < ../db-schema/ennuicastr.schema && \
 USER ennuicastr
 WORKDIR /app
 # Clone the user's client repo
-RUN git clone https://github.com/lo3chan/ennuicastr.git /app/ennuicastr
+RUN git clone --depth 1 https://github.com/lo3chan/ennuicastr.git /app/ennuicastr || true
 
 WORKDIR /app/ennuicastr
 # Create configs
