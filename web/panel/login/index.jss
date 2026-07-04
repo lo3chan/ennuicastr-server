@@ -92,6 +92,7 @@ if (request.method === "POST") {
             // Reload config for the current process
             config.adminPasswordHash = hashed;
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
+            await new Promise(r => setTimeout(r, 100));
             writeHead(302, {"location": "/panel/"});
             return;
         } else {
@@ -101,6 +102,7 @@ if (request.method === "POST") {
         // Login flow
         if (verifyPassword(submittedPassword, config.adminPasswordHash)) {
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
+            await new Promise(r => setTimeout(r, 100));
             writeHead(302, {"location": "/panel/"});
             return;
         } else {
