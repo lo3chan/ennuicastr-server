@@ -37,7 +37,7 @@ async function rec(rec, opts) {
     if ("lid" in opts) {
         while (true) {
             try {
-                await db.runP("BEGIN TRANSACTION;");
+                await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
                 lobby = await db.getP(
                     "SELECT *, lock > datetime('now') AS locked FROM lobbies2" +
@@ -152,7 +152,7 @@ async function rec(rec, opts) {
         if (lobbyShare.length) {
             while (true) {
                 try {
-                    await db.runP("BEGIN TRANSACTION;");
+                    await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
                     for (const share of lobbyShare) {
                         await db.runP(
@@ -276,7 +276,7 @@ async function del(rid, uid, opts) {
     // Then move the row to old_recordings
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
             // Insert the new row
             if (!opts.forget) {

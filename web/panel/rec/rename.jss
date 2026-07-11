@@ -46,7 +46,7 @@ const name = request.body.n.slice(0, config.limits.recNameLength);
 
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
         let rec = await recM.get(rid, uid);
         if (!rec) {

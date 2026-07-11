@@ -31,7 +31,7 @@ let canDelete = true,
 
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
         canDelete = true;
 
         // Check if there are any recordings

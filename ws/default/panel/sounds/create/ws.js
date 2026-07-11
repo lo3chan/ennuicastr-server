@@ -20,7 +20,7 @@ const db = edb.db;
 const log = edb.log;
 const id36 = require("../id36.js");
 
-const cp = require("child_process");
+const cproc = require("child_process");
 const fs = require("fs");
 const tmp = require("tmp-promise");
 
@@ -117,7 +117,7 @@ try {
 
     // Get its duration using ffprobe
     var duration = await new Promise(function(res, rej) {
-        var p = cp.spawn("ffprobe", ["-print_format", "json", "-show_streams", inFile], {
+        var p = cproc.spawn("ffprobe", ["-print_format", "json", "-show_streams", inFile], {
             stdio: ["ignore", "pipe", "ignore"]
         });
 
@@ -139,7 +139,7 @@ try {
     var sid;
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
             // Check that we won't go over the duration limit
             var curDuration = (await db.getP("SELECT SUM(duration) AS duration FROM sounds WHERE uid=@UID;", {
@@ -201,7 +201,7 @@ try {
         tmpout.write(JSON.stringify(args) + "\n");
 
         await new Promise(function(res, rej) {
-            var p = cp.spawn("ffmpeg", args, {stdio: "pipe"});
+            var p = cproc.spawn("ffmpeg", args, {stdio: "pipe"});
 
             p.stderr.on("data", (chunk) => {
                 var time = /time=([0-9:]*)/.exec(chunk);

@@ -125,7 +125,7 @@ describe("rec.js Module Tests", function () {
             expect(logStub.calledOnce).to.be.true;
 
             // Check transactions
-            expect(dbStub.runP.calledWith("BEGIN TRANSACTION;")).to.be.true;
+            expect(dbStub.runP.calledWith("BEGIN IMMEDIATE TRANSACTION;")).to.be.true;
             expect(dbStub.runP.calledWith("COMMIT;")).to.be.true;
         });
     });

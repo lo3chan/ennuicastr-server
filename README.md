@@ -1,3 +1,34 @@
+## Portainer / Docker Compose Stack
+
+If you are using Portainer, Docker Compose, or Swarm, you can use the following `docker-compose.yml` stack to quickly spin up the environment with a persistent volume:
+
+```yaml
+version: '3.8'
+
+services:
+  ennuicastr:
+    image: ghcr.io/<your-github-username>/ennuicastr:latest # Replace with your built image if necessary
+    container_name: ennuicastr
+    restart: unless-stopped
+    environment:
+      # Automatically route and secure via Cloudflare Tunnel
+      - TUNNEL_TOKEN=your_cloudflare_tunnel_token_here
+      - DOMAIN=yourdomain.com
+
+      # UNCOMMENT the following if running locally without Cloudflare:
+      # - DOMAIN=localhost:8080
+      # - PROTOCOL=http
+    # ports:
+      # UNCOMMENT if running locally without Cloudflare Tunnel:
+      # - "8080:80"
+    volumes:
+      # Persist configuration, database, and recordings
+      - ennuicastr_data:/data
+
+volumes:
+  ennuicastr_data:
+```
+
 This is the server component for Ennuicastr, a system for recording multiple
 users distributed across the world in a well-synchronized way, without
 significant loss, over the web. This is the server software that runs
@@ -16,6 +47,7 @@ server: The server for Ennuicastr recordings itself.
 web:    The web page
 
 cook:   Tools used to process raw audio into usable formats.
+
 
 
 # Running the Server
