@@ -14,7 +14,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const cp = require("child_process");
+const cproc = require("child_process");
 const http = require("http");
 
 const config = require("../config.js");
@@ -92,7 +92,7 @@ sock.once("message", async function(msg) {
     // Start getting data
     buf = Buffer.alloc(4);
     buf.writeUInt32LE(sending, 0);
-    var c = cp.spawn(config.repo + "/cook/" + gen + "-partwise.sh", args, {
+    var c = cproc.spawn(config.repo + "/cook/" + gen + "-partwise.sh", args, {
         stdio: ["ignore", "pipe", "inherit"]
     });
 

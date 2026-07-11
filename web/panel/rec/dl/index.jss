@@ -61,7 +61,7 @@ try {
 if (request.query.captionImprover &&
     (!recInfoExtra || !recInfoExtra.captionImprover)) {
     // Start the process
-    const p = cp.spawn("./caption-improver-runpod-whisper.js", [
+    const p = cproc.spawn("./caption-improver-runpod-whisper.js", [
         `${config.rec}/${rid}.ogg.captions`, `${rid}`
     ], {
         cwd: `${config.repo}/cook`,
@@ -74,7 +74,7 @@ if (request.query.captionImprover &&
     // And mark it as in progress
     while (true) {
         try {
-            await db.runP("BEGIN TRANSACTION;");
+            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
             // Get the current status
             let row = await db.getP("SELECT extra FROM recordings WHERE uid=@UID AND rid=@RID;", {

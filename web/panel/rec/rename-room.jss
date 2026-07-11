@@ -44,7 +44,7 @@ const name = request.body.n.slice(0, config.limits.recNameLength);
 
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
         let lobby = await db.getP("SELECT * FROM lobbies2 WHERE lid=@LID;", {
             "@LID": lid

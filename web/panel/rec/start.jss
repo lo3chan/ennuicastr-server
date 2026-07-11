@@ -59,7 +59,7 @@ rec = {
 // Add these defaults to the database
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
         await db.runP("DELETE FROM defaults WHERE uid=@UID;", {"@UID": uid});
         await db.runP("INSERT INTO defaults " +

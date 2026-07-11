@@ -25,7 +25,7 @@ const id36 = require(__dirname + "/../../../../id36.js");
 let otk;
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
         await db.runP("DELETE FROM otk WHERE uid=@UID;", {
             "@UID": uid
         });

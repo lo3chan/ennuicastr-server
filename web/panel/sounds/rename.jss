@@ -39,7 +39,7 @@ const name = request.body.n.slice(0, config.limits.soundNameLength);
 
 while (true) {
     try {
-        await db.runP("BEGIN TRANSACTION;");
+        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
 
         var rec = await db.getP("SELECT * FROM sounds WHERE uid=@UID AND sid=@SID;", {
             "@UID": uid,
