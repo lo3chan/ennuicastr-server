@@ -22,9 +22,26 @@ const config = require("./config.js");
 const db = new sqlite3.Database(config.db + "/ennuicastr.db");
 const logdb = new sqlite3.Database(config.db + "/log.db");
 
+function wrapWithRetry(obj, meth) {
+    const raw = util.promisify(obj[meth].bind(obj));
+    return async function(...args) {
+        while (true) {
+            try {
+                return await raw(...args);
+            } catch (ex) {
+                if (ex && ex.code === "SQLITE_BUSY") {
+                    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
+                    continue;
+                }
+                throw ex;
+            }
+        }
+    };
+}
+
 ["run", "get", "all"].forEach((x) => {
-    db[x + "P"] = util.promisify(db[x].bind(db));
-    logdb[x + "P"] = util.promisify(logdb[x].bind(logdb));
+    db[x + "P"] = wrapWithRetry(db, x);
+    logdb[x + "P"] = wrapWithRetry(logdb, x);
 });
 
 db.runP("PRAGMA journal_mode=WAL;");
@@ -63,7 +80,13 @@ async function log(type, details, extra) {
         try {
             await logStmt(vals);
             break;
-        } catch (ex) {}
+        } catch (ex) {
+            if (ex && ex.code === "SQLITE_BUSY") {
+                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
+            } else {
+                await new Promise(r => setTimeout(r, 100)); // Default backoff
+            }
+        }
     }
 }
 

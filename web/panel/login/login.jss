@@ -48,14 +48,14 @@ async function getUID(login) {
             await db.runP("COMMIT;");
             break;
         } catch (ex) {
-            await db.runP("ROLLBACK;");
+            try { await db.runP("ROLLBACK;"); } catch (e) {}
             await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 
     if (newUID) {
         // Log it
-        log("new-account", login, {uid});
+        await log("new-account", login, {uid});
     }
 
     return uid;
@@ -83,14 +83,14 @@ async function setEmail(uid, email) {
             newEmail = true;
             break;
         } catch (ex) {
-            await db.runP("ROLLBACK;");
+            try { await db.runP("ROLLBACK;"); } catch(e) {}
             await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 
     if (newEmail) {
         // Log it
-        log("new-email", email, {uid});
+        await log("new-email", email, {uid});
     }
 }
 
@@ -114,14 +114,14 @@ async function setName(uid, name) {
             newName = true;
             break;
         } catch (ex) {
-            await db.runP("ROLLBACK;");
+            try { await db.runP("ROLLBACK;"); } catch(e) {}
             await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
         }
     }
 
     if (newName) {
         // Log it
-        log("new-name", name, {uid});
+        await log("new-name", name, {uid});
     }
 }
 
