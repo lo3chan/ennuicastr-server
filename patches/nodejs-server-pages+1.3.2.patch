@@ -1,8 +1,96 @@
+diff --git a/node_modules/nodejs-server-pages/runner.js b/node_modules/nodejs-server-pages/runner.js
+index a47a3e9..e3c528e 100644
+--- a/node_modules/nodejs-server-pages/runner.js
++++ b/node_modules/nodejs-server-pages/runner.js
+@@ -330,10 +330,10 @@ function run(db, params, req, body, res) {
+     };
+
+     // Run it
+-    func(module).then(() => {
++    func(module).then(async () => {
+         clearTimeout(timeout);
+-        finish();
+-    }).catch((ex) => {
++        await finish();
++    }).catch(async (ex) => {
+         clearTimeout(timeout);
+         process.send({
+             c: "x",
+@@ -342,12 +342,12 @@ function run(db, params, req, body, res) {
+             e: ex + "\n" + ex.stack
+         });
+         res.write("ERROR");
+-        finish();
++        await finish();
+     });
+
+     // Close when we're done
+-    function finish() {
+-        s.close(); // No await, just let it finish in the background
++    async function finish() {
++        await s.close();
+         res.end();
+
+         // So that future requires don't cache our stuff, delete the whole cache
 diff --git a/node_modules/nodejs-server-pages/session.js b/node_modules/nodejs-server-pages/session.js
-index 54bf460..215f9aa 100644
+index 54bf460..de33d88 100644
 --- a/node_modules/nodejs-server-pages/session.js
 +++ b/node_modules/nodejs-server-pages/session.js
-@@ -89,7 +89,7 @@ Session.prototype.init = async function(config) {
+@@ -22,7 +22,20 @@ const cookie = require("cookie");
+ const sqlite3 = require("sqlite3");
+
+ function up(obj, meth) {
+-    return util.promisify(obj[meth].bind(obj));
++    const raw = util.promisify(obj[meth].bind(obj));
++    return async function(...args) {
++        while (true) {
++            try {
++                return await raw(...args);
++            } catch (ex) {
++                if (ex && ex.code === "SQLITE_BUSY") {
++                    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
++                    continue;
++                }
++                throw ex;
++            }
++        }
++    };
+ }
+
+ async function rollback(db) {
+@@ -59,9 +72,19 @@ Session.prototype.init = async function(config) {
+
+     // Make sure the database is real
+     await this.run("PRAGMA journal_mode=WAL;");
+-    await this.run("CREATE TABLE IF NOT EXISTS session (sid TEXT, key TEXT, value TEXT, expires TEXT);");
+-    await this.run("CREATE INDEX IF NOT EXISTS session_sid ON session (sid, key);");
+-    await this.run("CREATE INDEX IF NOT EXISTS session_exp ON session (expires);");
++    while (true) {
++        try {
++            await this.run("BEGIN IMMEDIATE TRANSACTION;");
++            await this.run("CREATE TABLE IF NOT EXISTS session (sid TEXT, key TEXT, value TEXT, expires TEXT);");
++            await this.run("CREATE INDEX IF NOT EXISTS session_sid ON session (sid, key);");
++            await this.run("CREATE INDEX IF NOT EXISTS session_exp ON session (expires);");
++            await this.run("COMMIT;");
++            break;
++        } catch (ex) {
++            await rollback(this.db);
++            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
++        }
++    }
+
+     // Try to get the existing session ID
+     if ("cookie" in this.request.headers) {
+@@ -71,7 +94,7 @@ Session.prototype.init = async function(config) {
+             sid = cookies.NJSPSESSID;
+
+             // Check if it's actually valid
+-            row = await this.dbGet("SELECT * FROM session WHERE sid=@SID;", {"@SID": sid});
++            const row = await this.dbGet("SELECT * FROM session WHERE sid=@SID;", {"@SID": sid});
+             if (!row)
+                 sid = null;
+         }
+@@ -89,7 +112,7 @@ Session.prototype.init = async function(config) {
              sid = part() + part() + part();
 
              try {
@@ -11,7 +99,7 @@ index 54bf460..215f9aa 100644
                  row = await this.dbGet("SELECT * FROM session WHERE sid=@SID;", {"@SID": sid});
                  if (!row) {
                      await this.run("INSERT INTO session VALUES (@SID, @KEY, @VALUE, datetime('now','" + config.expiry + " seconds'));", {
-@@ -105,6 +105,7 @@ Session.prototype.init = async function(config) {
+@@ -105,6 +128,7 @@ Session.prototype.init = async function(config) {
 
              } catch (ex) {
                  await rollback(this.db);
@@ -19,7 +107,7 @@ index 54bf460..215f9aa 100644
              }
          }
      }
-@@ -150,7 +151,7 @@ Session.prototype.set = async function(key, value) {
+@@ -150,7 +174,7 @@ Session.prototype.set = async function(key, value) {
          return;
      while (true) {
          try {
@@ -28,11 +116,53 @@ index 54bf460..215f9aa 100644
              await this.run("DELETE FROM session WHERE sid=@SID AND key=@KEY;", {
                  "@SID": this.sid,
                  "@KEY": key
-@@ -164,6 +165,7 @@ Session.prototype.set = async function(key, value) {
+@@ -164,6 +188,7 @@ Session.prototype.set = async function(key, value) {
              break;
          } catch (ex) {
              await rollback(this.db);
-+                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
++            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
          }
      }
  }
+@@ -171,16 +196,36 @@ Session.prototype.set = async function(key, value) {
+ Session.prototype.delete = async function(key) {
+     if (!this.sid)
+         return;
+-    await this.run("DELETE FROM session WHERE sid=@SID AND key=@KEY;", {
+-        "@SID": this.sid,
+-        "@KEY": key
+-    });
++    while (true) {
++        try {
++            await this.run("BEGIN IMMEDIATE TRANSACTION;");
++            await this.run("DELETE FROM session WHERE sid=@SID AND key=@KEY;", {
++                "@SID": this.sid,
++                "@KEY": key
++            });
++            await this.run("COMMIT;");
++            break;
++        } catch(ex) {
++            await rollback(this.db);
++            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
++        }
++    }
+ }
+
+ Session.prototype.cleanup = async function() {
+     if (!this.sid)
+         return;
+-    await this.run("DELETE FROM session WHERE expires<=datetime('now');");
++    while (true) {
++        try {
++            await this.run("BEGIN IMMEDIATE TRANSACTION;");
++            await this.run("DELETE FROM session WHERE expires<=datetime('now');");
++            await this.run("COMMIT;");
++            break;
++        } catch(ex) {
++            await rollback(this.db);
++            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 50) + 10));
++        }
++    }
+ }
+
+ Session.prototype.close = async function() {
