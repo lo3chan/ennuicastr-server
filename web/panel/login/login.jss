@@ -36,6 +36,7 @@ async function getUID(login) {
                 // Already registered
                 uid = row.uid;
                 await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
                 break;
             }
 
@@ -46,6 +47,7 @@ async function getUID(login) {
 
 
             await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
             break;
         } catch (ex) {
             try { await db.runP("ROLLBACK;"); } catch (e) {}
@@ -70,6 +72,7 @@ async function setEmail(uid, email) {
             if (row && row.email === email) {
                 // Email already set
                 await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
                 break;
             }
 
@@ -80,6 +83,7 @@ async function setEmail(uid, email) {
                 "@EMAIL": email
             });
             await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
             newEmail = true;
             break;
         } catch (ex) {
@@ -102,6 +106,7 @@ async function setName(uid, name) {
             var row = await db.getP("SELECT name FROM names WHERE uid=@UID;", {"@UID": uid});
             if (row && row.name === name) {
                 await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
                 break;
             }
 
@@ -111,6 +116,7 @@ async function setName(uid, name) {
                 "@NAME": name
             });
             await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
             newName = true;
             break;
         } catch (ex) {

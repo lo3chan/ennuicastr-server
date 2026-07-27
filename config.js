@@ -16,12 +16,47 @@
 
 /* Configuration */
 const fs = require("fs");
-const config = require("./config.json");
+const path = require("path");
 
-// Handle ~'s in paths
-["repo", "db", "rec", "sounds", "cert", "clientRepo"].forEach((path) => {
-    config[path] = config[path].replace(/~/g, process.env.HOME);
+const configPath = path.join(__dirname, "config.json");
+let configData = {};
+let lastMtime = 0;
+
+function loadConfig() {
+    try {
+        const stat = fs.statSync(configPath);
+        if (stat.mtimeMs > lastMtime) {
+            const raw = fs.readFileSync(configPath, "utf8");
+            const newConfig = JSON.parse(raw);
+
+            // Handle ~'s in paths
+            ["repo", "db", "rec", "sounds", "cert", "clientRepo"].forEach((p) => {
+                if (newConfig[p]) {
+                    newConfig[p] = newConfig[p].replace(/~/g, process.env.HOME);
+                }
+            });
+
+            configData = newConfig;
+            lastMtime = stat.mtimeMs;
+        }
+    } catch (ex) {
+        // Fallback to existing configData if parsing fails or file is temporarily missing
+    }
+}
+
+// Initial load
+loadConfig();
+
+// Create a Proxy to intercept property accesses and check mtime on every access
+const configProxy = new Proxy(configData, {
+    get: function(target, prop) {
+        loadConfig();
+        return Reflect.get(configData, prop);
+    },
+    set: function(target, prop, value) {
+        // Disallow direct modification via proxy
+        return false;
+    }
 });
 
-
-module.exports = config;
+module.exports = configProxy;

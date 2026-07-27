@@ -156,8 +156,8 @@ fastPunct.on("data", text => {
     let meta = "";
 
     let proc = cproc.spawn("/bin/sh", ["-c",
-        `cat "$2"header1 "$2"header2 "$2"data | ` +
-        `"$1"/cook/oggmeta`,
+        'cat "$2"header1 "$2"header2 "$2"data | ' +
+        '"$1"/cook/oggmeta',
         "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     proc.stdout.on("data", chunk => {
@@ -193,8 +193,8 @@ fastPunct.on("data", text => {
     // Get the formats
     let formats = "";
     proc = cproc.spawn("/bin/sh", ["-c",
-        `cat "$2"header1 "$2"header2 "$2"data | ` +
-        `"$1"/cook/oggtracks`,
+        'cat "$2"header1 "$2"header2 "$2"data | ' +
+        '"$1"/cook/oggtracks',
         "sh", config.repo, inBase
     ], {stdio: ["ignore", "pipe", "ignore"]});
     proc.stdout.on("data", chunk => {

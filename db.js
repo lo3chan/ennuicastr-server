@@ -19,8 +19,15 @@
 const util = require("util");
 const sqlite3 = require("sqlite3");
 const config = require("./config.js");
-const db = new sqlite3.Database(config.db + "/ennuicastr.db");
-const logdb = new sqlite3.Database(config.db + "/log.db");
+
+if (!global.__DB_CACHE) {
+    global.__DB_CACHE = {
+        db: new sqlite3.Database(config.db + "/ennuicastr.db"),
+        logdb: new sqlite3.Database(config.db + "/log.db")
+    };
+}
+const db = global.__DB_CACHE.db;
+const logdb = global.__DB_CACHE.logdb;
 
 function wrapWithRetry(obj, meth) {
     const raw = util.promisify(obj[meth].bind(obj));
@@ -47,11 +54,14 @@ function wrapWithRetry(obj, meth) {
 db.runP("PRAGMA journal_mode=WAL;");
 logdb.runP("PRAGMA journal_mode=WAL;");
 
-const logStmtA = logdb.prepare(
-    "INSERT INTO log (time, type, uid, rid, details) " +
-    "VALUES (strftime('%Y-%m-%d %H:%M:%f', @TIME), @TYPE, @UID, @RID, @DETAILS);"
-);
-const logStmt = util.promisify(logStmtA.run.bind(logStmtA));
+if (!global.__DB_CACHE.logStmtA) {
+    global.__DB_CACHE.logStmtA = logdb.prepare(
+        "INSERT INTO log (time, type, uid, rid, details) " +
+        "VALUES (strftime('%Y-%m-%d %H:%M:%f', @TIME), @TYPE, @UID, @RID, @DETAILS);"
+    );
+    global.__DB_CACHE.logStmt = util.promisify(global.__DB_CACHE.logStmtA.run.bind(global.__DB_CACHE.logStmtA));
+}
+const logStmt = global.__DB_CACHE.logStmt;
 
 /**
  * Log this interaction.
