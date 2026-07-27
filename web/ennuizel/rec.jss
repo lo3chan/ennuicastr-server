@@ -72,7 +72,7 @@ if (request.query.f === "vosk" && request.query.t) {
 
     // Get the input
     const inpProc = cproc.spawn("/bin/sh", [
-        "-c", input
+        "-c", 'eval "$1"', "sh", input
     ], {stdio: ["ignore", "pipe", "ignore"]});
 
     // Voskify it

@@ -38,6 +38,7 @@ while (true) {
         });
 
         await db.runP("COMMIT;");
+        await db.runP("PRAGMA wal_checkpoint(PASSIVE);");
         break;
 
     } catch (ex) {
