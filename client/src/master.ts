@@ -882,32 +882,13 @@ export function initCloudStorage(opts: {
             username: string, password: string, server: string
         } | null = null;
 
-        // We change the label based on the actual usage
-        masterUI.saveVideoInCloudLbl.innerHTML = "&nbsp;Save video recordings in cloud storage";
-
-        if (!masterUI.saveVideoInCloud.checked) {
-            fileStorage.clearRemoteFileStorage();
-            localStorage.removeItem("master-video-save-in-cloud-provider");
-            ret.transientActivation.res();
-            ret.completion.res();
-            return;
-        }
-
-        let provider = localStorage.getItem("master-video-save-in-cloud-provider");
-        if (!provider || opts.ignoreCookieProvider) {
-            const csPanel = ui.ui.panels.cloudStorage;
-            csPanel.desc.style.display = opts.showDesc ? "" : "none";
-            provider = await new Promise(res => {
-                csPanel.googleDrive.onclick = () => res("googleDrive");
-                csPanel.dropbox.onclick = () => res("dropbox");
-                csPanel.webdav.onclick = () => res("webDAV");
-                csPanel.fsdh.style.display = opts.showFSDH ? "" : "none";
-                csPanel.fsdh.onclick = () => res("fsdh");
-                csPanel.cancel.onclick = () => res("cancel");
-                csPanel.onhide = () => res("cancel");
-                ui.showPanel(csPanel);
-            });
-            ui.showPanel(null);
+    // In self-hosted server deployment, recordings save directly on local server in /app/ennuicastr-server/rec/
+    masterUI.saveVideoInCloud.checked = false;
+    fileStorage.clearRemoteFileStorage();
+    localStorage.removeItem("master-video-save-in-cloud-provider");
+    ret.transientActivation.res();
+    ret.completion.res();
+    return ret;
 
             // FSDH isn't handled here
             if (provider === "fsdh") {

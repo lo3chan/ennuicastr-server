@@ -236,31 +236,31 @@
             </button>
 
             <div class="rflex row">
-                <input type="checkbox" id="ec3-accept-guest-video-chk" />
+                <input type="checkbox" id="ec3-accept-guest-video-chk" checked />
                 <label for="ec3-accept-guest-video-chk">
                     &nbsp;Accept video recordings from guests
                 </label>
             </div>
-            <div class="rflex row">
+            <div class="rflex row" style="display: none;">
                 <input type="checkbox" id="ec3-video-rec-save-in-cloud-chk" />
                 <label for="ec3-video-rec-save-in-cloud-chk" id="ec3-video-rec-save-in-cloud-lbl">
                     &nbsp;Save video recordings in cloud storage
                 </label>
             </div>
-            <div id="ec3-video-rec-save-in-fsdh-hider" class="rflex row">
+            <div id="ec3-video-rec-save-in-fsdh-hider" class="rflex row" style="display: none;">
                 <input type="checkbox" id="ec3-video-rec-save-in-fsdh-chk" />
                 <label for="ec3-video-rec-save-in-fsdh-chk">
                     &nbsp;Save video recordings in a local directory
                 </label>
             </div>
-            <div class="rflex row">
+            <div class="rflex row" style="display: none;">
                 <input type="checkbox" id="ec3-video-rec-download-chk" />
                 <label for="ec3-video-rec-download-chk">
                     &nbsp;Download raw guest video recordings live
                 </label>
             </div>
             <div class="rflex row" id="ec3-video-rec-status"></div>
-            <div class="rcflex row">
+            <div class="rcflex row" style="display: none;">
                 <div class="cflex" style="flex: auto">
                     <span>Recording cost:</span>
                     <input id="ec3-recording-cost-txt" type="text" readonly />
@@ -294,7 +294,7 @@
             <button id="ec3-user-admin-kick-button" class="pill-button row"><i class="bx bx-user-x" aria-hidden="true"></i> Kick user</button>
             <button id="ec3-user-admin-mute-button" class="pill-button row"><i class="bx bx-microphone-off" aria-hidden="true"></i> Mute</button>
             <button id="ec3-user-admin-echo-button" class="pill-button row"><i class="bx bx-user-voice" aria-hidden="true"></i> Force echo cancellation</button>
-            <button id="ec3-user-admin-request-full-button" class="pill-button primary row"><i class="bx bxs-user-detail" aria-hidden="true"></i> Request administrative access</button>
+            <button id="ec3-user-admin-request-full-button" class="pill-button primary row" style="display: none;"><i class="bx bxs-user-detail" aria-hidden="true"></i> Request administrative access</button>
         </dialog>
 
         <!-- User administration interface (particular user, full access) -->
