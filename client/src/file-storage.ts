@@ -578,73 +578,10 @@ export async function getRemoteFileStorage(opts: {
      * Force a user consent prompt.
      */
     forcePrompt?: boolean
-}): Promise<FileStorage> {
-    async function loadDriver(name: string, driver: any) {
-        if (!remoteFileStorageDrivers[name])
-            remoteFileStorageDrivers[name] = localforage.defineDriver(driver);
-        await remoteFileStorageDrivers[name];
-    }
-
-    return remoteFileStoragePromise = (async () => {
-        await getLocalFileStorage();
-
-        const keyStorage = await localforage.createInstance({
-            name: "ennuicastr-file-storage-keys"
-        });
-        const cache = await localforage.createInstance({
-            name: `ennuicastr-file-storage-cache-${opts.provider}`
-        });
-
-        switch (opts.provider) {
-            case "googleDrive":
-                await loadDriver("googleDrive", nonlocalForage.googleDriveLocalForage);
-                break;
-
-            case "dropbox":
-                await loadDriver("dropbox", nonlocalForage.dropboxLocalForage);
-                break;
-
-            case "webDAV":
-                await loadDriver("webDAV", nonlocalForage.webDAVLocalForage);
-                break;
-
-            default:
-                throw new Error(`Unsupported provider ${opts.provider}`);
-        }
-        const remote = await localforage.createInstance(<any> {
-            driver: opts.provider,
-            localforage: keyStorage,
-            nonlocalforage: {
-                directory: "ennuicastr-file-storage",
-                transientActivation: opts.transientActivation,
-                lateTransientActivation: opts.lateTransientActivation || opts.transientActivation,
-                cancellable: opts.cancellable,
-                hideCancellable: opts.hideCancellable,
-                openIframe: opts.openIframe,
-                forcePrompt: !!opts.forcePrompt
-            },
-            name: "ennuicastr-file-storage",
-            dropbox: dropboxKeys,
-            googleDrive: googleDriveKeys,
-            webDAV: opts.webDAVInfo
-        });
-        await remote.ready();
-
-        await loadDriver("cache", nonlocalForage.cacheForage);
-        const fileStorage = await localforage.createInstance(<any> {
-            driver: "cacheForage",
-            cacheForage: {
-                local: cache,
-                nonlocal: remote
-            }
-        });
-
-        const lkf = new nonlocalForage.LockableForage(remote);
-        // To avoid clock skew, choose long timeouts
-        lkf.setTimes(1000);
-
-        return new FileStorage(fileStorage, lkf, remote, null);
-    })();
+export async function getRemoteFileStorage(opts: any): Promise<FileStorage> {
+    // Local server handles storage in /app/ennuicastr-server/rec/ - bypass Dropbox/Cloud OAuth
+    localStorage.removeItem("master-video-save-in-cloud-provider");
+    return getLocalFileStorage();
 }
 
 /**
