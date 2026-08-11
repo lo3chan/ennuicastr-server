@@ -19,14 +19,14 @@ await session.init();
 
 const crypto = require("crypto");
 const fs = require("fs");
-const config = require(__dirname + "/../../../config.js");
+const config = require("/app/ennuicastr-server/config.js");
 const login = await include("./login.jss");
 
 let errorMsg = null;
 let isSetup = !config.adminPasswordHash;
 
 function updateConfig(newConfig) {
-    const configPath = require.resolve(__dirname + "/../../../config.json");
+    const configPath = "/app/ennuicastr-server/config.json";
     let currentConfig = {};
     try {
         currentConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -50,8 +50,7 @@ function verifyPassword(password, storedHash) {
     return key === hash;
 }
 
-if (request.method === "POST") {
-
+if ((request.method || params.REQUEST_METHOD) === "POST") {
     let submittedPassword = null;
     let rawStr = "";
     if (request.body && request.body.password) {
@@ -92,7 +91,6 @@ if (request.method === "POST") {
             // Reload config for the current process
             config.adminPasswordHash = hashed;
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
-            await new Promise(r => setTimeout(r, 200));
             writeHead(302, {"location": "/panel/"});
             return;
         } else {
@@ -102,7 +100,6 @@ if (request.method === "POST") {
         // Login flow
         if (verifyPassword(submittedPassword, config.adminPasswordHash)) {
             await login.login("local:admin", {name: "Admin", email: "admin@localhost"});
-            await new Promise(r => setTimeout(r, 200));
             writeHead(302, {"location": "/panel/"});
             return;
         } else {

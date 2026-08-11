@@ -18,10 +18,10 @@
 const uid = await include("../uid.jss");
 if (!uid) return;
 
-const config = require(__dirname + "/../../../config.js");
-const edb = require(__dirname + "/../../../db.js");
+const config = require("/app/ennuicastr-server/config.js");
+const edb = require("/app/ennuicastr-server/db.js");
 const db = edb.db;
-const recM = require(__dirname + "/../../../rec.js");
+const recM = require("/app/ennuicastr-server/rec.js");
 
 function fail(msg) {
     writeHead(500, {"content-type": "application/json"});
@@ -46,7 +46,7 @@ const name = request.body.n.slice(0, config.limits.recNameLength);
 
 while (true) {
     try {
-        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
+        await db.runP("BEGIN TRANSACTION;");
 
         let rec = await recM.get(rid, uid);
         if (!rec) {

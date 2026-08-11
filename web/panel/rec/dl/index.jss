@@ -29,13 +29,13 @@ const noRedirect = !!request.query.noredirect;
 const cp = require("child_process");
 const fs = require("fs");
 
-const config = require(__dirname + "/../../../../config.js");
-const edb = require(__dirname + "/../../../../db.js");
+const config = require("/app/ennuicastr-server/config.js");
+const edb = require("/app/ennuicastr-server/db.js");
 const db = edb.db;
 const log = edb.log;
 
 const reclib = await include("../lib.jss");
-const recM = require(__dirname + "/../../../../rec.js");
+const recM = require("/app/ennuicastr-server/rec.js");
 
 
 
@@ -61,7 +61,7 @@ try {
 if (request.query.captionImprover &&
     (!recInfoExtra || !recInfoExtra.captionImprover)) {
     // Start the process
-    const p = cproc.spawn("./caption-improver-runpod-whisper.js", [
+    const p = cp.spawn("./caption-improver-runpod-whisper.js", [
         `${config.rec}/${rid}.ogg.captions`, `${rid}`
     ], {
         cwd: `${config.repo}/cook`,
@@ -74,7 +74,7 @@ if (request.query.captionImprover &&
     // And mark it as in progress
     while (true) {
         try {
-            await db.runP("BEGIN IMMEDIATE TRANSACTION;");
+            await db.runP("BEGIN TRANSACTION;");
 
             // Get the current status
             let row = await db.getP("SELECT extra FROM recordings WHERE uid=@UID AND rid=@RID;", {

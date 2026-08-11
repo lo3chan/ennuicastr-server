@@ -15,13 +15,13 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const uid = await include("../uid.jss");
-if (!uid) return;
+const uid = await include("../uid.jss", {noRedirect: true});
+if (!uid) return fail({error: "Unauthenticated. Please log in again."});
 
-const config = require(__dirname + "/../../../config.js");
-const db = require(__dirname + "/../../../db.js").db;
-const id36 = require(__dirname + "/../../../id36.js");
-const recM = require(__dirname + "/../../../rec.js");
+const config = require("/app/ennuicastr-server/config.js");
+const db = require("/app/ennuicastr-server/db.js").db;
+const id36 = require("/app/ennuicastr-server/id36.js");
+const recM = require("/app/ennuicastr-server/rec.js");
 
 function fail(msg) {
     writeHead(500, {"content-type": "application/json"});
@@ -59,7 +59,7 @@ rec = {
 // Add these defaults to the database
 while (true) {
     try {
-        await db.runP("BEGIN IMMEDIATE TRANSACTION;");
+        await db.runP("BEGIN TRANSACTION;");
 
         await db.runP("DELETE FROM defaults WHERE uid=@UID;", {"@UID": uid});
         await db.runP("INSERT INTO defaults " +

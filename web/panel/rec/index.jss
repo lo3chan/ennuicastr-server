@@ -21,13 +21,13 @@ const uid = uidX.uid;
 
 const net = require("net");
 
-const config = require(__dirname + "/../../../config.js");
+const config = require("/app/ennuicastr-server/config.js");
 
 
-const edb = require(__dirname + "/../../../db.js");
+const edb = require("/app/ennuicastr-server/db.js");
 const db = edb.db;
 const log = edb.log;
-const recM = require(__dirname + "/../../../rec.js");
+const recM = require("/app/ennuicastr-server/rec.js");
 
 
 

@@ -15,8 +15,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const db = require(__dirname + "/../../../db.js").db;
-const recM = require(__dirname + "/../../../rec.js");
+const db = require("/app/ennuicastr-server/db.js").db;
+const recM = require("/app/ennuicastr-server/rec.js");
 
 function fail(msg) {
     writeHead(500, {"content-type": "application/json"});

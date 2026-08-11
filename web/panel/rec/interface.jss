@@ -18,8 +18,8 @@
 const uid = await include("../uid.jss");
 if (!uid) return;
 
-const config = require(__dirname + "/../../../config.js");
-const db = require(__dirname + "/../../../db.js").db;
+const config = require("/app/ennuicastr-server/config.js");
+const db = require("/app/ennuicastr-server/db.js").db;
 
 
 
@@ -292,7 +292,24 @@ function launchRecording() {
         return res.text();
 
     }).then(function(res) {
-        res = JSON.parse(res);
+        
+        var parsedRes;
+        try {
+            parsedRes = JSON.parse(res);
+        } catch (ex) {
+            if (res.includes("login") || res.includes("302")) {
+                alert("Your session has expired. Please log in again.");
+                document.location = "/panel/login/";
+                return;
+            }
+            clientWindow.document.body.innerText = "Recording failed!
+
+" + res;
+            alert("Error starting recording: " + res);
+            return;
+        }
+        res = parsedRes;
+    
 
         // Check for failure
         if (res.error) {
