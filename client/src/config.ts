@@ -58,9 +58,6 @@ export let iconfig: any = null;
 // Our username
 export let username: string = null;
 
-// The Jitsi URL
-export let jitsiUrl: string = null;
-
 // The RTEnnui URL
 export let rtennuiUrl: string = null;
 
@@ -70,13 +67,9 @@ export let useFlac = false;
 // Which features to use
 export let useContinuous = false;
 export let useRTC = false;
-export const useJitsi = {
-    audio: false,
-    video: false
-};
 export const useRTEnnui = {
-    audio: false,
-    video: false
+    audio: true,
+    video: true
 };
 export let useVideoRec = false;
 export let useTranscription = false;
@@ -304,9 +297,6 @@ export async function load(): Promise<boolean> {
     useVideoRec = !!(config.format&features.videorec);
     useTranscription = !!(config.format&features.transcription);
     useRecordOnly = !!(config.format&features.recordOnly);
-    useDualECDefault = !(config.format&features.nonDualEC);
-    useJitsi.audio = false;
-    useJitsi.video = false;
     useRTEnnui.audio = true;
     useRTEnnui.video = true;
     useDebug = !!(params.get("debug"));
