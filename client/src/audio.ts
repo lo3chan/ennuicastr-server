@@ -1078,12 +1078,16 @@ setInterval(function() {
         return;
     }
 
-    // Display an issue if we haven't sent recently
+    // Display an issue if we haven't sent recently and audio capture has started
     const now = performance.now();
     let lastSentRecently = sentRecently;
     sentRecently = true;
-    for (const input of inputs)
-        sentRecently = sentRecently && (input.lastSentTime > now-1500);
+    for (const input of inputs) {
+        if (!input || input.muted) continue;
+        if (input.lastSentTime > 0) {
+            sentRecently = sentRecently && (input.lastSentTime > now - 3000);
+        }
+    }
     if (sentRecently)
         log.popStatus("notencoding");
     else

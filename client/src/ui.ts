@@ -673,39 +673,11 @@ export function transientActivation(
         force?: boolean
     } = {}
 ) {
-    if (!opts.force &&
-        !transientActivationForce &&
-        (<any> navigator).userActivation &&
-        (<any> navigator).userActivation.isActive) {
-        return;
-    }
-
-    transientActivationForce = false;
-
-    const taPanel = ui.panels.transientActivation;
-    taPanel.label.innerHTML = lblHTML;
-    taPanel.button.innerHTML = btnHTML;
-
     const cbs = transientActivationCbs;
     transientActivationCbs = [];
-
-    const b = new barrierPromise.BarrierPromise();
-    cbs.push(b);
-    taPanel.button.onclick = () => {
-        taPanel.onhide = null;
-        unsetModal();
-        showPanel(null);
-
-        for (const cb of cbs)
-            cb.res();
-    };
-    taPanel.onhide = () => {
-        for (const cb of cbs)
-            cb.rej("closed");
-    };
-    showPanel(taPanel, taPanel.button, {modal: opts.makeModal});
-
-    return Promise.all(cbs.map(x => x.promise));
+    for (const cb of cbs)
+        cb.res();
+    return Promise.resolve();
 }
 
 // Saveable config for a box with a string value
