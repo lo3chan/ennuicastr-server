@@ -68,6 +68,8 @@ async function runVAD(curChunks, max, acceptNoise = false) {
                 return [firstIn, lastOut];
             }
         }
+    }
+}
 
 async function main() {
     vads = [

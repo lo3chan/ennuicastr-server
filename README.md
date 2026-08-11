@@ -1,103 +1,98 @@
-## Portainer / Docker Compose Stack
+# Ennuicastr Unified Monorepo & Deployment Guide
 
-If you are using Portainer, Docker Compose, or Swarm, you can use the following `docker-compose.yml` stack to quickly spin up the environment with a persistent volume:
+Welcome to the **Ennuicastr Unified Monorepo** repository! This project contains the complete, self-contained multi-track synchronized WebRTC recording system, including:
+1. **Recording Server Daemon** (`server/`) — Native Ogg/FLAC/Opus audio multiplexer and WebSocket worker backend.
+2. **Web Client Application** (`client/`) — High-performance, browser-native SPA (TypeScript, WebAssembly `libav.js`, WebRTC, VAD).
+3. **Web Administration Panel** (`web/`) — NodeJS Server Pages (NJSP) dashboard for managing recordings, persistent rooms, and soundboards.
+4. **Unified Containerization** (`Dockerfile`, `entrypoint.sh`) — Complete production Docker packaging with Nginx reverse proxy and Cloudflare Tunnel (`cloudflared`).
+
+---
+
+## 🚀 Quick Start with Portainer / Docker Compose
+
+You can deploy the entire stack immediately using Portainer or Docker Compose:
 
 ```yaml
 version: '3.8'
 
 services:
   ennuicastr:
-    image: ghcr.io/<your-github-username>/ennuicastr:latest # Replace with your built image if necessary
+    image: ghcr.io/lo3chan/ennuicastr-server/ennuicastr:latest
     container_name: ennuicastr
-    restart: unless-stopped
+    restart: always
     environment:
-      # Automatically route and secure via Cloudflare Tunnel
-      - TUNNEL_TOKEN=your_cloudflare_tunnel_token_here
-      - DOMAIN=yourdomain.com
-
-      # UNCOMMENT the following if running locally without Cloudflare:
-      # - DOMAIN=localhost:8080
-      # - PROTOCOL=http
-    # ports:
-      # UNCOMMENT if running locally without Cloudflare Tunnel:
-      # - "8080:80"
+      # Primary domain for your Ennuicastr instance
+      - DOMAIN=ennui.gettysburgbeacon.com
+      # (Optional) Cloudflare Tunnel Token for zero-config SSL and public access
+      - TUNNEL_TOKEN=eyJhIjoiMjAwNDYyZTFiZTExOTAyNjJjMjYwNzQyNGQzYTFjMDIi...
+    ports:
+      # Expose port 80 if not using Cloudflare Tunnel or if testing locally
+      - "8080:80"
     volumes:
-      # Persist configuration, database, and recordings
+      # Persistent volume for database, recordings, soundboards, and config.json
       - ennuicastr_data:/data
 
 volumes:
   ennuicastr_data:
 ```
 
-This is the server component for Ennuicastr, a system for recording multiple
-users distributed across the world in a well-synchronized way, without
-significant loss, over the web. This is the server software that runs
-https://ecastr.com/ , the main installation of Ennuicastr.
+---
 
-This software is divided into several subcomponents:
+## 🌐 Site Map & Web Endpoint Navigation
 
-db:     The database
+Ennuicastr organizes its web interface into logical namespaces:
 
-njsp:   The configuration for NodeJS-Server-Pages
-        (`npm install nodejs-server-pages`), which is needed to run the
-        templated web site component.
+| Endpoint | Access Level | Description |
+|---|---|---|
+| `https://<domain>/panel/` | Admin | Main Dashboard (overview of system state, quick links) |
+| `https://<domain>/panel/login/` | Public / Admin | Admin password authentication screen |
+| `https://<domain>/panel/rec/` | Admin | Recording Management (Create new sessions, manage persistent rooms, view active recordings) |
+| `https://<domain>/panel/config/` | Admin | System configuration (Limit tracks, update password, set API keys) |
+| `https://<domain>/panel/sounds/` | Admin | Soundboard asset manager (Upload custom audio effects for real-time trigger) |
+| `https://<domain>/r/` | Public / Web App | Real-time WebRTC Recording Client SPA |
+| `https://<domain>/r/lobby/` | Public / API | Persistent room lobby startup endpoint |
+| `https://<domain>/ws` | Internal | WebSocket signaling channel for live recording connections |
 
-server: The server for Ennuicastr recordings itself.
+---
 
-web:    The web page
+## 🔒 First-Time Setup & Admin Credentials
 
-cook:   Tools used to process raw audio into usable formats.
+1. **Initial Login**: When accessing `/panel/` for the first time, you will be prompted to set an admin password.
+2. **Default Password**: The default admin password for pre-configured deployments is `mjn22mjn22`.
+3. **Password Security**: The password hash is securely stored in `/data/config.json` using PBKDF2/SHA512. You can update the password anytime via the **Configuration** menu inside the panel.
 
+---
 
+## 🛠 Monorepo Repository Structure
 
-# Running the Server
-
-Ennuicastr provides a unified, bundled Docker deployment strategy, which significantly simplifies the installation process. The Dockerfile completely packages the server, the web client, Nginx, the required Node.js environments, SQLite databases, and `cloudflared` for easy remote tunneling.
-
-## Deploying with Docker
-
-This is the recommended and simplest way to run Ennuicastr. Configuration is done via environment variables at runtime.
-
-### Prerequisites
-- Docker installed on your host.
-- (Optional but highly recommended) A Cloudflare account and a generated Tunnel Token to automatically route traffic securely without setting up port forwarding or LetsEncrypt/SSL manually.
-
-### 1: Get the Image
-
-The easiest way is to pull the pre-built image from the GitHub Container Registry (`ghcr.io`):
-
-```bash
-docker pull ghcr.io/<your-github-username>/ennuicastr:latest
+```
+├── Dockerfile                  # Multi-stage Docker build file (Server + Client + Nginx)
+├── entrypoint.sh               # Container startup script, config generator, Nginx setup
+├── config.js                   # Node.js server configuration loader
+├── db.js                       # SQLite database wrapper
+├── rec.js                      # Session manager & hostUrl generator
+├── client/                     # Web Client Source Code (TypeScript, WebAssembly, WebRTC)
+├── server/                     # Recording Worker Daemon & Ogg Encoder
+├── web/                        # Web Panel HTML/JSS Pages
+├── db-schema/                  # SQLite DB creation scripts (ennuicastr.schema, log.schema)
+├── docs/                       # Architectural documentation (docs/ARCHITECTURE.md)
+└── cook/                       # Audio post-processing & Whisper transcription utilities
 ```
 
-*Alternatively, you can build the image locally from the included `Dockerfile` by running `docker build -t ennuicastr .` in the root of the repository.*
+---
 
-### 2: Run the Server
+## ⚡ Technical Highlights & Fixes Applied
 
-If you are using **Cloudflare Tunnels**, you can run the container by just providing your token and domain (be sure to use the correct image name, e.g., `ghcr.io/<your-github-username>/ennuicastr:latest` or `ennuicastr` if built locally):
+- **Unified Monorepo**: The `client/` frontend is fully integrated inside `lo3chan/ennuicastr-server`. Developers and AI assistants (e.g. Google Jules) can modify both backend and frontend in one location.
+- **Pure Browser Operation**: Participants open an invite link (e.g. `https://<domain>/r/?<room-keys>`) and record directly in Chrome, Firefox, Safari, or Edge without installing software.
+- **Absolute Require Resolution**: Solved NJSP sandboxing path issues by migrating all server-side template requires to deterministic absolute paths (`/app/ennuicastr-server/...`).
+- **Nginx Query-String Routing**: Requests to the root domain containing room keys automatically route to `/r/` (web recording client) while standard requests route to `/panel/`.
+- **SharedArrayBuffer Support**: Configured COOP (`same-origin`) and COEP (`require-corp`) headers to enable `libav.js` WebAssembly high-performance audio processing.
 
-```bash
-docker run -d \
-  -e TUNNEL_TOKEN="your_cloudflare_tunnel_token_here" \
-  -e DOMAIN="yourdomain.com" \
-  --name ennuicastr \
-  ennuicastr
-```
+---
 
-Your `config.json` and Nginx configurations are dynamically generated at launch based on the provided `DOMAIN`. The tunnel securely exposes port `80` from Nginx directly to your Cloudflare domain.
+## 📖 Further Documentation
 
-**Local / Manual Configuration**
-If you wish to test locally without a tunnel or manually manage your reverse proxy, omit the `TUNNEL_TOKEN` and expose the internal port 80:
-
-```bash
-docker run -d \
-  -p 8080:80 \
-  -e DOMAIN="localhost:8080" \
-  -e PROTOCOL="http" \
-  --name ennuicastr \
-  ennuicastr
-```
-
-## Legacy / Manual Installation (Not Recommended)
-
-If you must install Ennuicastr manually directly onto a server (without Docker), you can consult the historical configuration logic in [docs/INSTALL.md](docs/INSTALL.md).
+For detailed architectural specifications, database schemas, binary protocol specs, and WebAssembly pipeline details, see:
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Technical Architecture Specification
+- [README-Docker.md](README-Docker.md) — Production Container Deployment Guide
