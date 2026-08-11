@@ -8,12 +8,12 @@ if (!uidX) return;
 
 const fs = require("fs");
 const crypto = require("crypto");
-const configPath = require.resolve(__dirname + "/../../../config.json");
+const configPath = "/app/ennuicastr-server/config.json";
 const appConfig = require("/app/ennuicastr-server/config.js");
 let errorMsg = null;
 let successMsg = null;
 
-if (request.method === "POST") {
+if ((request.method || params.REQUEST_METHOD) === "POST") {
     try {
         let currentConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
 

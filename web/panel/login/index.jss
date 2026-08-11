@@ -26,7 +26,7 @@ let errorMsg = null;
 let isSetup = !config.adminPasswordHash;
 
 function updateConfig(newConfig) {
-    const configPath = require.resolve(__dirname + "/../../../config.json");
+    const configPath = "/app/ennuicastr-server/config.json";
     let currentConfig = {};
     try {
         currentConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -50,7 +50,7 @@ function verifyPassword(password, storedHash) {
     return key === hash;
 }
 
-if (request.method === "POST") {
+if ((request.method || params.REQUEST_METHOD) === "POST") {
 
     let submittedPassword = null;
     let rawStr = "";
