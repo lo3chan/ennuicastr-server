@@ -4,7 +4,7 @@ set -e
 echo "Starting Ennuicastr..."
 
 # --- Defaults ---
-DOMAIN="${DOMAIN:-testbed.ecastr.com}"
+DOMAIN="${DOMAIN:-ennui.gettysburgbeacon.com}"
 SHORT_DOMAIN="${SHORT_DOMAIN:-$DOMAIN}"
 CLIENT_REPO_PATH="/app/ennuicastr"
 SERVER_REPO_PATH="/app/ennuicastr-server"
@@ -201,4 +201,4 @@ fi
 # Keep container alive and output all logs as a diagnostic hose
 echo "Ennuicastr is running! Starting diagnostic hose..."
 touch /var/log/nginx/access.log /var/log/nginx/error.log ${SERVER_REPO_PATH}/njsp/njsp.log ${SERVER_REPO_PATH}/server/main.log cloudflared.log
-tail -f /var/log/nginx/access.log /var/log/nginx/error.log ${SERVER_REPO_PATH}/njsp/njsp.log ${SERVER_REPO_PATH}/server/main.log cloudflared.log
+tail -F /var/log/nginx/access.log /var/log/nginx/error.log ${SERVER_REPO_PATH}/njsp/njsp.log ${SERVER_REPO_PATH}/server/main.log cloudflared.log
