@@ -57,11 +57,8 @@ RUN sqlite3 ennuicastr.db < ../db-schema/ennuicastr.schema && \
 
 # --- Build Client ---
 USER ennuicastr
-WORKDIR /app
-# Clone the user's client repo
-RUN git clone --depth 1 https://github.com/lo3chan/ennuicastr.git /app/ennuicastr || true
+WORKDIR /app/ennuicastr-server/client
 
-WORKDIR /app/ennuicastr
 # Create configs
 RUN cp config/config.json.example config/config.json && \
     cp config/dropbox.json.example config/dropbox.json && \

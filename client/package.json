@@ -1,0 +1,57 @@
+{
+  "name": "ennuicastr",
+  "version": "0.0.0",
+  "description": "EnnuiCastr is a system for recording multiple users distributed across the world in a well-synchronized way, without significant loss, over the web.",
+  "main": "src/main.ts",
+  "dependencies": {
+    "@ennuicastr/dl-stream": "^1.0.0",
+    "@ennuicastr/libspecbleach.js": "=0.1.7-js2",
+    "@ennuicastr/mprpc": "^0.1.0",
+    "@ennuicastr/webrtcaec3.js": "=0.3.0",
+    "@ennuicastr/webrtcvad.js": "^0.1.0",
+    "@libav.js/variant-webm-vp9": "^5.1.6",
+    "@types/file-saver": "^2.0.3",
+    "@types/streamsaver": "^2.0.1",
+    "boxicons": "^2.1.4",
+    "ennuiboard": "^2.0.0",
+    "file-saver": "^2.0.5",
+    "jquery": "^3.6.0",
+    "libavjs-webcodecs-bridge": "^0.0.5",
+    "libavjs-webcodecs-polyfill": "^0.5.1",
+    "localforage": "^1.10.0",
+    "nonlocal-forage": "^0.2.0",
+    "nosleep.js": "^0.12.0",
+    "rtennui": "^0.8.4",
+    "sha512-es": "^1.8.2",
+    "vosk-browser": "0.0.4",
+    "web-streams-polyfill": "^3.1.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.7",
+    "@badgateway/oauth2-client": "^2.4.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "rollup": "^4.17.2",
+    "tslib": "^2.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yahweasel/ennuicastr.git"
+  },
+  "author": "Yahweasel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yahweasel/ennuicastr/issues"
+  },
+  "homepage": "https://github.com/Yahweasel/ennuicastr#readme"
+}

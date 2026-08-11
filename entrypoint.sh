@@ -57,10 +57,10 @@ if [ ! -f "$CONFIG_FILE" ]; then
     "//urls": "URLs and paths for Ennuicastr and associated tools",
     "site": "${PROTOCOL}://${DOMAIN}/",
     "panel": "${PROTOCOL}://${DOMAIN}/panel/",
-    "clientShort": "${PROTOCOL}://${SHORT_DOMAIN}/",
+    "clientShort": "${PROTOCOL}://${DOMAIN}/r/",
     "client": "${PROTOCOL}://${DOMAIN}/r/",
     "ennuizel": "${PROTOCOL}://ez.${DOMAIN}/",
-    "clientRepo": "${CLIENT_REPO_PATH}",
+    "clientRepo": "${SERVER_REPO_PATH}/client",
     "repo": "${SERVER_REPO_PATH}",
     "db": "${SERVER_REPO_PATH}/db",
     "rec": "${SERVER_REPO_PATH}/rec",
@@ -113,7 +113,7 @@ server {
     # The Ennuicastr client itself
     location /r/ {
         alias /var/www/rec/;
-        try_files \$uri \$uri/ =404;
+        try_files \$uri \$uri/ /r/index.html =404;
 
         # Needed for libav.js shared memory
         add_header 'Cross-Origin-Opener-Policy' 'same-origin';
@@ -139,8 +139,11 @@ server {
         }
     }
 
-    # Redirect root domain to the main panel
+    # Redirect root domain to panel unless room parameters are present
     location = / {
+        if (\$args != "") {
+            return 302 /r/?\$args;
+        }
         return 302 /panel/;
     }
 
