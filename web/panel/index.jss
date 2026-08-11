@@ -19,7 +19,7 @@ const uidX = await include("uid.jss", {verbose: true});
 if (!uidX) return;
 const {ruid, euid, uid} = uidX;
 
-const unM = require(__dirname + "/../../username.js");
+const unM = require("/app/ennuicastr-server/username.js");
 
 const ua = params.HTTP_USER_AGENT || "";
 const isChrome = ua.indexOf("Chrome") >= 0;

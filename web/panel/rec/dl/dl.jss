@@ -15,7 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const config = require(__dirname + "/../../../../config.js");
+const config = require("/app/ennuicastr-server/config.js");
 
 const cproc = require("child_process");
 const fs = require("fs");

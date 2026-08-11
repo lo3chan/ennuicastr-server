@@ -15,7 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const config = require(__dirname + "/../../config.js");
+const config = require("/app/ennuicastr-server/config.js");
 writeHead(302, {
     "location":
         (!!params.QUERY_STRING)
