@@ -91,9 +91,6 @@
                     <button id="ec3-chat-button" class="icon-button menu-button">
                         <i class="bx bx-chat" aria-hidden="true"></i><span class="menu-button-lbox"><span class="menu-button-label">Chat</span></span>
                     </button>
-                    <button id="ec3-streamer-popout-all-button" class="icon-button menu-button streamer-interface">
-                        <i class="bx bx-windows" aria-hidden="true"></i><span class="menu-button-lbox"><span class="menu-button-label">Pop out</span></span>
-                    </button>
                     <button id="ec3-help-button" class="icon-button menu-button">
                         <i class="bx bx-help-circle" aria-hidden="true"></i><span class="menu-button-lbox"><span class="menu-button-label">Help</span></span>
                     </button>
@@ -122,17 +119,6 @@
 
         <!-- The layer separator makes it easier to close panels -->
         <div id="ec3-layer-separator"></div>
-
-        <!-- Transient activation panel, for when a user interaction is required to continue -->
-        <dialog id="ec3-transient-activation-panel" class="panel" role="dialog" aria-labelledby="ec3-transient-activation-panel-label">
-            <div id="ec3-transient-activation-panel-label" class="panel-title" role="heading"></div>
-            <button class="icon-button close-button" aria-label="Close">
-                <i class="bx bx-x" aria-hidden="true"></i>
-            </button>
-
-            <button id="ec3-transient-activation-btn" class="pill-button row">
-            </button>
-        </dialog>
 
 
         <!-- Invite panel -->
@@ -240,77 +226,6 @@
             <button id="ec3-user-admin-kick-button" class="pill-button row"><i class="bx bx-user-x" aria-hidden="true"></i> Kick user</button>
             <button id="ec3-user-admin-mute-button" class="pill-button row"><i class="bx bx-microphone-off" aria-hidden="true"></i> Mute</button>
             <button id="ec3-user-admin-echo-button" class="pill-button row"><i class="bx bx-user-voice" aria-hidden="true"></i> Force echo cancellation</button>
-        </dialog>
-
-        <!-- User administration interface (particular user, full access) -->
-        <dialog id="ec3-user-admin-user-full-panel" class="panel" role="dialog" aria-labelledby="ec3-user-admin-user-full-panel-label">
-            <div id="ec3-user-admin-user-full-panel-label" class="panel-title" role="heading">User administration</div>
-            <button class="icon-button close-button" aria-label="Close">
-                <i class="bx bx-x" aria-hidden="true"></i>
-            </button>
-
-            <div id="ec3-user-admin-user-full-name-lbl" class="row" style="text-align: center;"><i class="bx bx-group"></i> All users</div>
-            <button id="ec3-user-admin-full-kick-button" class="pill-button row"><i class="bx bx-user-x"></i> Kick user</button>
-            <div class="rflex row">
-                <input id="ec3-user-admin-full-mute-chk" type="checkbox" />
-                <label for="ec3-user-admin-full-mute-chk">&nbsp;Mute</label>
-            </div>
-            <div class="rflex row">
-                <input id="ec3-user-admin-full-echo-chk" type="checkbox" />
-                <label for="ec3-user-admin-full-echo-chk">&nbsp;Echo cancellation</label>
-            </div>
-
-            <div class="rflex row">
-                <label for="ec3-user-admin-full-vad-sensitivity-rng" style="min-width: 8em; max-width: 8em; text-align: right;">Voice detection&nbsp;<br/>sensitivity:&nbsp;</label>
-                <input id="ec3-user-admin-full-vad-sensitivity-rng" type="range" min=1 max=4 value=4 style="flex: auto; width: 5em;" />
-                <span id="ec3-user-admin-full-vad-sensitivity-status">&nbsp;4</span>
-            </div>
-
-            <div class="rflex row">
-                <label for="ec3-user-admin-full-vad-noise-gate-rng" style="min-width: 8em; max-width: 8em; text-align: right;">Noise gate:&nbsp;</label>
-                <input id="ec3-user-admin-full-vad-noise-gate-rng" type="range" min=-100 max=0 value=-100 style="flex: auto; width: 5em;" />
-                <span id="ec3-user-admin-full-vad-noise-gate-status">&nbsp;-100dB</span>
-            </div>
-
-            <div class="rflex row">
-                <label for="ec3-user-admin-full-audio-dev-sel" class="left-label" style="min-width: 8em; max-width: 8em;">Audio device:&nbsp;</label>
-                <select id="ec3-user-admin-full-audio-dev-sel" style="flex: auto;"></select>
-            </div>
-
-            <div id="ec3-user-admin-full-video-hider">
-                <div class="rflex row">
-                    <label for="ec3-user-admin-full-video-dev-sel" class="left-label" style="min-width: 8em; max-width: 8em;">Video device:&nbsp;</label>
-                    <select id="ec3-user-admin-full-video-dev-sel" style="flex: auto;"></select>
-                </div>
-                <div class="rflex row">
-                    <label for="ec3-user-admin-full-video-res-sel" class="left-label" style="min-width: 8em; max-width: 8em;">Max resolution:&nbsp;</label>
-                    <select id="ec3-user-admin-full-video-res-sel" style="flex: auto;">
-                        <option value="360">360p</option>
-                        <option value="480">480p</option>
-                        <option value="720">720p</option>
-                        <option value="1080">1080p</option>
-                        <option value="0">Unlimited</option>
-                    </select>
-                </div>
-                <div class="rflex row" style="display: none">
-                    <label for="ec3-user-admin-full-bitrate-inp" style="min-width: 6em; max-width: 6em;">Video bitrate:&nbsp;</label>
-                    <input id="ec3-user-admin-full-bitrate-inp" type="text" style="flex: auto" />
-                    &nbsp;
-                    <button id="ec3-user-admin-full-video-record-button" title="Record video" aria-label="Record video"><i class="fas fa-circle"></i> Rec</button>
-                </div>
-            </div>
-        </dialog>
-
-        <!-- User administration permission request -->
-        <dialog id="ec3-user-admin-permission-panel" class="panel" role="dialog" aria-labelledby="ec3-user-admin-permission-panel-label">
-            <div id="ec3-user-admin-permission-panel-label" class="panel-title" role="heading">User administration</div>
-            <div>The user <span id="ec3-user-admin-permission-requester"></span> has requested permission to control your input device settings. Is this OK?</div>
-
-            <div class="rflex row">
-                <button id="ec3-user-admin-permission-yes-button" class="pill-button primary fauto">Yes</button>&nbsp;
-                <button id="ec3-user-admin-permission-audio-button" class="pill-button fauto">Audio only</button>&nbsp;
-                <button id="ec3-user-admin-permission-no-button" class="pill-button fauto">No</button>
-            </div>
         </dialog>
 
         <!-- The soundboard -->
