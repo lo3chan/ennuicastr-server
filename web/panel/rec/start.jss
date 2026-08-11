@@ -15,8 +15,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const uid = await include("../uid.jss");
-if (!uid) return;
+const uid = await include("../uid.jss", {noRedirect: true});
+if (!uid) return fail({error: "Unauthenticated. Please log in again."});
 
 const config = require("/app/ennuicastr-server/config.js");
 const db = require("/app/ennuicastr-server/db.js").db;

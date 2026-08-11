@@ -292,7 +292,20 @@ function launchRecording() {
         return res.text();
 
     }).then(function(res) {
-        res = JSON.parse(res);
+        var parsedRes;
+        try {
+            parsedRes = JSON.parse(res);
+        } catch (ex) {
+            if (res.includes("login") || res.includes("302")) {
+                alert("Your session has expired. Please log in again.");
+                document.location = "/panel/login/";
+                return;
+            }
+            clientWindow.document.body.innerText = "Recording failed!\n\n" + res;
+            alert("Error starting recording: " + res);
+            return;
+        }
+        res = parsedRes;
 
         // Check for failure
         if (res.error) {
