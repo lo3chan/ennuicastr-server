@@ -305,10 +305,10 @@ export async function load(): Promise<boolean> {
     useTranscription = !!(config.format&features.transcription);
     useRecordOnly = !!(config.format&features.recordOnly);
     useDualECDefault = !(config.format&features.nonDualEC);
-    useJitsi.audio = !!(config.format&features.jitsiAudio);
-    useJitsi.video = !!(config.format&features.jitsiVideo);
-    useRTEnnui.audio = !useJitsi.audio;
-    useRTEnnui.video = !useJitsi.video;
+    useJitsi.audio = false;
+    useJitsi.video = false;
+    useRTEnnui.audio = true;
+    useRTEnnui.video = true;
     useDebug = !!(params.get("debug"));
 
     // If we're a host and recording video, we need persistent storage

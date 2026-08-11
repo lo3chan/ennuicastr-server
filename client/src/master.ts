@@ -403,7 +403,6 @@ function genInvite() {
         ((config.config.format&config.features.rtc)?config.features.rtc:0) +
         (config.useRecordOnly?config.features.recordOnly:0) +
         (config.useVideoRec?config.features.videorec:0) +
-        (config.useJitsi.audio?config.features.jitsiAudio:0) +
         (config.useRTEnnui.video?config.features.rtennuiVideo:0) +
         (config.useTranscription?config.features.transcription:0) +
         (config.useDualECDefault?0:config.features.nonDualEC) +
