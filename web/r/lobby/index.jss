@@ -15,7 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const db = require(__dirname + "/../../../db.js").db;
+const db = require("/app/ennuicastr-server/db.js").db;
 const recM = require(__dirname + "/../../../rec.js");
 
 function fail(msg) {

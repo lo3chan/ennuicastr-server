@@ -29,8 +29,8 @@ const noRedirect = !!request.query.noredirect;
 const cp = require("child_process");
 const fs = require("fs");
 
-const config = require(__dirname + "/../../../../config.js");
-const edb = require(__dirname + "/../../../../db.js");
+const config = require("/app/ennuicastr-server/config.js");
+const edb = require("/app/ennuicastr-server/db.js");
 const db = edb.db;
 const log = edb.log;
 

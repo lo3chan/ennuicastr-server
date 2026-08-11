@@ -18,8 +18,8 @@
 const uid = await include("../uid.jss");
 if (!uid) return;
 
-const config = require(__dirname + "/../../../config.js");
-const db = require(__dirname + "/../../../db.js").db;
+const config = require("/app/ennuicastr-server/config.js");
+const db = require("/app/ennuicastr-server/db.js").db;
 
 
 

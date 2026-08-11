@@ -9,7 +9,7 @@ if (!uidX) return;
 const fs = require("fs");
 const crypto = require("crypto");
 const configPath = require.resolve(__dirname + "/../../../config.json");
-const appConfig = require(__dirname + "/../../../config.js");
+const appConfig = require("/app/ennuicastr-server/config.js");
 let errorMsg = null;
 let successMsg = null;
 

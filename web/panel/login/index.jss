@@ -19,7 +19,7 @@ await session.init();
 
 const crypto = require("crypto");
 const fs = require("fs");
-const config = require(__dirname + "/../../../config.js");
+const config = require("/app/ennuicastr-server/config.js");
 const login = await include("./login.jss");
 
 let errorMsg = null;

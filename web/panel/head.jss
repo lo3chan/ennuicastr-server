@@ -1,12 +1,12 @@
 <?JS!
 const config = (arguments[1] || {});
-const econfig = require(__dirname + "/../../config.js");
+const econfig = require("/app/ennuicastr-server/config.js");
 const uid = await include("uid.jss", {verbose: true});
 
 let org = "";
 if (uid && uid.euid && uid.euid !== uid.ruid) {
     // Logged into an organization account
-    const unM = require(__dirname + "/../../username.js");
+    const unM = require("/app/ennuicastr-server/username.js");
     org = " (" + (await unM.getUsername(uid.euid)) + ")";
 }
 
