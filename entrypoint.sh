@@ -111,32 +111,28 @@ server {
     add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
 
     # The Ennuicastr client itself
+    # Web client sound assets
+    location /r/sounds/ {
+        alias /app/ennuicastr-server/sounds/;
+    }
+
+    # Backend NJSP endpoints under /r/ (e.g., /r/lobby/, /r/sound.jss)
+    location ~ ^/r/(lobby|sound\.jss|api|.*\.jss) {
+        root /app/ennuicastr-server/web;
+        fastcgi_index index.jss;
+        fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
+        include fastcgi_params;
+        fastcgi_buffering off;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    }
+
+    # Static web client recording app
     location /r/ {
         alias /var/www/rec/;
         try_files \$uri \$uri/ /r/index.html =404;
 
-        # Needed for libav.js shared memory
         add_header 'Cross-Origin-Opener-Policy' 'same-origin';
         add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
-
-        location ~ \.jss$ {
-            fastcgi_index index.jss;
-            fastcgi_pass unix:/tmp/nodejs-server-pages.sock;
-            include fastcgi_params;
-            fastcgi_buffering off;
-            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        }
-
-        location ~ /ws$ {
-            proxy_pass http://unix:/tmp/nodejs-server-pages-ws.sock;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
-            proxy_set_header Connection "Upgrade";
-            proxy_set_header Host \$host;
-            proxy_read_timeout 86400;
-            proxy_send_timeout 86400;
-            send_timeout 86400;
-        }
     }
 
     # Redirect root domain to panel unless room parameters are present
