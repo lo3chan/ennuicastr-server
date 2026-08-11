@@ -160,6 +160,18 @@ server {
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
     }
 
+    # Worker WebSocket proxy
+    location /ws {
+        proxy_pass http://127.0.0.1:\$arg_port;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host \$host;
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
+        send_timeout 86400;
+    }
+
     location ~ /ws$ {
         proxy_pass http://unix:/tmp/nodejs-server-pages-ws.sock;
         proxy_http_version 1.1;
@@ -177,7 +189,9 @@ NGINX_EOF
 sed -i 's/user www-data;/user ennuicastr;/g' /etc/nginx/nginx.conf
 
 # --- Ensure necessary directories ---
-chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db
+chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db /var/www/rec
+chmod -R 755 /var/www/rec
+find /var/www/rec -type f -exec chmod 644 {} +
 chown -R ennuicastr:ennuicastr /var/log/nginx /var/lib/nginx /run
 
 # --- Start Nginx ---

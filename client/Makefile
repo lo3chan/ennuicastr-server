@@ -146,10 +146,10 @@ install:
 	mkdir -p $(PREFIX)/images $(PREFIX)/libav $(PREFIX)/fs \
 		$(PREFIX)/libs
 	for i in $(OUT) $(LIBS); do \
-		install -C -m 0622 dist/$$i $(PREFIX)/$$i; \
+		install -C -m 0644 dist/$$i $(PREFIX)/$$i; \
 	done
 	for i in $(EXTRA); do \
-		install -C -m 0622 $$i $(PREFIX)/$$i; \
+		install -C -m 0644 $$i $(PREFIX)/$$i; \
         done
 	cp -a bx $(PREFIX)/
 

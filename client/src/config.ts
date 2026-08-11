@@ -334,7 +334,11 @@ export async function load(): Promise<boolean> {
 
 // The WebSock URL
 export function wsUrl(): string {
-    return (url.protocol==="http:"?"ws":"wss") + "://" + url.hostname + ":" + config.port;
+    const protocol = (url.protocol === "http:" ? "ws" : "wss");
+    if (!url.port || url.port === "80" || url.port === "443" || url.protocol === "https:") {
+        return protocol + "://" + url.host + "/ws?port=" + config.port;
+    }
+    return protocol + "://" + url.hostname + ":" + config.port;
 }
 
 // Call if we're disconnected, to forcibly close

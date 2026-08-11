@@ -556,26 +556,33 @@ export function showPanel(
 
     // Hide all existing panels
     for (const o in ui.panels) {
-        (<any> ui.panels)[o].wrapper.style.display = "none";
+        const p = (<any> ui.panels)[o];
+        if (p && p.wrapper && p.wrapper.style)
+            p.wrapper.style.display = "none";
     }
     if (curPanel) {
         if (curPanel.onhide)
             curPanel.onhide();
-        if (curPanel.wrapper.showModal)
-            curPanel.wrapper.close();
+        if (curPanel.wrapper && curPanel.wrapper.showModal && curPanel.wrapper.close) {
+            try { curPanel.wrapper.close(); } catch(e) {}
+        }
         curPanel = null;
     }
 
     // Show this one
-    if (panel) {
-        ui.layerSeparator.style.display = "block";
-        panel.wrapper.style.display = "block";
+    if (panel && panel.wrapper) {
+        if (ui.layerSeparator)
+            ui.layerSeparator.style.display = "block";
+        if (panel.wrapper.style)
+            panel.wrapper.style.display = "block";
 
         if (panel.wrapper.showModal) {
-            if (opts.modal)
-                panel.wrapper.showModal();
-            else
-                panel.wrapper.show();
+            try {
+                if (opts.modal)
+                    panel.wrapper.showModal();
+                else
+                    panel.wrapper.show();
+            } catch(e) {}
         }
 
         if (autoFocus)
