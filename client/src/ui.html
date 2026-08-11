@@ -134,31 +134,6 @@
             </button>
         </dialog>
 
-        <!-- WebDAV login panel -->
-        <dialog id="ec3-webdav-panel" class="panel" role="dialog" aria-labelledby="ec3-webdav-panel-label">
-            <div id="ec3-webdav-panel-label" class="panel-title" role="heading">ownCloud login</div>
-
-            <p>In ownCloud's security settings, create a <em>app password</em> (or <em>device password</em>) for Ennuicastr. Copy the information given here:</p>
-
-            <form id="ec3-webdav-form">
-                <div class="rflex row">
-                    <label for="ec3-webdav-username" class="left-label">Username:&nbsp;</label>
-                    <input type="text" id="ec3-webdav-username" style="flex: auto; min-width: 6em;" />
-                </div>
-                <div class="rflex row">
-                    <label for="ec3-webdav-password" class="left-label">App password:&nbsp;</label>
-                    <input type="password" id="ec3-webdav-password" style="flex: auto; min-width: 6em;" />
-                </div>
-                <div class="rflex row">
-                    <label for="ec3-webdav-url" class="left-label">WebDAV URL:&nbsp;</label>
-                    <input type="text" id="ec3-webdav-url" style="flex: auto; min-width: 6em;" />
-                </div>
-                <button id="ec3-webdav-login-btn" class="pill-button row">
-                    <i class="bx bx-cloud"></i> Log in
-                </button>
-            </form>
-        </dialog>
-
 
         <!-- Invite panel -->
         <dialog id="ec3-invite-panel" class="panel" role="dialog" aria-labelledby="ec3-invite-panel-label">
@@ -241,36 +216,7 @@
                     &nbsp;Accept video recordings from guests
                 </label>
             </div>
-            <div class="rflex row" style="display: none;">
-                <input type="checkbox" id="ec3-video-rec-save-in-cloud-chk" />
-                <label for="ec3-video-rec-save-in-cloud-chk" id="ec3-video-rec-save-in-cloud-lbl">
-                    &nbsp;Save video recordings in cloud storage
-                </label>
-            </div>
-            <div id="ec3-video-rec-save-in-fsdh-hider" class="rflex row" style="display: none;">
-                <input type="checkbox" id="ec3-video-rec-save-in-fsdh-chk" />
-                <label for="ec3-video-rec-save-in-fsdh-chk">
-                    &nbsp;Save video recordings in a local directory
-                </label>
-            </div>
-            <div class="rflex row" style="display: none;">
-                <input type="checkbox" id="ec3-video-rec-download-chk" />
-                <label for="ec3-video-rec-download-chk">
-                    &nbsp;Download raw guest video recordings live
-                </label>
-            </div>
             <div class="rflex row" id="ec3-video-rec-status"></div>
-            <div class="rcflex row" style="display: none;">
-                <div class="cflex" style="flex: auto">
-                    <span>Recording cost:</span>
-                    <input id="ec3-recording-cost-txt" type="text" readonly />
-                </div>
-                <div>&nbsp;</div>
-                <div class="cflex" style="flex: auto">
-                    <span>Current rate:</span>
-                    <input id="ec3-recording-rate-txt" type="text" readonly />
-                </div>
-            </div>
         </dialog>
 
         <!-- User administration panel (list) -->
@@ -294,7 +240,6 @@
             <button id="ec3-user-admin-kick-button" class="pill-button row"><i class="bx bx-user-x" aria-hidden="true"></i> Kick user</button>
             <button id="ec3-user-admin-mute-button" class="pill-button row"><i class="bx bx-microphone-off" aria-hidden="true"></i> Mute</button>
             <button id="ec3-user-admin-echo-button" class="pill-button row"><i class="bx bx-user-voice" aria-hidden="true"></i> Force echo cancellation</button>
-            <button id="ec3-user-admin-request-full-button" class="pill-button primary row" style="display: none;"><i class="bx bxs-user-detail" aria-hidden="true"></i> Request administrative access</button>
         </dialog>
 
         <!-- User administration interface (particular user, full access) -->
@@ -608,43 +553,6 @@
             </button>
 
             <div id="ec3-user-list" class="cflex row"></div>
-        </dialog>
-
-        <!-- Selector for cloud storage platforms -->
-        <dialog id="ec3-cloud-storage-sel-panel" class="panel" role="dialog" aria-labelledby="ec3-cloud-storage-sel-panel-label">
-            <div id="ec3-cloud-storage-sel-panel-label" class="panel-title" role="heading">Cloud storage</div>
-            <section id="ec3-cloud-storage-desc" class="row" style="display: none;">
-                Video recordings are saved on a cloud storage provider of your choosing.
-            </section>
-
-            <button class="icon-button close-button" aria-label="Close">
-                <i class="bx bx-x" aria-hidden="true"></i>
-            </button>
-
-            <button id="ec3-google-drive-btn" class="pill-button row">
-                <i class="bx bxl-google"></i>&nbsp;
-                Google Drive
-            </button>
-
-            <button id="ec3-dropbox-btn" class="pill-button row">
-                <i class="bx bxl-dropbox"></i>&nbsp;
-                Dropbox
-            </button>
-
-            <button id="ec3-cloud-webdav-btn" class="pill-button row">
-                <i class="bx bx-cloud"></i>&nbsp;
-                ownCloud/Nextcloud
-            </button>
-
-            <button id="ec3-cloud-storage-fsdh-btn" class="pill-button row" style="display: none;">
-                <i class="bx bx-folder-open"></i>&nbsp;
-                Local directory
-            </button>
-
-            <button id="ec3-cloud-storage-cancel-btn" class="pill-button row">
-                <i class="bx bx-x"></i>&nbsp;
-                Cancel
-            </button>
         </dialog>
 
         <!-- Help -->
