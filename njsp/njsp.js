@@ -19,5 +19,23 @@ setInterval(() => {
     }
 }, 5000);
 
+const sqlite3 = require("sqlite3");
+setInterval(() => {
+    try {
+        const errDb = new sqlite3.Database(errDbPath);
+        errDb.all("SELECT * FROM error ORDER BY rowid DESC LIMIT 5", (err, rows) => {
+            if (!err && rows && rows.length > 0) {
+                for (const r of rows) {
+                    if (!global.__LAST_ERR_TIME || r.time > global.__LAST_ERR_TIME) {
+                        global.__LAST_ERR_TIME = r.time;
+                        console.error("[NJSP ERROR]", r.time, r.file, r.error);
+                    }
+                }
+            }
+            errDb.close();
+        });
+    } catch(e) {}
+}, 2000);
+
 njsp.createServer({errDB: errDbPath, db: dbPath});
 njsp.createWSServer({root, errDB: errDbPath, db: dbPath});
