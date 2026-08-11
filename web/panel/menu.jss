@@ -18,7 +18,7 @@
 const config = (arguments[1] || {});
 const econfig = require(__dirname + "/../../config.js");
 
-const uidX = await include("uid.jss", {noRedirect: true, verbose: true});
+const uidX = (await include("uid.jss", {noRedirect: true, verbose: true})) || {};
 const {ruid, euid, uid} = uidX;
 
 if (!config.nomain) {
