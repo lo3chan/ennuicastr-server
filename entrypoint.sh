@@ -131,8 +131,9 @@ server {
         alias /var/www/rec/;
         try_files \$uri \$uri/ /r/index.html =404;
 
-        add_header 'Cross-Origin-Opener-Policy' 'same-origin';
-        add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
+        add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, max-age=0' always;
+        add_header 'Cross-Origin-Opener-Policy' 'same-origin' always;
+        add_header 'Cross-Origin-Embedder-Policy' 'require-corp' always;
     }
 
     # Redirect root domain to panel unless room parameters are present
