@@ -1,0 +1,7 @@
+{
+    "name": "Ennuicastr",
+    "short_name": "Ennuicastr",
+    "icons": [],
+    "start_url": "/panel/",
+    "display": "standalone"
+}
