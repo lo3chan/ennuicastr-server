@@ -23,7 +23,6 @@
 import * as comm from "./comm";
 import * as config from "./config";
 import * as ctcp from "./ctcp";
-import * as jitsi from "./jitsi";
 import * as rtennui from "./rtennui";
 
 export async function initComms(): Promise<void> {
@@ -32,26 +31,12 @@ export async function initComms(): Promise<void> {
     comm.comms.ctcp = comm.comms.broadcast = comm.comms.videoRec = c;
     await c.init({broadcast: true, data: true});
 
-    // Jitsi communications
-    const useJitsi = config.useJitsi;
-    if (useJitsi.video || useJitsi.audio) {
-        const j = new jitsi.Jitsi();
-        comm.comms.broadcast = j;
-        if (useJitsi.video)
-            comm.comms.video = j;
-        if (useJitsi.audio)
-            comm.comms.audio = j;
-        await j.init(useJitsi);
-    }
-
-    // RTEnnui communications
+    // Native RTEnnui WebRTC communications for video and audio
     const useRTEnnui = config.useRTEnnui;
-    if (useRTEnnui.video || useRTEnnui.audio) {
-        const e = new rtennui.RTEnnui();
-        if (useRTEnnui.video)
-            comm.comms.video = e;
-        if (useRTEnnui.audio)
-            comm.comms.audio = e;
-        await e.init(useRTEnnui);
-    }
+    const e = new rtennui.RTEnnui();
+    if (useRTEnnui.video)
+        comm.comms.video = e;
+    if (useRTEnnui.audio)
+        comm.comms.audio = e;
+    await e.init(useRTEnnui);
 }

@@ -176,19 +176,7 @@ const defaults = await (async function() {
         l("transcription", "Live captions", true);
         chk("transcription", "t");
         alt("transcription", "Enable live captions. Currently only English is supported.");
-
-        l("jitsiVideo", "Use Jitsi for video", true);
-        chk("jitsiVideo", "xjv");
-        alt("jitsiVideo", "Disable Ennuicastr's native live video chat system, and use Jitsi Meet for live chat. Use this only if you're having technical issues with live chat. If you're having issues with both video and audio, you can enable Jitsi for audio after enabling Jitsi for video.");
         ?>
-
-        <div id="jitsi-audio-hider" style="display: none">
-            <?JS
-            l("jitsiAudio", "Use Jitsi for audio", true);
-            chk("jitsiAudio", "xja");
-            alt("jitsiAudio", "Use Jitsi Meet for both video and audio.");
-            ?>
-        </div>
         <?JS
 
         l("noDualEC", "Disable post hoc EC", true);
@@ -222,14 +210,6 @@ const defaults = await (async function() {
 
 <script type="text/javascript">
 var clientUrl, clientWindow;
-
-function updateJitsiVideo() {
-    var v = $("#r-jitsiVideo")[0].checked;
-    $("#jitsi-audio-hider")[0].style.display = v ? "" : "none";
-}
-
-$("#r-jitsiVideo")[0].onchange = updateJitsiVideo;
-updateJitsiVideo();
 
 function updateRecordOnly() {
     var v = $("#r-recordOnly")[0].checked;

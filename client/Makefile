@@ -47,7 +47,7 @@ EXTRA=\
     libav/libav-$(LIBAV_VERSION)-ennuicastr.asm.js \
     libav/libav-$(LIBAV_VERSION)-ennuicastr.wasm.js \
     libav/libav-$(LIBAV_VERSION)-ennuicastr.wasm.wasm \
-    libs/vosk.js libs/lib-jitsi-meet.7421.js
+    libs/vosk.js
 
 all: $(addprefix dist/,$(OUT)) $(addprefix dist/,$(LIBS)) $(DATA)
 
