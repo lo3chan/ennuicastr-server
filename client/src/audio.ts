@@ -1069,6 +1069,15 @@ util.netEvent("data", "admin", function(ev) {
 export let sentRecently = false;
 
 setInterval(function() {
+    // Only check encoding status during active recording
+    if (!net.net || net.mode !== net.modeState.rec) {
+        log.popStatus("notencoding");
+        sentRecently = true;
+        if (Ennuiboard.enabled.gamepad)
+            Ennuiboard.subsystems.gamepad.poll();
+        return;
+    }
+
     // Display an issue if we haven't sent recently
     const now = performance.now();
     let lastSentRecently = sentRecently;

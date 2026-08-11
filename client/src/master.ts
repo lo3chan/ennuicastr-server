@@ -150,13 +150,8 @@ export function createMasterInterface(): void {
         );
     }
 
-    // If we're accepting guest recording, we have to save it *somewhere*
-    if (masterUI.acceptRemoteVideo.checked &&
-        !masterUI.saveVideoInCloud.checked &&
-        !masterUI.saveVideoInFSDH.checked &&
-        !masterUI.downloadVideoLive.checked) {
-        masterUI.saveVideoInCloud.checked = true;
-    }
+    // Video recordings are automatically stored on the local server in /app/ennuicastr-server/rec/
+    masterUI.saveVideoInCloud.checked = false;
 
     // Put everything in the proper state
     configureMasterInterface();
