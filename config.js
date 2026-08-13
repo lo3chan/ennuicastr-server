@@ -18,7 +18,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const configPath = path.join(__dirname, "config.json");
+const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
+const configPath = process.env.CONFIG_FILE || path.join(dataDir, "config.json");
+
 let configData = {};
 let lastMtime = 0;
 
@@ -29,10 +31,20 @@ function loadConfig() {
             const raw = fs.readFileSync(configPath, "utf8");
             const newConfig = JSON.parse(raw);
 
+            // Dynamically resolve relative paths using environment variables or __dirname
+            const repoPath = process.env.REPO_DIR || __dirname;
+
+            // Override with relative paths instead of hardcoded absolute paths if not explicitly defined
+            newConfig.repo = newConfig.repo || repoPath;
+            newConfig.clientRepo = newConfig.clientRepo || path.join(repoPath, 'client');
+            newConfig.db = newConfig.db || path.join(dataDir, 'db');
+            newConfig.rec = newConfig.rec || path.join(dataDir, 'rec');
+            newConfig.sounds = newConfig.sounds || path.join(dataDir, 'sounds');
+
             // Handle ~'s in paths
             ["repo", "db", "rec", "sounds", "cert", "clientRepo"].forEach((p) => {
-                if (newConfig[p]) {
-                    newConfig[p] = newConfig[p].replace(/~/g, process.env.HOME);
+                if (newConfig[p] && typeof newConfig[p] === 'string') {
+                    newConfig[p] = newConfig[p].replace(/~/g, process.env.HOME || '');
                 }
             });
 
@@ -41,6 +53,29 @@ function loadConfig() {
         }
     } catch (ex) {
         // Fallback to existing configData if parsing fails or file is temporarily missing
+        // If configData is empty, initialize defaults
+        if (Object.keys(configData).length === 0) {
+            const repoPath = process.env.REPO_DIR || __dirname;
+            configData = {
+                repo: repoPath,
+                clientRepo: path.join(repoPath, 'client'),
+                db: path.join(dataDir, 'db'),
+                rec: path.join(dataDir, 'rec'),
+                sounds: path.join(dataDir, 'sounds'),
+                limits: {
+                    simultaneous: 4,
+                    lobbies: 64,
+                    tracksFree: 8,
+                    tracksPaid: 64,
+                    recNameLength: 512,
+                    recUsernameLength: 32,
+                    lobbyNameLength: 512,
+                    soundNameLength: 512,
+                    soundSize: 1073741824,
+                    soundDurationTotal: 7200
+                }
+            };
+        }
     }
 }
 
