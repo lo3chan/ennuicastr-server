@@ -185,9 +185,10 @@ NGINX_EOF
 # Set nginx user to ennuicastr
 sed -i 's/user www-data;/user ennuicastr;/g' /etc/nginx/nginx.conf
 
-# --- Ensure necessary directories ---
-chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH}/rec ${SERVER_REPO_PATH}/sounds ${SERVER_REPO_PATH}/db /var/www/rec
-chmod -R 755 /var/www/rec
+# --- Ensure necessary permissions ---
+chown -R ennuicastr:ennuicastr ${SERVER_REPO_PATH} /var/www/rec
+chmod -R 755 ${SERVER_REPO_PATH} /var/www/rec
+chmod +x ${SERVER_REPO_PATH}/njsp/*.sh ${SERVER_REPO_PATH}/njsp/*.js ${SERVER_REPO_PATH}/server/*.sh ${SERVER_REPO_PATH}/server/*.js ${SERVER_REPO_PATH}/*.sh ${SERVER_REPO_PATH}/*.js 2>/dev/null || true
 find /var/www/rec -type f -exec chmod 644 {} +
 chown -R ennuicastr:ennuicastr /var/log/nginx /var/lib/nginx /run
 
