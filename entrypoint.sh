@@ -129,7 +129,7 @@ server {
     # Static web client recording app
     location /r/ {
         alias /var/www/rec/;
-        try_files \$uri \$uri/ /r/index.html =404;
+        try_files \$uri \$uri/ =404;
 
         add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, max-age=0' always;
         add_header 'Cross-Origin-Opener-Policy' 'same-origin' always;

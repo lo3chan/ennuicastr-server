@@ -63,7 +63,7 @@ describe("login/index.jss Server Page", function () {
         const myRequire = (mod) => {
             if (mod === "crypto") return crypto;
             if (mod === "fs") return { readFileSync: () => JSON.stringify({}), writeFileSync: () => {} };
-            if (mod === "../../config.js" || mod === __dirname + "/../../../config.js" || mod === "/app/web/panel/login/../../../config.js") return configMock;
+            if (mod === "../../config.js" || mod === __dirname + "/../../../config.js" || mod === "/app/web/panel/login/../../../config.js" || mod === "/app/ennuicastr-server/config.js") return configMock;
             return {};
         };
         myRequire.resolve = () => "/app/config.json";

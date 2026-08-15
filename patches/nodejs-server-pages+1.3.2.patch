@@ -33,7 +33,7 @@ index a47a3e9..e3c528e 100644
 
          // So that future requires don't cache our stuff, delete the whole cache
 diff --git a/node_modules/nodejs-server-pages/session.js b/node_modules/nodejs-server-pages/session.js
-index 54bf460..de33d88 100644
+index 54bf460..5d260d8 100644
 --- a/node_modules/nodejs-server-pages/session.js
 +++ b/node_modules/nodejs-server-pages/session.js
 @@ -22,7 +22,20 @@ const cookie = require("cookie");
@@ -58,7 +58,7 @@ index 54bf460..de33d88 100644
  }
 
  async function rollback(db) {
-@@ -59,9 +72,19 @@ Session.prototype.init = async function(config) {
+@@ -59,9 +72,20 @@ Session.prototype.init = async function(config) {
 
      // Make sure the database is real
      await this.run("PRAGMA journal_mode=WAL;");
@@ -72,6 +72,7 @@ index 54bf460..de33d88 100644
 +            await this.run("CREATE INDEX IF NOT EXISTS session_sid ON session (sid, key);");
 +            await this.run("CREATE INDEX IF NOT EXISTS session_exp ON session (expires);");
 +            await this.run("COMMIT;");
++            await this.run("PRAGMA wal_checkpoint(PASSIVE);");
 +            break;
 +        } catch (ex) {
 +            await rollback(this.db);
@@ -81,7 +82,7 @@ index 54bf460..de33d88 100644
 
      // Try to get the existing session ID
      if ("cookie" in this.request.headers) {
-@@ -71,7 +94,7 @@ Session.prototype.init = async function(config) {
+@@ -71,7 +95,7 @@ Session.prototype.init = async function(config) {
              sid = cookies.NJSPSESSID;
 
              // Check if it's actually valid
@@ -90,7 +91,7 @@ index 54bf460..de33d88 100644
              if (!row)
                  sid = null;
          }
-@@ -89,7 +112,7 @@ Session.prototype.init = async function(config) {
+@@ -89,7 +113,7 @@ Session.prototype.init = async function(config) {
              sid = part() + part() + part();
 
              try {
@@ -99,7 +100,14 @@ index 54bf460..de33d88 100644
                  row = await this.dbGet("SELECT * FROM session WHERE sid=@SID;", {"@SID": sid});
                  if (!row) {
                      await this.run("INSERT INTO session VALUES (@SID, @KEY, @VALUE, datetime('now','" + config.expiry + " seconds'));", {
-@@ -105,6 +128,7 @@ Session.prototype.init = async function(config) {
+@@ -99,12 +123,14 @@ Session.prototype.init = async function(config) {
+                     });
+                 }
+                 await this.run("COMMIT;");
++            await this.run("PRAGMA wal_checkpoint(PASSIVE);");
+
+                 if (!row)
+                     break;
 
              } catch (ex) {
                  await rollback(this.db);
@@ -107,7 +115,7 @@ index 54bf460..de33d88 100644
              }
          }
      }
-@@ -150,7 +174,7 @@ Session.prototype.set = async function(key, value) {
+@@ -150,7 +176,7 @@ Session.prototype.set = async function(key, value) {
          return;
      while (true) {
          try {
@@ -116,7 +124,11 @@ index 54bf460..de33d88 100644
              await this.run("DELETE FROM session WHERE sid=@SID AND key=@KEY;", {
                  "@SID": this.sid,
                  "@KEY": key
-@@ -164,6 +188,7 @@ Session.prototype.set = async function(key, value) {
+@@ -161,9 +187,11 @@ Session.prototype.set = async function(key, value) {
+                 "@VALUE": JSON.stringify(value)
+             });
+             await this.run("COMMIT;");
++            await this.run("PRAGMA wal_checkpoint(PASSIVE);");
              break;
          } catch (ex) {
              await rollback(this.db);
@@ -124,7 +136,7 @@ index 54bf460..de33d88 100644
          }
      }
  }
-@@ -171,16 +196,36 @@ Session.prototype.set = async function(key, value) {
+@@ -171,16 +199,38 @@ Session.prototype.set = async function(key, value) {
  Session.prototype.delete = async function(key) {
      if (!this.sid)
          return;
@@ -140,6 +152,7 @@ index 54bf460..de33d88 100644
 +                "@KEY": key
 +            });
 +            await this.run("COMMIT;");
++            await this.run("PRAGMA wal_checkpoint(PASSIVE);");
 +            break;
 +        } catch(ex) {
 +            await rollback(this.db);
@@ -157,6 +170,7 @@ index 54bf460..de33d88 100644
 +            await this.run("BEGIN IMMEDIATE TRANSACTION;");
 +            await this.run("DELETE FROM session WHERE expires<=datetime('now');");
 +            await this.run("COMMIT;");
++            await this.run("PRAGMA wal_checkpoint(PASSIVE);");
 +            break;
 +        } catch(ex) {
 +            await rollback(this.db);

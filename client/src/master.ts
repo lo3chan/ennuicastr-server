@@ -24,7 +24,6 @@ import * as barrierPromise from "./barrier-promise";
 import * as comm from "./comm";
 import * as config from "./config";
 import * as fileStorage from "./file-storage";
-import globalConfig from "../config/config.json";
 import * as log from "./log";
 import * as net from "./net";
 import { prot } from "./protocol";
@@ -411,9 +410,7 @@ function genInvite() {
 
     // Make the URL
     const url = new URL(
-        globalConfig.invite
-            ? globalConfig.invite
-            : config.url.toString()
+        config.url.toString()
     );
     url.search = sb;
     ui.ui.panels.invite.link.value = url.toString();

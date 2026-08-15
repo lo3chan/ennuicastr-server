@@ -578,6 +578,8 @@ export async function getRemoteFileStorage(opts: {
      * Force a user consent prompt.
      */
     forcePrompt?: boolean
+}
+
 export async function getRemoteFileStorage(opts: any): Promise<FileStorage> {
     // Local server handles storage in /app/ennuicastr-server/rec/ - bypass Dropbox/Cloud OAuth
     localStorage.removeItem("master-video-save-in-cloud-provider");
