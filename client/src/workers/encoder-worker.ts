@@ -29,7 +29,10 @@ declare let __filename: string;
 (<any> globalThis).__filename = "";
 
 __filename = `../${ifLibav.libavPath}`; // To "trick" wasm loading
-(<any> globalThis).LibAV = {base: `../${ifLibav.libavDir}`};
+(<any> globalThis).LibAV = {
+    base: `../${ifLibav.libavDir}`,
+    variant: "ennuicastr"
+};
 importScripts(__filename);
 
 class Encoder
@@ -74,7 +77,7 @@ class Encoder
         let buffersrc_ctx = 0, buffersink_ctx = 0;
 
         // Load libav
-        libav = await LibAV.LibAV({noworker: true});
+        libav = await LibAV.LibAV({noworker: true, variant: "ennuicastr"});
 
         const encOptions: LibAVT.AVCodecContextProps = {
             sample_rate: outSampleRate,

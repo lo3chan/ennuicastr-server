@@ -31,7 +31,10 @@ declare let __filename: string;
 
 // Load libraries
 __filename = `../${ifLibav.libavPath}`;
-(<any> globalThis).LibAV = {base: `../${ifLibav.libavDir}`};
+(<any> globalThis).LibAV = {
+    base: `../${ifLibav.libavDir}`,
+    variant: "ennuicastr"
+};
 importScripts(__filename);
 
 // How many "max" messages to send just to calm down the data with silence
@@ -45,7 +48,7 @@ class OutputProcessor
     init(opts: ifOutproc.OutProcOpts): void {
         // Load libav in the background
         this._ser = this._ser.catch(console.error).then(async () => {
-            const la = this._la = await LibAV.LibAV({noworker: true});
+            const la = this._la = await LibAV.LibAV({noworker: true, variant: "ennuicastr"});
             this._frame = await la.av_frame_alloc();
 
             const ret =
