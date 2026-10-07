@@ -157,9 +157,15 @@ server {
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
     }
 
-    # Worker WebSocket proxy
-    location /ws {
-        proxy_pass http://127.0.0.1:\$arg_port;
+    # Worker WebSocket proxy with explicit query argument port
+    location = /ws {
+        return 301 /ws/?\$args;
+    }
+
+    location /ws/ {
+        if (\$arg_port ~ "^[0-9]+$") {
+            proxy_pass http://127.0.0.1:\$arg_port;
+        }
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -169,7 +175,8 @@ server {
         send_timeout 86400;
     }
 
-    location ~ /ws$ {
+    # NJSP WebSocket proxy
+    location ~ ^/(panel/.*|web/.*)/ws$ {
         proxy_pass http://unix:/tmp/nodejs-server-pages-ws.sock;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;

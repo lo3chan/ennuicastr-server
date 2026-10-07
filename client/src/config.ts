@@ -334,7 +334,13 @@ export async function load(): Promise<boolean> {
 
 // The WebSock URL
 export function wsUrl(): string {
-    return (url.protocol==="http:"?"ws":"wss") + "://" + url.hostname + ":" + config.port;
+    const proto = (url.protocol === "http:" ? "ws" : "wss");
+    // If running over HTTPS (such as Cloudflare Tunnel or standard 443),
+    // route via the reverse-proxy endpoint /ws/?port=
+    if (url.protocol === "https:" || !url.port || url.port === "80" || url.port === "443") {
+        return proto + "://" + url.host + "/ws/?port=" + encodeURIComponent(config.port);
+    }
+    return proto + "://" + url.hostname + ":" + config.port;
 }
 
 // Call if we're disconnected, to forcibly close
