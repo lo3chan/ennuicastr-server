@@ -20,7 +20,7 @@ export class WebCodecsAudioEncoder {
         packets: Uint8Array[]
     ) => unknown;
 
-    constructor() {
+    constructor(public capture?: any) {
         const mc = new MessageChannel();
         this.reversePort = mc.port1;
         this.outputChannel = new MessageChannel();

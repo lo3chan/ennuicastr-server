@@ -699,7 +699,7 @@ export class Audio {
         const format = config.useFlac ? "flac" : "opus";
         const useWebCodecs = await WebCodecsAudioEncoder.isSupported(format, sampleRate, 1);
         if (useWebCodecs) {
-            enc = this.userMediaEncoder = new WebCodecsAudioEncoder() as any;
+            enc = this.userMediaEncoder = new WebCodecsAudioEncoder(cap) as any;
         } else {
             enc = this.userMediaEncoder = new EncoderWorker(cap);
         }
