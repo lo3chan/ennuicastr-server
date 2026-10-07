@@ -992,11 +992,13 @@ wss.on("connection", (ws, wsreq) => {
         ret.writeUInt32LE(prot.ids.info, 0);
         ret.writeUInt32LE(prot.info.creditCost, p.key);
         var neededSubscription = ((recInfo.format==="flac"||recInfo.continuous)?2:1);
+        var costCurrency = (config.creditCost && config.creditCost.currency) || 0;
+        var costCredits = (config.creditCost && config.creditCost.credits) || 0;
         if (recInfo.subscription >= neededSubscription)
             ret.writeUInt32LE(0, p.value);
         else
-            ret.writeUInt32LE(config.creditCost.currency, p.value);
-        ret.writeUInt32LE(config.creditCost.credits, p.value + 4);
+            ret.writeUInt32LE(costCurrency, p.value);
+        ret.writeUInt32LE(costCredits, p.value + 4);
         ws.send(ret);
 
         // Inform them of the credit situation

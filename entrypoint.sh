@@ -80,6 +80,14 @@ if [ ! -f "$CONFIG_FILE" ]; then
         "soundNameLength": 512,
         "soundSize": 1073741824,
         "soundDurationTotal": 7200
+    },
+    "creditCost": {
+        "currency": 0,
+        "credits": 3600
+    },
+    "recCost": {
+        "basic": { "upton": 0, "n": 64, "plus": 0 },
+        "hq": { "upton": 0, "n": 64, "plus": 0 }
     }
 }
 CONFIG_EOF
