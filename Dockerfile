@@ -1,12 +1,12 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    curl gnupg build-essential zip unzip sqlite3 \
+    curl gnupg build-essential zip unzip sqlite3 libsqlite3-dev \
     git ffmpeg flac vorbis-tools fdkaac opus-tools \
-    python3 ca-certificates jq nginx \
+    python3 python3-distutils ca-certificates jq nginx \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 24.x (Current LTS)
@@ -41,12 +41,13 @@ RUN node -e " \
   pkg.dependencies.sqlite3 = '^5.1.7'; \
   pkg.dependencies.typescript = '^5.2.0'; \
   pkg.dependencies.wrtc = 'npm:@roamhq/wrtc@^0.10.0'; \
-  pkg.overrides = { 'wrtc': 'npm:@roamhq/wrtc@^0.10.0' }; \
+  pkg.overrides = { 'wrtc': 'npm:@roamhq/wrtc@^0.10.0', 'sqlite3': '^5.1.7' }; \
   fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2)); \
 " && \
     rm -rf node_modules package-lock.json && \
     npm install node-pre-gyp && \
-    npm install
+    npm install --build-from-source=sqlite3 && \
+    npm rebuild --build-from-source=sqlite3
 
 RUN make
 
