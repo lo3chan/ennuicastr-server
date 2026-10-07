@@ -123,4 +123,101 @@ export class LocalAudioBuffer {
         this.pendingCount = 0;
         resilience.setPendingBufferCount(0);
     }
+
+    /**
+     * Scan OPFS directory for saved audio session buffer files.
+     */
+    static async scanRecoveredSessions(): Promise<RecoveredSession[]> {
+        const results: RecoveredSession[] = [];
+        if (typeof navigator === "undefined" || !navigator.storage || !navigator.storage.getDirectory) {
+            return results;
+        }
+
+        try {
+            const root = await navigator.storage.getDirectory();
+            if ((root as any).values) {
+                for await (const handle of (root as any).values()) {
+                    if (handle && handle.kind === "file") {
+                        const match = /^beacon-studio-(.+)\.raw$/.exec(handle.name);
+                        if (match) {
+                            try {
+                                const file = await handle.getFile();
+                                if (file.size > 0) {
+                                    results.push({
+                                        name: handle.name,
+                                        sessionId: match[1],
+                                        size: file.size,
+                                        lastModified: file.lastModified,
+                                        handle
+                                    });
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            } else if ((root as any).entries) {
+                for await (const entry of (root as any).entries()) {
+                    const handle = entry[1];
+                    if (handle && handle.kind === "file") {
+                        const match = /^beacon-studio-(.+)\.raw$/.exec(handle.name);
+                        if (match) {
+                            try {
+                                const file = await handle.getFile();
+                                if (file.size > 0) {
+                                    results.push({
+                                        name: handle.name,
+                                        sessionId: match[1],
+                                        size: file.size,
+                                        lastModified: file.lastModified,
+                                        handle
+                                    });
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            }
+        } catch (ex) {
+            console.warn("OPFS scanRecoveredSessions error:", ex);
+        }
+
+        return results;
+    }
+
+    /**
+     * Download a recovered raw audio session file to user's device.
+     */
+    static async downloadRecoveredSession(handle: any, filename?: string): Promise<void> {
+        const file = await handle.getFile();
+        const url = URL.createObjectURL(file);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename || handle.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+
+    /**
+     * Delete a recovered session file from OPFS storage.
+     */
+    static async deleteRecoveredSession(name: string): Promise<void> {
+        if (typeof navigator === "undefined" || !navigator.storage || !navigator.storage.getDirectory) return;
+        try {
+            const root = await navigator.storage.getDirectory();
+            await (root as any).removeEntry(name);
+        } catch (ex) {
+            console.warn("Failed to remove OPFS session file:", ex);
+        }
+    }
 }
+
+export interface RecoveredSession {
+    name: string;
+    sessionId: string;
+    size: number;
+    lastModified: number;
+    handle: any;
+}
+

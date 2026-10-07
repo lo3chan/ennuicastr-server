@@ -160,7 +160,8 @@ export const ui = {
         settings: HTMLButtonElement,
         chat: HTMLButtonElement,
         help: HTMLButtonElement,
-        videoPopout: HTMLButtonElement
+        videoPopout: HTMLButtonElement,
+        leave?: HTMLButtonElement
     }> null,
 
     // The separator for panel layering
@@ -174,6 +175,15 @@ export const ui = {
             onhide?: ()=>void,
             label: HTMLElement,
             button: HTMLButtonElement
+        }> null,
+
+        // Recovery panel
+        recovery: <{
+            wrapper: HTMLDialogElement,
+            list: HTMLElement,
+            count: HTMLElement,
+            btn: HTMLButtonElement,
+            onhide?: ()=>void
         }> null,
 
         // WebDAV login panel

@@ -905,3 +905,61 @@ body {
 [data-view-mode="studio"] #ec3-status {
     position: relative;
 }
+
+/* Touch & Mobile Modernization */
+@media screen and (max-width: 768px), (pointer: coarse) {
+    .icon-button {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .round-button {
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .pill-button {
+        min-height: 44px;
+        line-height: 44px;
+        padding: 0 1em;
+    }
+
+    .menu-button {
+        min-height: 48px;
+        padding-top: var(--scale-main-8);
+        padding-bottom: var(--scale-main-8);
+    }
+
+    #ec3-top-row {
+        padding-top: max(4px, env(safe-area-inset-top, 0px));
+        padding-left: max(4px, env(safe-area-inset-left, 0px));
+        padding-right: max(4px, env(safe-area-inset-right, 0px));
+        gap: 6px;
+    }
+
+    #ec3-main-menu {
+        padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Prevent mobile browser zoom on form control focus */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    /* Quick VU bar responsiveness */
+    #ec3-quick-vu-track {
+        width: 42px !important;
+        height: 12px !important;
+    }
+
+    #ec3-recording-info {
+        min-width: 3.5em;
+    }
+}
+

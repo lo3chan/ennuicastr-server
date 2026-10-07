@@ -36,6 +36,12 @@
                     <div id="ec3-recording-title" class="smallhide">Loading...</div>
                     <div id="ec3-recording-timer">0:00</div>
                 </div>
+                <div id="ec3-quick-vu-wrapper" class="vcenter" title="Microphone Level" style="margin: 0 8px; display: flex; align-items: center; gap: 6px;">
+                    <i id="ec3-quick-vu-icon" class="bx bx-microphone" style="color: var(--fg-dim); font-size: 16px;"></i>
+                    <div id="ec3-quick-vu-track" style="width: 50px; height: 10px; background: #222; border-radius: 5px; overflow: hidden; border: 1px solid #444; position: relative;">
+                        <div id="ec3-quick-vu-bar" style="width: 0%; height: 100%; background: #10b981; transition: width 0.05s ease-out; border-radius: 4px;"></div>
+                    </div>
+                </div>
                 <div class="vcenter">
                 <div id="ec3-recording-startstop-wrapper" class="rflex" style="gap: 1em;">
                     <button id="ec3-start-recording-button" class="pill-button rec-button" aria-label="Start recording">
@@ -96,6 +102,9 @@
                     </button>
                     <button id="ec3-help-button" class="icon-button menu-button">
                         <i class="bx bx-help-circle" aria-hidden="true"></i><span class="menu-button-lbox"><span class="menu-button-label">Help</span></span>
+                    </button>
+                    <button id="ec3-leave-button" class="icon-button menu-button" aria-label="Leave Studio">
+                        <i class="bx bx-log-out" aria-hidden="true"></i><span class="menu-button-lbox"><span class="menu-button-label">Leave</span></span>
                     </button>
                     <div class="fauto smallhide"></div>
                 </div></nav>
@@ -421,6 +430,25 @@
             <span id="ec3-user-list-button-hider">
                 <button id="ec3-user-list-button" class="pill-button row"><i class="bx bx-group"></i> Users</button>
             </span>
+            <div id="ec3-recovery-section" class="row" style="margin-top: 1em; padding-top: 0.5em; border-top: 1px solid var(--bg-dimmish);">
+                <button id="ec3-recovery-btn" class="pill-button row" style="width: 100%;">
+                    <i class="bx bx-save"></i> Local Crash Backups (<span id="ec3-recovery-count">0</span>)
+                </button>
+            </div>
+        </dialog>
+
+        <!-- The recovery backups panel -->
+        <dialog id="ec3-recovery-panel" class="panel" role="dialog" aria-labelledby="ec3-recovery-panel-label">
+            <div id="ec3-recovery-panel-label" class="panel-title" role="heading">Local Storage Backups</div>
+            <button class="icon-button close-button" aria-label="Close">
+                <i class="bx bx-x" aria-hidden="true"></i>
+            </button>
+            <p style="font-size: 0.9em; color: var(--fg-dimmish); margin-bottom: 1em;">
+                Beacon Studio automatically records raw audio chunks to your device's private storage (OPFS) as a write-ahead log. If your network dropped or browser closed unexpectedly, you can download raw audio backups directly:
+            </p>
+            <div id="ec3-recovery-list" class="cflex row" style="max-height: 240px; overflow-y: auto; gap: 8px;">
+                <div style="color: var(--fg-dim);">Scanning local storage...</div>
+            </div>
         </dialog>
 
         <!-- The input settings menu -->

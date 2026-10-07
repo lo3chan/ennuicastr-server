@@ -40,6 +40,8 @@ import * as videoRecord from "./video-record";
 import * as downloadStream from "@ennuicastr/dl-stream";
 import { Ennuiboard } from "ennuiboard";
 import NoSleep from "../node_modules/nosleep.js/dist/NoSleep.min.js";
+import { LocalAudioBuffer } from "./local-audio-buffer";
+import * as quickVU from "./quick-vu";
 
 // Certain options are only shown on mobile
 const ua = navigator.userAgent.toLowerCase();
@@ -96,7 +98,9 @@ export function mkUI(): void {
     loadUserList();
     loadCloudStorage();
     loadHelp();
+    loadRecoveryPanel();
     loadInterfaceSounds();
+    quickVU.initQuickVU();
 
     if ("master" in config.config)
         master.createMasterInterface();
@@ -214,7 +218,8 @@ function loadMainMenu() {
         settings: gebi("ec3-settings-button"),
         chat: gebi("ec3-chat-button"),
         help: gebi("ec3-help-button"),
-        videoPopout: gebi("ec3-streamer-popout-all-button")
+        videoPopout: gebi("ec3-streamer-popout-all-button"),
+        leave: gebi("ec3-leave-button") as HTMLButtonElement
     };
 
     ui.panels.transientActivation = {
@@ -329,6 +334,18 @@ function loadMainMenu() {
         uiFE.maybeResizeSoon();
     };
     btn(p.help, "help", null);
+    if (p.leave) {
+        p.leave.onclick = function() {
+            const isHost = "master" in config.config;
+            const promptMsg = isHost
+                ? "Are you sure you want to leave the studio? Local capture will stop."
+                : "Are you sure you want to leave the recording session?";
+            if (confirm(promptMsg)) {
+                config.disconnect();
+                window.location.href = "../panel/";
+            }
+        };
+    }
     btn(sets.inputB, "inputConfig", null);
     btn(sets.outputB, "outputConfig", null);
     if (!config.useRTC) sets.outputB.style.display = "none";
@@ -636,6 +653,84 @@ function loadHelp() {
     ui.panels.help = {
         wrapper: gebi("ec3-help-panel")
     };
+}
+
+function loadRecoveryPanel() {
+    const rec = (ui.panels as any).recovery = {
+        wrapper: gebi("ec3-recovery-panel"),
+        list: gebi("ec3-recovery-list"),
+        count: gebi("ec3-recovery-count"),
+        btn: gebi("ec3-recovery-btn")
+    };
+    if (!rec.wrapper || !rec.btn) return;
+
+    async function refreshRecoveryList() {
+        rec.list.innerHTML = '<div style="color: var(--fg-dim); padding: 8px;">Scanning local storage...</div>';
+        const sessions = await LocalAudioBuffer.scanRecoveredSessions();
+        rec.count.innerText = "" + sessions.length;
+
+        if (sessions.length === 0) {
+            rec.list.innerHTML = '<div style="color: var(--fg-dim); padding: 8px;">No saved crash backups found on this device.</div>';
+            return;
+        }
+
+        rec.list.innerHTML = "";
+        sessions.forEach(sess => {
+            const row = dce("div");
+            row.className = "rflex row vcenter";
+            row.style.cssText = "background: var(--bg-button); padding: 8px; border-radius: 6px; justify-content: space-between; gap: 8px; margin-bottom: 6px;";
+
+            const info = dce("div");
+            info.style.cssText = "overflow: hidden; text-overflow: ellipsis; white-space: nowrap;";
+            const mb = (sess.size / (1024 * 1024)).toFixed(2);
+            const dateStr = new Date(sess.lastModified).toLocaleString();
+            info.innerHTML = `<strong>Session: ${sess.sessionId}</strong><br/><span style="font-size: 0.8em; color: var(--fg-dim);">${dateStr} &bull; ${mb} MB</span>`;
+
+            const btns = dce("div");
+            btns.className = "rflex";
+            btns.style.gap = "6px";
+
+            const dlBtn = dce("button");
+            dlBtn.className = "pill-button";
+            dlBtn.style.cssText = "padding: 4px 10px; font-size: 0.85em;";
+            dlBtn.innerHTML = '<i class="bx bx-download"></i> Save';
+            dlBtn.onclick = async () => {
+                await LocalAudioBuffer.downloadRecoveredSession(sess.handle);
+            };
+
+            const delBtn = dce("button");
+            delBtn.className = "pill-button rec-button";
+            delBtn.style.cssText = "padding: 4px 10px; font-size: 0.85em;";
+            delBtn.innerHTML = '<i class="bx bx-trash"></i>';
+            delBtn.onclick = async () => {
+                if (confirm(`Permanently delete backup for session "${sess.sessionId}"?`)) {
+                    await LocalAudioBuffer.deleteRecoveredSession(sess.name);
+                    await refreshRecoveryList();
+                }
+            };
+
+            btns.appendChild(dlBtn);
+            btns.appendChild(delBtn);
+            row.appendChild(info);
+            row.appendChild(btns);
+            rec.list.appendChild(row);
+        });
+    }
+
+    rec.btn.onclick = () => {
+        uiFE.showPanel(rec as any);
+        refreshRecoveryList();
+    };
+
+    // Initial silent scan on startup
+    LocalAudioBuffer.scanRecoveredSessions().then(sessions => {
+        rec.count.innerText = "" + sessions.length;
+        if (sessions.length > 0) {
+            log.pushStatus("recovery-notice", `💾 Found ${sessions.length} local audio backup(s) in Settings`, {
+                timeout: 10000
+            });
+        }
+    }).catch(() => {});
 }
 
 function loadInterfaceSounds() {
