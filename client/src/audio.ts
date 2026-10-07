@@ -695,14 +695,8 @@ export class Audio {
         });
 
         // Create the encoder (opportunistic WebCodecs hardware acceleration with Wasm fallback)
-        let enc: any;
-        const format = config.useFlac ? "flac" : "opus";
-        const useWebCodecs = await WebCodecsAudioEncoder.isSupported(format, sampleRate, 1);
-        if (useWebCodecs) {
-            enc = this.userMediaEncoder = new WebCodecsAudioEncoder(cap) as any;
-        } else {
-            enc = this.userMediaEncoder = new EncoderWorker(cap);
-        }
+        // Use battle-tested Wasm encoder worker pipeline for maximum stability and packet sync
+        enc = this.userMediaEncoder = new EncoderWorker(cap);
         await enc.init({
             reverse: enc.reversePort,
             output: enc.outputChannel.port1,
