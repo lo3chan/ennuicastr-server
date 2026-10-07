@@ -171,22 +171,8 @@ function loadWave() {
         watcher: gebi("ec3-waveform-watcher")
     };
 
-    // Choose the watcher image's type based on support
-    function usePng() {
-        wave.watcher.src = "images/watcher.png";
-    }
-    if (!window.createImageBitmap || !window.fetch) {
-        usePng();
-    } else {
-        const sample = "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=";
-        fetch(sample).then(function(res) {
-            return res.blob();
-        }).then(function(blob) {
-            return createImageBitmap(blob)
-        }).then(function() {
-            wave.watcher.src = "images/watcher.webp";
-        }).catch(usePng);
-    }
+    // Default watcher placeholder to avoid missing image 404s
+    wave.watcher.src = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E";
 }
 
 function loadLog() {
@@ -734,10 +720,74 @@ function loadRecoveryPanel() {
     }).catch(() => {});
 }
 
+function createChimeDataUri(isUp: boolean): string {
+    const sampleRate = 44100;
+    const duration = 0.22;
+    const numSamples = Math.floor(sampleRate * duration);
+    const buffer = new Int16Array(numSamples);
+    const f1 = isUp ? 587.33 : 880;
+    const f2 = isUp ? 880 : 587.33;
+    const half = Math.floor(numSamples / 2);
+    for (let i = 0; i < numSamples; i++) {
+        const t = i / sampleRate;
+        const freq = i < half ? f1 : f2;
+        const env = Math.exp(-12 * (i < half ? (i / sampleRate) : ((i - half) / sampleRate)));
+        const sample = Math.sin(2 * Math.PI * freq * t) * env;
+        buffer[i] = Math.max(-32768, Math.min(32767, Math.floor(sample * 16000)));
+    }
+    const header = new Uint8Array(44);
+    const view = new DataView(header.buffer);
+    const writeStr = (offset: number, str: string) => {
+        for (let j = 0; j < str.length; j++) header[offset + j] = str.charCodeAt(j);
+    };
+    writeStr(0, "RIFF");
+    view.setUint32(4, 36 + buffer.byteLength, true);
+    writeStr(8, "WAVE");
+    writeStr(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM
+    view.setUint16(22, 1, true); // Mono
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, "data");
+    view.setUint32(40, buffer.byteLength, true);
+    
+    const wavBytes = new Uint8Array(44 + buffer.byteLength);
+    wavBytes.set(header, 0);
+    wavBytes.set(new Uint8Array(buffer.buffer), 44);
+    
+    let binary = "";
+    const len = wavBytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(wavBytes[i]);
+    }
+    return "data:audio/wav;base64," + btoa(binary);
+}
+
 function loadInterfaceSounds() {
+    let chimeUp = gebi<HTMLAudioElement>("ec3-chime-up-snd");
+    let chimeDown = gebi<HTMLAudioElement>("ec3-chime-down-snd");
+    if (!chimeUp) {
+        chimeUp = dce("audio");
+        chimeUp.src = createChimeDataUri(true);
+    } else {
+        chimeUp.onerror = () => {
+            chimeUp.src = createChimeDataUri(true);
+        };
+    }
+    if (!chimeDown) {
+        chimeDown = dce("audio");
+        chimeDown.src = createChimeDataUri(false);
+    } else {
+        chimeDown.onerror = () => {
+            chimeDown.src = createChimeDataUri(false);
+        };
+    }
     ui.sounds = {
-        chimeUp: gebi("ec3-chime-up-snd"),
-        chimeDown: gebi("ec3-chime-down-snd"),
+        chimeUp,
+        chimeDown,
         soundboard: {}
     };
 }
