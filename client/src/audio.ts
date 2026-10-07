@@ -29,9 +29,11 @@ import * as rpcTarget from "@ennuicastr/mprpc/target";
 import * as capture from "./capture";
 import * as config from "./config";
 import * as ifEnc from "./iface/encoder";
+import { LocalAudioBuffer } from "./local-audio-buffer";
 import * as log from "./log";
 import * as net from "./net";
 import { prot } from "./protocol";
+import * as resilience from "./resilience";
 import * as ui from "./ui";
 import * as util from "./util";
 import { dce } from "./util";
@@ -39,6 +41,16 @@ import * as vad from "./vad";
 import * as workers from "./workers";
 
 import { Ennuiboard } from "ennuiboard";
+
+export let localBuffer: LocalAudioBuffer | null = null;
+
+// Initialize local buffer on network connection
+util.events.addEventListener("net.connected", () => {
+    if (!localBuffer && config.config && config.config.id) {
+        localBuffer = new LocalAudioBuffer(config.config.id + "-" + (config.config.key || ""));
+        localBuffer.init().catch(() => {});
+    }
+});
 
 // We add our own output to the AudioContext
 export type ECAudioContext = AudioContext & {
@@ -864,6 +876,12 @@ export class Audio {
         const data8 = new Uint8Array(data.buffer);
         (new Uint8Array(msg.buffer)).set(
             data8, p.packet + (config.useContinuous?1:0));
+
+        // Write to local zero-loss OPFS / memory buffer
+        if (localBuffer) {
+            localBuffer.append(granulePos, trackNo, msg.buffer).catch(() => {});
+        }
+
         net.dataSock.send(msg.buffer);
     }
 

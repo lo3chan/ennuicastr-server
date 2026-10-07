@@ -29,6 +29,7 @@ import * as log from "./log";
 import * as master from "./master";
 import * as net from "./net";
 import { prot } from "./protocol";
+import * as resilience from "./resilience";
 import * as ui from "./ui";
 import * as uiImpl from "./ui-impl";
 import * as util from "./util";
@@ -76,6 +77,7 @@ async function main() {
         await config.resolve();
 
         const acPromise = audio.initAudioContext();
+        resilience.initResilience(() => audio.ac);
         let waitPromises: Promise<unknown>[] = [];
 
         if ("master" in config.config) {

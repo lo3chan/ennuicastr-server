@@ -23,6 +23,7 @@
 import * as config from "./config";
 import * as log from "./log";
 import { prot } from "./protocol";
+import * as resilience from "./resilience";
 import * as util from "./util";
 
 /* We have multiple connections to the server:
@@ -295,6 +296,7 @@ function dataSockMsg(ev: MessageEvent) {
                 {
                     // Set the mode
                     mode = val;
+                    resilience.setRecordingActive(mode === prot.mode.rec);
 
                     // Update the status
                     log.popStatus("mode");
