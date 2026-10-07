@@ -190,7 +190,7 @@ function loadWave() {
 }
 
 function loadLog() {
-    const log = ui.log = {
+    const ulog = ui.log = {
         wrapper: gebi("ec3-status"),
         spacer: gebi("ec3-status-spacer"),
         name: gebi("ec3-recording-title"),
@@ -198,10 +198,11 @@ function loadLog() {
     };
 
     if (net.recName)
-        log.name.innerText = net.recName;
+        ulog.name.innerText = net.recName;
     util.events.addEventListener("net.info.recName", function() {
-        log.name.innerText = net.recName;
+        ulog.name.innerText = net.recName;
     });
+    log.syncStatus();
 }
 
 function loadMainMenu() {

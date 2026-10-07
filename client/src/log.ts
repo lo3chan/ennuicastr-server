@@ -130,10 +130,10 @@ export function popStatus(id: string): void {
 }
 
 function updateStatus(remove: StatusMessage, add: StatusMessage) {
-    const w = ui.ui.log.wrapper;
-    if (!w)
+    if (!ui.ui || !ui.ui.log || !ui.ui.log.wrapper)
         return;
-    if (remove)
+    const w = ui.ui.log.wrapper;
+    if (remove && remove.el.parentNode === w)
         w.removeChild(remove.el);
     if (add)
         w.appendChild(add.el);
@@ -148,4 +148,19 @@ function updateStatus(remove: StatusMessage, add: StatusMessage) {
     ui.ui.log.spacer.style.height = height + "px";
 
     ui.maybeResizeSoon();
+}
+
+/**
+ * Sync all current status elements into the UI log wrapper once initialized.
+ */
+export function syncStatus(): void {
+    if (!ui.ui || !ui.ui.log || !ui.ui.log.wrapper)
+        return;
+    const w = ui.ui.log.wrapper;
+    for (const id in curStatus) {
+        const s = curStatus[id];
+        if (!s.timein && s.el.parentNode !== w) {
+            w.appendChild(s.el);
+        }
+    }
 }
