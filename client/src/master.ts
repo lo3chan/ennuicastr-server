@@ -342,6 +342,10 @@ function configureMasterInterface() {
 
 // Generic "send this mode change" function
 function sendMode(mode: number) {
+    if (!net.masterSock) {
+        console.warn("masterSock not initialized yet when attempting to send mode:", mode);
+        return;
+    }
     const p = prot.parts.mode;
     const out = new DataView(new ArrayBuffer(p.length));
     out.setUint32(0, prot.ids.mode, true);

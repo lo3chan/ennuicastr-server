@@ -696,7 +696,7 @@ export class Audio {
 
         // Create the encoder (opportunistic WebCodecs hardware acceleration with Wasm fallback)
         // Use battle-tested Wasm encoder worker pipeline for maximum stability and packet sync
-        enc = this.userMediaEncoder = new EncoderWorker(cap);
+        const enc = this.userMediaEncoder = new EncoderWorker(cap);
         await enc.init({
             reverse: enc.reversePort,
             output: enc.outputChannel.port1,
