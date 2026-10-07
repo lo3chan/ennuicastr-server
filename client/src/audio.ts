@@ -38,6 +38,7 @@ import * as ui from "./ui";
 import * as util from "./util";
 import { dce } from "./util";
 import * as vad from "./vad";
+import { WebCodecsAudioEncoder } from "./webcodecs-encoder";
 import * as workers from "./workers";
 
 import { Ennuiboard } from "ennuiboard";
@@ -693,8 +694,15 @@ export class Audio {
             matchSampleRate: true
         });
 
-        // Create the encoder
-        const enc = this.userMediaEncoder = new EncoderWorker(cap);
+        // Create the encoder (opportunistic WebCodecs hardware acceleration with Wasm fallback)
+        let enc: any;
+        const format = config.useFlac ? "flac" : "opus";
+        const useWebCodecs = await WebCodecsAudioEncoder.isSupported(format, sampleRate, 1);
+        if (useWebCodecs) {
+            enc = this.userMediaEncoder = new WebCodecsAudioEncoder() as any;
+        } else {
+            enc = this.userMediaEncoder = new EncoderWorker(cap);
+        }
         await enc.init({
             reverse: enc.reversePort,
             output: enc.outputChannel.port1,

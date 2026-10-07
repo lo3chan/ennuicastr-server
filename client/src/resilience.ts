@@ -25,6 +25,7 @@ export function initResilience(getAudioContext: () => AudioContext | null): void
     initIOSAudioKeepalive();
     initAudioContextWatcher(getAudioContext);
     initNavigationGuard();
+    initHeadphoneCheck();
 }
 
 /**
@@ -178,4 +179,69 @@ function initNavigationGuard(): void {
             return message;
         }
     });
+}
+
+/**
+ * 5. Headphone Detection & Quality Advisory
+ * Advises mobile users to wear headphones to prevent acoustic echo cancellation
+ * from ducking their master recording.
+ */
+function initHeadphoneCheck(): void {
+    const isMobile = /android|iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase()) || (navigator.maxTouchPoints > 1);
+    if (!isMobile) return;
+
+    const checkDevices = async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const hasHeadphones = devices.some(d => {
+                const label = (d.label || "").toLowerCase();
+                return label.includes("headphone") || label.includes("headset") || label.includes("airpod") || label.includes("buds") || label.includes("bluetooth");
+            });
+
+            if (!hasHeadphones) {
+                showToast("🎧 Tip: Use headphones or earbuds for the cleanest studio audio without echo.", 8000);
+            }
+        } catch (ex) {}
+    };
+
+    setTimeout(checkDevices, 4000);
+    if (navigator.mediaDevices) {
+        navigator.mediaDevices.addEventListener("devicechange", checkDevices);
+    }
+}
+
+/**
+ * Toast notification utility for clean, accessible studio tips.
+ */
+export function showToast(message: string, durationMs = 5000): void {
+    const existing = document.getElementById("beacon-studio-toast");
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "beacon-studio-toast";
+    toast.style.position = "fixed";
+    toast.style.bottom = "80px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.backgroundColor = "rgba(20, 24, 33, 0.95)";
+    toast.style.color = "#ffffff";
+    toast.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+    toast.style.borderRadius = "24px";
+    toast.style.padding = "10px 20px";
+    toast.style.fontSize = "14px";
+    toast.style.fontWeight = "500";
+    toast.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.5)";
+    toast.style.zIndex = "99999";
+    toast.style.display = "flex";
+    toast.style.alignItems = "center";
+    toast.style.gap = "10px";
+    toast.style.transition = "opacity 0.3s ease";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }, durationMs);
 }
