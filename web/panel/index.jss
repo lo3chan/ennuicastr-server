@@ -118,7 +118,7 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
 ?>
 
 <section class="wrapper special">
-    <p onclick="showUID();">You are logged into Ennuicastr using <?JS= loginProvider + asLine ?>.</p>
+    <p onclick="showUID();">You are logged into Studio using <?JS= loginProvider + asLine ?>.</p>
 
     <?JS if (euid && euid !== ruid) { ?>
     <p>You are currently logged into the <a href="/panel/org/">organization account</a> for <?JS= await unM.getDisplay(euid) ?>.</p>
@@ -136,8 +136,6 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
     //--></script>
 
     <?JS
-    if (accountCredits.credits) { ?><p><?JS= credits.creditsMessage(accountCredits) ?></p><?JS }
-
     if (warning) {
         ?><div style="background-color: #933; color: #fff; text-align: center; border: 2px solid #fff; border-radius: 0.5em; padding: 0.5em; margin: 1em;"><?JS= warning ?></div><?JS
     }

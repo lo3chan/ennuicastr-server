@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Ennuicastr (Testing)</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="fa/css/all.min.css" rel="stylesheet" />
+        <link href="ennuicastr2.css" rel="stylesheet" />
+        <script type="text/javascript" src="protocol.js"></script>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script type="text/javascript">(function() {
+            var scr = document.createElement("script");
+            scr.src = "ennuicastr-test.js?v=" + Math.random() + Math.random() + Math.random();
+            document.body.appendChild(scr);
+        })();</script>
+    </body>
+</html>

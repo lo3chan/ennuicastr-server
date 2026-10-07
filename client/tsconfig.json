@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "lib": ["es2021", "dom"],
+        "target": "es2017",
+        "resolveJsonModule": true,
+        "moduleResolution": "bundler",
+        "allowSyntheticDefaultImports": true
+    }
+}

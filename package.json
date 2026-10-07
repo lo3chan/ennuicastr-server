@@ -1,12 +1,12 @@
 {
-  "name": "ennuicastr-server",
-  "version": "0.0.1",
-  "description": "",
+  "name": "beacon-studio-server",
+  "version": "1.0.0",
+  "description": "Private Self-Hosted Double-Ender Broadcast Studio Server",
   "main": "config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Yahweasel",
+  "author": "Beacon Studio",
   "license": "ISC",
   "dependencies": {
     "@badgateway/oauth2-client": "^2.3.0",
@@ -21,9 +21,9 @@
     "nodejs-server-pages": "^1.2.1",
     "pauseable": "^0.3.2",
     "rtennui-server": "^0.8.0",
-    "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/master",
+    "sqlite3": "^5.1.7",
     "tmp-promise": "^3.0.2",
-    "typescript": "^4.2.4",
-    "ws": "^7.2.1"
+    "typescript": "^5.2.0",
+    "ws": "^7.5.9"
   }
 }

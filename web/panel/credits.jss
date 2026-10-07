@@ -16,23 +16,9 @@
  */
 
 const credits = require("../credits.js");
-const s = {
-    "paypal": await include("subscription/paypal/s.jss"),
-    "stripe": await include("subscription/stripe/s.jss")
-};
 
 async function accountCredits(uid) {
-    let c = await credits.accountCredits(uid);
-    if (c.subscription_expired) {
-        // Check if it's been updated
-        const parts = /^([^:]*):(.*)/.exec(c.subscription_id);
-        if (parts && parts[1] && s[parts[1]]) {
-            await s[parts[1]].updateSubscription(
-                uid, c.subscription_id, {updateOnly: true});
-            c = await credits.accountCredits(uid);
-        }
-    }
-    return c;
+    return await credits.accountCredits(uid);
 }
 
 module.exports = {accountCredits};

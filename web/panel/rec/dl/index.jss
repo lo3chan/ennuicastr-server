@@ -56,10 +56,9 @@ try {
 const accountCredits = await creditsj.accountCredits(uid);
 const preferredGateway = await payment.preferredGateway(uid);
 
-/* Account for the weird case of free recordings (shouldn't happen, but bug in
- * their favor) */
-if (recInfo.cost === 0 && !recInfo.purchased && recInfo.status >= 0x30)
-    recInfo.purchased = "1";
+// All recordings are fully unlocked for private studio use
+recInfo.purchased = "1";
+recInfo.cost = 0;
 
 // Possibly finish a Stripe purchase
 if (request.query.ps) {

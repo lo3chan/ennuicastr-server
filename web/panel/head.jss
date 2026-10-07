@@ -31,41 +31,12 @@ await include("../head.jss", config);
 
 <script src="<?JS= econfig.client ?>hotkeys.min.js" async defer></script>
 
-<?JS if (config.paypal) { ?>
-<script type="text/javascript">
-PayPalLoader = (function() {
-    var l = {};
-    var scr = document.createElement("script");
-    scr.async = true;
-    scr.defer = true;
-    scr.src = "https://www.paypal.com/sdk/js?client-id=<?JS= econfig.paypal.clientId + (config.paypalArgs || "") ?>";
-    l.loaded = false;
-    scr.addEventListener("load", function() {
-        l.loaded = true;
-    });
-
-    l.load = function() {
-        return new Promise(function(resolve) {
-            if (l.loaded) {
-                resolve();
-            } else {
-                scr.addEventListener("load", resolve);
-            }
-        });
-    };
-
-    document.body.appendChild(scr);
-    return l;
-})();
-</script>
-<?JS } ?>
-
 <header id="banner" class="small">
     <p><?JS
         if (config.title)
-            write(`<a href="/panel/">Ennuicastr</a>${org} → ${config.title}`);
+            write(`<a href="/panel/">Studio</a>${org} → ${config.title}`);
         else
-            write(`Ennuicastr${org}`);
+            write(`Studio${org}`);
     ?>
     <a href="#" style="float: right; margin-right: 1em" id="theme-b"><i class="bx bxs-sun"></i></a>
     </p>

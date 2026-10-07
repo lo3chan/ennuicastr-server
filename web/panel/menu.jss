@@ -79,7 +79,6 @@ if (config.all && config.username)
 b("/panel/rec/", "s-microphone", "Recordings", "recordings");
 if (showSharing)
     b("/panel/share/", "s-share", "Sharing", "sharing");
-b("/panel/subscription/", "s-calendar", "Subscription", "subscription");
 if (config.all || showOrg)
     b("/panel/org/", "s-buildings", "Organizations", "organizations");
 b("/panel/sounds/", "s-music", "Soundboard", "sounds");

@@ -1,0 +1,237 @@
+PRAGMA journal_mode=WAL;
+
+CREATE TABLE IF NOT EXISTS users (
+    uid TEXT UNIQUE,
+    /* login should be of the form service_provider:key, such as paypal:24601 */
+    login TEXT UNIQUE
+);
+
+CREATE INDEX IF NOT EXISTS users_login ON users (login);
+
+CREATE TABLE IF NOT EXISTS emails (
+    uid TEXT UNIQUE,
+    email TEXT
+);
+
+CREATE INDEX IF NOT EXISTS emails_uid ON emails (uid);
+
+CREATE TABLE IF NOT EXISTS names (
+    uid TEXT UNIQUE,
+    name TEXT
+);
+
+CREATE INDEX IF NOT EXISTS names_uid ON names (uid);
+
+CREATE TABLE IF NOT EXISTS usernames (
+    uid TEXT UNIQUE,
+    username TEXT
+);
+
+CREATE INDEX IF NOT EXISTS usernames_uid ON usernames (uid);
+
+/* Sharing of organizational accounts */
+CREATE TABLE IF NOT EXISTS user_share (
+    uid_shared TEXT,
+    uid_target TEXT,
+    /*
+     * 1: Member
+     * 2: Admin
+     * 3: Owner
+     */
+    level NUMBER
+);
+
+CREATE INDEX IF NOT EXISTS user_share_uid_shared ON user_share (uid_shared);
+CREATE INDEX IF NOT EXISTS user_share_uid_target ON user_share (uid_target);
+
+/* Keys to share organizations */
+CREATE TABLE IF NOT EXISTS user_share_key (
+    key PRIMARY KEY,
+    uid_shared TEXT,
+    expiry TEXT
+);
+
+CREATE INDEX IF NOT EXISTS user_share_key_uid_shared ON user_share_key (uid_shared);
+CREATE INDEX IF NOT EXISTS user_share_key_expiry ON user_share_key (expiry);
+
+/* One-time keys */
+CREATE TABLE IF NOT EXISTS otk (
+    uid TEXT PRIMARY KEY,
+    otk TEXT UNIQUE,
+    expiry TEXT
+);
+
+CREATE INDEX IF NOT EXISTS otk_otk ON otk (otk);
+
+CREATE TABLE IF NOT EXISTS credits (
+    uid TEXT PRIMARY KEY,
+    /* How many credits the user currently has remaining */
+    credits BIGINT,
+    /* How many credits the user has ever purchased */
+    purchased BIGINT,
+    /* Subscription level */
+    subscription INTEGER,
+    /* When does the subscription expire? Note that you must check *both*, as
+     * expired subscriptions are left in the DB! */
+    subscription_expiry TEXT,
+    /* What is the ID for the subscription, prefixed with the service, e.g.
+     * paypal:I-... */
+    subscription_id TEXT
+);
+
+/* Preferred payment gateway per account */
+CREATE TABLE IF NOT EXISTS preferred_payment_gateways (
+    uid TEXT PRIMARY KEY,
+    gateway TEXT
+);
+
+/* Recordings that are either active or at least not expired */
+CREATE TABLE IF NOT EXISTS recordings (
+    uid TEXT,
+    /* recording ID */
+    rid INTEGER PRIMARY KEY,
+    /* TCP port */
+    port INTEGER,
+    /* Recording name (user set) */
+    name TEXT,
+    /* Recording format (user set, just a default) */
+    format TEXT,
+    /* Continuous mode? (user set, just a default) */
+    continuous BOOLEAN,
+    /* RTC mode? */
+    rtc BOOLEAN,
+    /* Recording-only mode? i.e., mute output by default */
+    recordOnly BOOLEAN,
+    /* Video recording by default? */
+    videoRec BOOLEAN,
+    /* Transcription? */
+    transcription BOOLEAN,
+    /* Key required to join the recording */
+    key INTEGER,
+    /* Key required to join as master */
+    master INTEGER,
+    /* Key to download with Ennuizel (websocket) */
+    wskey INTEGER,
+    /* Current recording status */
+    status INTEGER,
+    /* When the recording was initialized */
+    init TEXT,
+    /* When the recording was started */
+    start TEXT,
+    /* And finished (or NULL if ongoing, but a crash could cause this to be
+     * incomplete) */
+    end TEXT,
+    /* The expiry (deletion time) */
+    expiry TEXT,
+    /* The number of users recorded */
+    tracks INTEGER,
+    /* The number of credits that this recording will/did cost to purchase */
+    cost INTEGER,
+    /* When it was purchased, if it's been purchased, or an empty string otherwise */
+    purchased TEXT,
+    /* Extra, recording-specific data in JSON format */
+    extra TEXT
+);
+
+CREATE INDEX IF NOT EXISTS recordings_uid ON recordings (uid);
+CREATE INDEX IF NOT EXISTS recordings_expiry ON recordings (expiry);
+
+/* Former recordings (expired) */
+CREATE TABLE IF NOT EXISTS old_recordings (
+    uid TEXT,
+    rid INTEGER,
+    name TEXT,
+    init TEXT,
+    start TEXT,
+    end TEXT,
+    expiry TEXT,
+    tracks INTEGER,
+    cost INTEGER,
+    purchased TEXT
+);
+
+CREATE INDEX IF NOT EXISTS old_recordings_uid_rid_expiry ON old_recordings (uid, rid, expiry);
+
+/* "Share" links between UIDs and recordings. Obviously anyone can access a
+ * recording they own, but you can also share recordings with this */
+CREATE TABLE IF NOT EXISTS recording_share (
+    uid_from TEXT,
+    uid_to TEXT,
+    rid INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS recording_share_uid_from ON recording_share (uid_from);
+CREATE INDEX IF NOT EXISTS recording_share_uid_to ON recording_share (uid_to);
+CREATE INDEX IF NOT EXISTS recording_share_rid ON recording_share (rid);
+
+/* Default choices for recordings */
+CREATE TABLE IF NOT EXISTS defaults (
+    uid TEXT UNIQUE,
+    /* Recording name */
+    name TEXT,
+    format TEXT,
+    continuous BOOLEAN,
+    rtc BOOLEAN,
+    recordOnly BOOLEAN,
+    videoRec BOOLEAN,
+    transcription BOOLEAN,
+    universal_monitor BOOLEAN,
+    extra TEXT
+);
+
+CREATE INDEX IF NOT EXISTS defaults_uid ON defaults (uid);
+
+/* Rooms (called "lobbies" internally so that they don't abbreviate to 'r') */
+CREATE TABLE IF NOT EXISTS lobbies2 (
+    uid TEXT,
+    /* The ID of this lobby */
+    lid INTEGER PRIMARY KEY,
+    /* Just a display name */
+    name TEXT,
+    /* Room key */
+    key INTEGER,
+    /* Room master key */
+    master INTEGER,
+    /* Room configuration (JSON object) */
+    config TEXT,
+    /* The most recently associated recording */
+    rid INTEGER,
+    /* A lock used while creating recordings to make sure multiple recordings
+     * aren't created simultaneously. This is needed because the actual
+     * recording is created in a separate process, so we can't have a simple
+     * SQL transaction to do both. */
+    lock TEXT
+);
+
+CREATE INDEX IF NOT EXISTS lobbies2_uid ON lobbies2 (uid);
+
+/* Room sharing */
+CREATE TABLE IF NOT EXISTS lobby_share (
+    uid_from TEXT,
+    uid_to TEXT,
+    lid INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS lobby_share_uid_from ON lobby_share (uid_from);
+CREATE INDEX IF NOT EXISTS lobby_share_uid_to ON lobby_share (uid_to);
+CREATE INDEX IF NOT EXISTS lobby_share_lid ON lobby_share (lid);
+
+/* Soundboard */
+CREATE TABLE IF NOT EXISTS sounds (
+    uid TEXT,
+    /* An ID for this sound */
+    sid TEXT PRIMARY KEY,
+    /* Just a display name */
+    name TEXT,
+    /* The duration */
+    duration REAL
+);
+
+CREATE INDEX IF NOT EXISTS sounds_uid ON sounds (uid);
+
+/* Stripe-specific: The log of all successful checkouts, since we don't have a
+ * way of lock-and-key finalizing a checkout ourselves. */
+CREATE TABLE IF NOT EXISTS stripe_checkouts (
+    uid TEXT,
+    checkout_id TEXT PRIMARY KEY
+);

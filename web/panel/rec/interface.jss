@@ -130,11 +130,9 @@ const defaults = await (async function() {
 
         l("videoRec", "Record video", true);
         chk("videoRec", "v");
-        alt("videoRec", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Ennuicastr recording application. Video recording is free.");
+        alt("videoRec", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Studio recording application.");
 
-        const showQual = (accountCredits.subscription >= 2 ||
-                          defaults.format === "flac" ||
-                          defaults.continuous);
+        const showQual = true;
         const showAdvanced = (defaults.jitsiAudio ||
                               defaults.jitsiVideo ||
                               !defaults.rtc ||
@@ -153,17 +151,13 @@ const defaults = await (async function() {
         <div id="quality"<?JS= showQual ? "" : ' style="display: none"' ?>>
         <?JS
 
-        let priceAdvice = " ($2/hr)";
-        if (accountCredits.subscription >= 2)
-            priceAdvice = "";
-
         l("format", "Recording format", true);
-        sel("format", "f", [["opus", "High quality (Opus)"], ["flac", "Ultra quality" + priceAdvice + " (FLAC)"]]);
-        alt("format", "Format that guests will use to record locally. Opus offers high—but not lossless—quality. Lossless FLAC is available, but costs extra. You may download in any format regardless of what format you record in.");
+        sel("format", "f", [["flac", "Ultra quality (Lossless FLAC)"], ["opus", "High quality (Opus)"]]);
+        alt("format", "Format that guests will use to record locally. Lossless FLAC captures bit-perfect studio master audio. Opus offers high-efficiency compressed audio.");
 
-        l("continuous", "Continuous" + priceAdvice, true);
+        l("continuous", "Continuous recording", true);
         chk("continuous", "c");
-        alt("continuous", "By default, Ennuicastr is only recording when you speak. This saves on recording space, but can also save on editing time. However, to do this, it uses a technique called voice activity detection (VAD), and VAD is not always perfect. It is possible to miss things. Check this to disable the VAD, and thus get a continuous and complete recording, but at an extra cost.");
+        alt("continuous", "By default, the recorder uses voice activity detection (VAD) to conserve space. Check this to disable VAD and record a continuous, gap-free master track.");
 
         ?></div><br/><?JS
 

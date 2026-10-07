@@ -21,9 +21,9 @@ if (!("menu" in config)) config.menu = "panel/menu.jss";
 if (!("minimenu" in config)) config.minimenu = false;
 const title = (function() {
     if (config.title)
-        return config.title + " — Ennuicastr";
+        return config.title + " — Studio";
     else
-        return "Ennuicastr";
+        return "Studio";
 })();
 
 // Look for theme cookie

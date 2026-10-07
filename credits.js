@@ -115,35 +115,18 @@ function centsToCreditsClient(v) {
  * at regular quality that it buys.
  */
 function creditsToHM(credits) {
-    var baseCost = config.recCost.basic.upton;
-    if (baseCost === 0) return "unlimited";
-    var minutes = Math.floor(credits / baseCost);
-    var hours = Math.floor(minutes / 60);
-    minutes = (minutes % 60) + "";
-    if (minutes.length < 2) minutes = "0" + minutes;
-    return hours + ":" + minutes;
+    return "unlimited";
 }
 
 /**
  * Credits info for this user
  */
 async function accountCredits(uid) {
-    var row = await db.getP("SELECT *, (datetime('now')>subscription_expiry) AS subscription_expired FROM credits WHERE uid=@UID;", {
-        "@UID": uid
-    });
-    if (row) {
-        if (row.subscription_expired) {
-            if (row.subscription !== 0)
-                row.subscription = 0;
-            else
-                row.subscription_expired = false;
-        }
-        return row;
-    }
     return {
-        credits: 0,
-        purchased: 0,
-        subscription: 0,
+        credits: 999999999,
+        purchased: 1,
+        subscription: 2,
+        subscription_expiry: "2099-12-31 23:59:59",
         subscription_expired: false
     };
 }
@@ -152,12 +135,7 @@ async function accountCredits(uid) {
  * Standard "you have n credits" message for clients
  */
 function creditsMessage(credits, fractional) {
-    var d;
-    if (fractional)
-        d = creditsToDollarsFractional(credits.credits);
-    else
-        d = creditsToDollars(credits.credits);
-    return "You have $" + d + " in credit (" + creditsToHM(credits.credits) + " recording time).";
+    return "Unlimited studio recording time.";
 }
 
 module.exports = {

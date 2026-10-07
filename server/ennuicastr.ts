@@ -1297,7 +1297,7 @@ async function recvRecInfo(r) {
                           "(@UID, @RID, @PORT, @NAME, @FORMAT," +
                           " @CONTINUOUS, @RTC, @RECORDONLY, @VIDEOREC," +
                           " @TRANSCRIPTION, @KEY, @MASTER, @WSKEY, @EXTRA," +
-                          " 0, datetime('now'), datetime('now', '1 month'), 0, 0, '');", {
+                          " 0, datetime('now'), datetime('now', '1 month'), 0, 0, '1');", {
                 "@UID": r.uid,
                 "@RID": rid,
                 "@PORT": port,
@@ -1318,12 +1318,8 @@ async function recvRecInfo(r) {
         } catch (ex) {}
     }
 
-    // Check the user's subscription status for pricing
-    var row = await db.getP("SELECT subscription FROM credits WHERE uid=@UID;", {"@UID": r.uid});
-    if (row)
-        r.subscription = row.subscription;
-    else
-        r.subscription = 0;
+    // Private studio mode: always grant full VIP subscription (unlimited FLAC + HQ)
+    r.subscription = 2;
 
     // Open all the output files
     function s(footer) {
