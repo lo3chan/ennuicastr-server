@@ -53,7 +53,7 @@ all: $(addprefix dist/,$(OUT)) $(addprefix dist/,$(LIBS)) $(DATA)
 
 dist/ecloader.js: src/loader.ts node_modules/.bin/tsc
 	mkdir -p dist
-	./node_modules/.bin/tsc --lib es2015,dom $< --outFile $@
+	./node_modules/.bin/tsc --skipLibCheck --lib es2015,dom $< --outFile $@
 
 dist/ecloader.min.js: dist/ecloader.js node_modules/.bin/tsc
 	./node_modules/.bin/terser < $< > $@
