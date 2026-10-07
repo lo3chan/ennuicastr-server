@@ -114,6 +114,11 @@ server {
     # Basic limits
     client_max_body_size 1024M;
 
+    include /etc/nginx/mime.types;
+    types {
+        application/wasm wasm;
+    }
+
     # SharedArrayBuffer headers needed globally or on paths
     add_header 'Cross-Origin-Opener-Policy' 'same-origin';
     add_header 'Cross-Origin-Embedder-Policy' 'require-corp';

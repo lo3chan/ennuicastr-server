@@ -72,7 +72,9 @@ RUN cd libav && \
     cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.js libav-5.4.6.1.1-ennuicastr.js && \
     cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.wasm.js libav-5.4.6.1.1-ennuicastr.wasm.js && \
     cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.wasm.wasm libav-5.4.6.1.1-ennuicastr.wasm.wasm && \
-    cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.asm.js libav-5.4.6.1.1-ennuicastr.asm.js || true
+    cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.asm.js libav-5.4.6.1.1-ennuicastr.asm.js || true && \
+    cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.wasm.js . && \
+    cp libav.js-5.4.6.1.1/dist/libav-5.4.6.1.1-default.wasm.wasm .
 
 # Build the client
 RUN npm install

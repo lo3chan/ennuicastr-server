@@ -771,20 +771,13 @@ function loadInterfaceSounds() {
     let chimeDown = gebi<HTMLAudioElement>("ec3-chime-down-snd");
     if (!chimeUp) {
         chimeUp = dce("audio");
-        chimeUp.src = createChimeDataUri(true);
-    } else {
-        chimeUp.onerror = () => {
-            chimeUp.src = createChimeDataUri(true);
-        };
     }
+    chimeUp.src = createChimeDataUri(true);
+
     if (!chimeDown) {
         chimeDown = dce("audio");
-        chimeDown.src = createChimeDataUri(false);
-    } else {
-        chimeDown.onerror = () => {
-            chimeDown.src = createChimeDataUri(false);
-        };
     }
+    chimeDown.src = createChimeDataUri(false);
     ui.sounds = {
         chimeUp,
         chimeDown,
