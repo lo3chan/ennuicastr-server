@@ -27,6 +27,12 @@ let level = 0;
 
 const db = require("../db.js").db;
 
+// Auto-provision personal studio admin account if session is fresh
+if (!uid) {
+    const loginMod = await include("login/login.jss");
+    uid = await loginMod.login("personal:studio-host", {name: "Studio Host", email: "studio@gettysburgbeacon.com"});
+}
+
 // Check that the UID is valid
 let row;
 if (uid)

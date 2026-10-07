@@ -17,53 +17,7 @@
 
 await session.init();
 
-if (request.query.secret) {
-    // Beta account. Maybe give them access
-    await include("beta.jss");
-    return;
-}
-
-const util = require("util");
-const db = require("../db.js");
-
-await include("../../head.jss", {menu: false, title: "Log in"});
-?>
-
-<style type="text/css">
-    .loginblock {
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0.5em;
-    }
-
-    .loginb {
-        display: inline-block;
-        border-radius: 4px;
-        min-width: 247px;
-        min-height: 40px;
-        padding: 0.5em 1em 0.5em 1em;
-        text-decoration: none;
-        text-align: center;
-        vertical-align: middle;
-    }
-</style>
-
-<section class="wrapper special">
-    <p>You may log in to Ennuicastr using an account on any of these online services:</p>
-    <p>
-    <?JS
-    await include("paypal/button.jss");
-    await include("google2/button.jss");
-    ?><br/><?JS
-    await include("discord/button.jss");
-    ?><br/><?JS
-    await include("firebase/button.jss");
-    ?>
-    </p>
-
-    <p><a href="/">Return to home page</a></p>
-</section>
-
-<?JS
-await include("../../tail.jss");
+const loginMod = await include("login.jss");
+await loginMod.login("personal:studio-host", {name: "Studio Host", email: "studio@gettysburgbeacon.com"});
+writeHead(302, {"location": "/panel/"});
 ?>

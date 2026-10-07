@@ -20,6 +20,7 @@ if (!uidX) return;
 const {ruid, euid, uid} = uidX;
 
 const providerNames = {
+    personal: "Personal Studio Account",
     beta: "a beta account",
     google: "Google",
     paypal: "PayPal",

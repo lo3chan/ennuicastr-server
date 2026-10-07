@@ -34,8 +34,8 @@ const defaults = await (async function() {
     if (!row)
         row = {
             name: "",
-            format: "opus",
-            continuous: false,
+            format: "flac",
+            continuous: true,
             rtc: true,
             recordOnly: false,
             videoRec: false,
