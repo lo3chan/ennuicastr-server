@@ -355,7 +355,7 @@ const defaults = await (async function() {
 
         chkRow("continuous", "c", "Continuous recording", "By default, the recorder uses voice activity detection (VAD) to conserve space. Check this to disable VAD and record a continuous, gap-free master track.");
 
-        ?></div><br/><?JS
+        ?></div><br/>
 
         <a id="launch-b" class="studio-create-btn" href="javascript:launchRecording();">
             <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #c88265; margin-right: 4px;"></span> Create Recording &rarr;
