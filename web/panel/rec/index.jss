@@ -103,17 +103,6 @@ function joinRecording(url) {
     window.open(url, "", "width=800,height=600,menubar=0,toolbar=0,location=0,personalbar=0,status=0");
 }
 
-function toggleMore(rec) {
-    var el = document.getElementById("more-" + rec);
-    if (el.style.height === "auto") {
-        el.style.height = "0px";
-        el.style.margin = "";
-    } else {
-        el.style.height = "auto";
-        el.style.margin = "1em 0";
-    }
-}
-
 function localDate(date) {
     try {
         var d = new Date(date.replace(" ", "T") + "Z");
@@ -281,38 +270,8 @@ for (let lobby of lobbies) {
                 });
             ?></td>
             <td>-</td>
-            <td>
-                <button
-                    class="round"
-                    onclick='toggleMore("l-<?JS= lobby.lid.toString(36) ?>");'
-                    aria-label="More options">
-                <i class="bx bx-dots-horizontal-rounded"></i></button>
-                <div
-                    id="more-l-<?JS= lobby.lid.toString(36) ?>"
-                    style="height: 0px; overflow: clip;"><?JS
-
-                    // Deleting and sharing are only for the owner
-                    if (lobby.uid === uid) {
-                        ?>
-                        <a href="delete-room/?i=<?JS= lobby.lid.toString(36) ?>" class="button fit"><i class="bx bxs-trash"></i> Delete</a>
-                        <?JS
-
-                        // Sharing requires admin
-                        if (uidX.level >= 2) {
-                        ?>
-                        <a href="share-room/?i=<?JS= lobby.lid.toString(36) ?>" class="button fit"><i class="bx bxs-share"></i> Share</a>
-                        <?JS
-                        }
-
-                    } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
-                        ?>
-                        <a href="share-room/?i=<?JS= lobby.lid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
-                        <?JS
-
-                    }
-                ?></div>
-
+            <td style="text-align: right;">
+                <a href="delete-room/?i=<?JS= lobby.lid.toString(36) ?>" class="button" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);"><i class="bx bxs-trash"></i> Delete</a>
             </td>
         </tr>
 <?JS
@@ -377,47 +336,8 @@ for (let row of recs) {
             <td><?JS
                 ?><a href="dl/?i=<?JS= row.rid.toString(36) ?>" class="button"><i class="bx bxs-download"></i> Download</a><?JS
             ?></td>
-            <td>
-                <button
-                    class="round"
-                    onclick='toggleMore("<?JS= row.rid.toString(36) ?>");'
-                    aria-label="More options">
-                <i class="bx bx-dots-horizontal-rounded"></i></button>
-                <div
-                    id="more-<?JS= row.rid.toString(36) ?>"
-                    style="height: 0px; overflow: clip;"><?JS
-
-                    // Deleting and sharing are only for the owner
-                    if (row.uid === uid) {
-                        if (row.status >= 0x30 /* finished */) {
-                            ?><a href="delete/?i=<?JS= row.rid.toString(36) ?>" class="button fit"><i class="bx bxs-trash"></i> Delete</a><?JS
-                        }
-
-                        if (uidX.level >= 2 /* admin */) {
-                        if (row.lid) {
-                            // This is a lobby, so share in either
-                            ?>
-                            <a href="share-room/?i=<?JS= row.lid.toString(36) ?>" class="button fit" style="height: auto"><i class="bx bxs-share"></i> Share<br/>(Room)</a>
-                            <?JS
-                        }
-
-                        ?>
-                        <a href="share/?i=<?JS= row.rid.toString(36) ?>" class="button fit" style="height: auto"><i class="bx bxs-share"></i> Share<?JS=
-                            row.lid ?
-                                "<br/>(Recording)" :
-                                ""
-                        ?></a>
-                        <?JS
-                        }
-
-                    } else if (uidX.level >= 2 /* admin */) {
-                        // Shared recipient can only unshare
-                        ?>
-                        <a href="share/?i=<?JS= row.rid.toString(36) ?>&un=1" class="button fit"><i class="bx bxs-minus-circle"></i> Unshare</a>
-                        <?JS
-
-                    }
-                ?></div>
+            <td style="text-align: right;">
+                <a href="delete/?i=<?JS= row.rid.toString(36) ?>" class="button" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);"><i class="bx bxs-trash"></i> Delete</a>
             </td>
         </tr>
 <?JS

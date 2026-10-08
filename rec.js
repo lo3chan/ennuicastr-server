@@ -258,7 +258,7 @@ async function del(rid, uid, opts) {
     opts = opts || {};
 
     const rec = await db.getP("SELECT * FROM recordings WHERE rid=@RID;", {"@RID": rid});
-    if (!rec || rec.uid !== uid || (rec.status < 0x30 && !opts.force)) {
+    if (!rec || rec.uid !== uid) {
         // Not allowed or not valid
         return false;
     }
