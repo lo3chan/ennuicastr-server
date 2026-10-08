@@ -263,38 +263,41 @@ const defaults = await (async function() {
         var els = [];
 
         function l(forr, txt, alt) {
-            write('<label for="r-' + forr + '">' + txt +
-                ':&nbsp;</label>' +
-                (alt?'<a href="javascript:toggle(\'' + forr + '\')" aria-label="Help on this feature"><i class="bx bxs-help-circle"></i></a>':''));
+            write('<div class="studio-form-label-row"><label class="studio-form-label" for="r-' + forr + '">' + txt + '</label>' +
+                (forr === "name" ? '<span class="studio-tag-required">Required</span>' : '') +
+                (alt ? '<a class="studio-help-link" href="javascript:toggle(\'' + forr + '\')" aria-label="Help on this feature"><i class="bx bx-help-circle"></i></a>' : '') +
+                '</div>');
         }
 
         function txt(id, q, limit) {
-            write('<input id="r-' + id + '" type="text"' +
+            write('<div class="studio-form-group">' +
+                  '<input id="r-' + id + '" type="text" style="width: 100%; box-sizing: border-box;"' +
                   (limit ? (' maxlength=' + limit) : '') +
-                  ' /><br/>' +
+                  ' />' +
                   '<script type="text/javascript"><!--\n' +
                   '$("#r-' + id + '")[0].value = ' + JSON.stringify(defaults[id]) + ';\n' +
-                  '//--></script>');
-            // We have to use a script to do this to avoid encoding <> etc for value=.
+                  '//--></script></div>');
             els.push([id, q]);
         }
 
         function sel(id, q, opts) {
-            write('<select id="r-' + id + '">');
+            write('<div class="studio-form-group">' +
+                  '<select id="r-' + id + '" style="width: 100%; box-sizing: border-box;">');
             opts.forEach((opt) => {
                 write('<option value="' + opt[0] + '"' +
                       (defaults[id]===opt[0]?' selected':'') +
                       '>' + opt[1] + '</option>');
             });
-            write('</select><br/>');
+            write('</select></div>');
 
             els.push([id, q]);
         }
 
         function chk(id, q) {
+            // Note: chk is called right after l() in the existing code, but let's make it render nicely
             write('<input id="r-' + id + '" type="checkbox"' +
                   (defaults[id]?' checked':'') +
-                  ' /><br/>');
+                  ' style="margin-left: 0.5em;" /><br/>');
 
             els.push([id, q]);
         }

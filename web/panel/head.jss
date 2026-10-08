@@ -30,14 +30,3 @@ await include("../head.jss", config);
 -->
 
 <script src="<?JS= econfig.client ?>hotkeys.min.js" async defer></script>
-
-<header id="banner" class="small">
-    <p><?JS
-        if (config.title)
-            write(`<a href="/panel/">Beacon Studio</a> → ${config.title}`);
-        else
-            write(`Beacon Studio`);
-    ?>
-    <a href="#" style="float: right; margin-right: 1em" id="theme-b"><i class="bx bxs-sun"></i></a>
-    </p>
-</header>
