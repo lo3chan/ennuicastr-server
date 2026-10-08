@@ -61,22 +61,204 @@ const defaults = await (async function() {
 <style type="text/css">
 .explainer {
     position: absolute;
-    z-index: 1;
-    max-width: 30em;
-    background-color: var(--bg-8);
-    color: var(--fg-6);
-    border: 2px solid black;
-    border-radius: 1em;
+    z-index: 10;
+    max-width: 28em;
+    background-color: var(--bg-14);
+    color: var(--fg-1);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
     padding: 1em;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.15);
+    font-size: 0.88em;
+    line-height: 1.5;
+}
+.studio-card-container {
+    max-width: 620px;
+    margin: 2em auto;
+    text-align: left;
+}
+.studio-card {
+    background: var(--bg-14);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.12);
+    padding: 2.2em;
+}
+.studio-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.8em;
+    padding-bottom: 1.2em;
+    border-bottom: 1px solid var(--border-color);
+}
+.studio-card-title {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--fg-1);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+.studio-card-subtitle {
+    font-size: 0.88em;
+    color: var(--fg-2);
+    margin-top: 0.25em;
+    margin-bottom: 0;
+}
+.studio-card-badge {
+    background: var(--bg-15);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-2);
+}
+.studio-form-group {
+    margin-bottom: 1.4em;
+}
+.studio-form-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4em;
+}
+.studio-form-label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: var(--fg-1);
+}
+.studio-tag-required {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72em;
+    background: var(--bg-15);
+    border: 1px solid var(--border-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--fg-2);
+}
+.studio-checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75em 1em;
+    background: var(--bg-15);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.75em;
+    cursor: pointer;
+}
+.studio-checkbox-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+}
+.studio-checkbox-left input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+.studio-checkbox-label {
+    font-weight: 500;
+    font-size: 0.92em;
+    color: var(--fg-1);
+    margin: 0;
+    cursor: pointer;
+}
+.studio-help-link {
+    color: var(--fg-4);
+    font-size: 1.1em;
+}
+.studio-help-link:hover {
+    color: var(--fg-1);
+}
+.studio-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75em 1em;
+    margin-top: 1.2em;
+    margin-bottom: 0.75em;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+}
+.studio-section-toggle:hover {
+    background: var(--bg-15);
+    color: var(--fg-1);
+}
+.studio-create-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: 1.5em;
+    padding: 0.9em 1.5em;
+    background-color: var(--bg-7) !important;
+    color: #ffffff !important;
+    border: 2px solid #23342d !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 1.05em !important;
+    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.25) !important;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+.studio-create-btn:hover {
+    background-color: #2e3e36 !important;
+}
+.studio-create-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.25) !important;
+}
+.studio-footer-shortcuts {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    margin-top: 1.5em;
+}
+.studio-shortcut-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    background: var(--bg-15);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: var(--fg-2);
+    text-decoration: none;
+}
+.studio-shortcut-pill:hover {
+    border-color: var(--fg-2);
+    color: var(--fg-1);
 }
 </style>
 
-<a id="create-recording-b" class="button" href="javascript:createRecording();">
-<i class="bx bx-play-circle"></i> Create a new recording
-</a>
+<div class="studio-card-container">
+    <div class="studio-card">
+        <div class="studio-card-header">
+            <div>
+                <h1 class="studio-card-title">Create a new recording</h1>
+                <p class="studio-card-subtitle">Configure session acoustics and ingestion parameters</p>
+            </div>
+            <div class="studio-card-badge">
+                <i class="bx bx-microphone" style="font-size: 1.25em;"></i>
+            </div>
+        </div>
 
-<div id="create-recording" class="wrapper style2 small" style="display: none">
-    <span style="display: inline-block; text-align: left">
+        <div id="create-recording" style="display: block;">
+            <span style="display: block; text-align: left">
         <?JS
         var els = [];
 
@@ -208,15 +390,25 @@ const defaults = await (async function() {
 
         </div><br/>
 
-        <a id="launch-b" class="button" href="javascript:launchRecording();" style="width: 100%">
-        <i class="bx bx-play-circle"></i> Create recording
+        <a id="launch-b" class="studio-create-btn" href="javascript:launchRecording();">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #c88265; margin-right: 4px;"></span> Create Recording &rarr;
         </a>
     </span>
 
     <p id="no-rtc-warn" class="warning" style="margin-top: 1em">WARNING: Ennuicastr will record, but you will not be able to actually hear any other users! Only disable voice chat if you're using some other program for voice communication.</p>
 </div>
+</div>
 
-<p></p>
+<div class="studio-footer-shortcuts">
+    <a href="/panel/rec/" class="studio-shortcut-pill">
+        <i class="bx bx-microphone"></i> Recordings
+    </a>
+    <span style="color: var(--fg-4);">&bull;</span>
+    <a href="/panel/sounds/" class="studio-shortcut-pill">
+        <i class="bx bx-music"></i> Soundboard
+    </a>
+</div>
+</div>
 
 <script type="text/javascript">
 var clientUrl, clientWindow;

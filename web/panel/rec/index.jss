@@ -71,16 +71,28 @@ function localDate(date) {
 }
 </script>
 
-<section>
-    <header class="align-center"><h2>Available recordings</h2></header>
+<div style="max-width: 1100px; margin: 1.5em auto; padding: 0 1.5em; text-align: left;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5em;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Available Recordings</h1>
+            <span style="font-family: 'Space Mono', monospace; font-size: 0.75em; background: var(--bg-14); border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 12px; color: var(--fg-2);">
+                <?JS= recs.length ?> Active
+            </span>
+        </div>
+        <div>
+            <a href="/panel/" class="studio-create-btn" style="margin: 0; padding: 0.6em 1.2em; font-size: 0.9em; border-radius: 6px;">
+                <i class="bx bx-plus"></i> Create a New Recording
+            </a>
+        </div>
+    </div>
 
     <div style="overflow: auto">
     <table id="available-recordings">
         <thead>
-        <tr><th>Name</th><th>Start date<br/>Expiry date</th><th>Status</th>
+        <tr><th>Name</th><th>Start Date / Expiry Date</th><th>Status</th>
         <th data-sort-method="none" class="no-sort">Join</th>
         <th data-sort-method="none" class="no-sort">Download</th>
-        <th data-sort-method="none" class="no-sort">More</th></tr>
+        <th data-sort-method="none" class="no-sort" style="text-align: right;">Actions</th></tr>
         </thead><tbody>
 <?JS
 
@@ -368,7 +380,7 @@ if (!unassoc && recs.length === 0) {
 ?>
     </tbody></table>
     </div>
-</section>
+</div>
 
 <script type="text/javascript" src="/assets/js/utils.js?v=2" async defer></script>
 <script type="text/javascript" src="/assets/js/tablesort.min.js"></script>

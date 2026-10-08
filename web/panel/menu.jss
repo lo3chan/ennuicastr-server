@@ -51,21 +51,10 @@ const showOrg = await (async function() {
     return !!share;
 })();
 
-if (!config.nomain) {
-?>
-<div id="menuhide">
-    <button onclick="toggleMenu();"><i class="bx bx-menu"></i></button>
-</div>
-
-<?JS
-}
-
-function b(target, icon, text, id) {
-    var cl = "button";
-    if (target === params.REQUEST_URI)
-        cl += " recurrent";
-    if (icon)
-        text = '<i class="bx bx' + icon + '"></i> ' + text;
+function b(target, text, id) {
+    var cl = "studio-nav-pill";
+    if (target === params.REQUEST_URI || (target === "/panel/" && (params.REQUEST_URI === "/panel" || params.REQUEST_URI === "/panel/index.jss")))
+        cl += " active";
     id = "ec-menu-" + id;
     if (config.nomain)
         id += "-mini";
@@ -73,9 +62,9 @@ function b(target, icon, text, id) {
 }
 
 if (!config.nomain)
-    b("/panel/", "s-video", "Studio Panel", "main");
-b("/panel/rec/", "s-microphone", "Recordings", "recordings");
-b("/panel/sounds/", "s-music", "Soundboard", "sounds");
+    b("/panel/", "Studio Panel", "main");
+b("/panel/rec/", "Recordings", "recordings");
+b("/panel/sounds/", "Soundboard", "sounds");
 if (config.all && config.username)
-    b("/panel/username/", "s-rename", "Host Name", "username");
+    b("/panel/username/", "Host Name", "username");
 ?>

@@ -48,7 +48,10 @@ if ("cookie" in request.headers) {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="/assets/css/main.css?v=h" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/assets/css/main.css?v=20261008" />
         <!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
 
         <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
@@ -61,45 +64,27 @@ if ("cookie" in request.headers) {
     <body>
 
 <?JS if (config.menu) { ?>
-        <div id="menushow">
-            <button onclick="toggleMenu();" aria-label="Menu"><i class="bx bx-menu"></i></button>
-        </div>
-        <script type="text/javascript"><!--
-            function toggleMenu() {
-                var m = $("#menu")[0];
-                var ms = $("#menushow")[0];
-                if (m.style.display === "none" || m.style.display === "") {
-                    m.style.display = "block";
-                    ms.style.display = "none";
-                } else {
-                    m.style.display = "none";
-                    ms.style.display = "block";
-                }
-            }
-
-            function windowResize() {
-                var mn = $("#main")[0];
-                var m = $("#menu")[0];
-                var ms = $("#menushow")[0];
-                if (window.innerWidth > 960) {
-                    mn.style.marginLeft = m.offsetWidth + "px";
-                    m.style.display = ms.style.display = "";
-                } else {
-                    mn.style.marginLeft = "";
-                }
-            }
-            window.addEventListener("resize", windowResize);
-            window.addEventListener("load", windowResize);
-        //--></script>
-
-        <div id="menu" role="navigation">
-            <?JS await include(config.menu); ?>
-        </div>
+        <header id="studio-topbar" role="banner">
+            <div class="studio-topbar-inner">
+                <div class="studio-brand">
+                    <a href="/panel/" class="studio-logo-link">
+                        <span class="studio-logo-mark"></span>
+                        <span class="studio-logo-text">BEACON STUDIO</span>
+                    </a>
+                </div>
+                <nav id="menu" role="navigation" class="studio-nav-pills">
+                    <?JS await include(config.menu); ?>
+                </nav>
+                <div class="studio-topbar-actions">
+                    <div class="studio-status-badge">
+                        <span class="studio-status-dot"></span>
+                        <span class="studio-status-text">STUDIO READY</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <div id="main">
-            <script type="text/javascript"><!--
-                windowResize();
-            --></script>
 <?JS } else if (config.minimenu) { ?>
         <div id="minimenu" role="navigation">
             <?JS await include(config.minimenu); ?>

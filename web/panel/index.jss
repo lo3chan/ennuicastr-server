@@ -126,14 +126,6 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
 
     await include("rec/interface.jss");
     ?>
-
-    <p style="line-height: 3.25; margin-top: 2em">
-    <?JS await include("menu.jss", {
-        nomain: true,
-        username: !!(await unM.getUsername(uid)),
-        all: true
-    }); ?>
-    </p>
 </section>
 
 <?JS await include("../tail.jss"); ?>

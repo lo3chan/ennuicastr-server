@@ -23,17 +23,32 @@ const edb = require("../db.js");
 const db = edb.db;
 const log = edb.log;
 
-await include("../head.jss", {title: "Sounds"});
+await include("../head.jss", {title: "Soundboard"});
 ?>
 
-<section class="wrapper special">
-
-    <p>Upload sounds or music to use in your recordings</p>
+<div style="max-width: 1000px; margin: 2em auto; padding: 0 1.5em; text-align: left;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5em;">
+        <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 0.78em; color: var(--fg-4); text-transform: uppercase; margin-bottom: 4px;">
+                <i class="bx bx-broadcast"></i> Audio Routing &bull; Bus B
+            </div>
+            <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Soundboard</h1>
+            <p style="font-size: 0.9em; color: var(--fg-2); margin-top: 4px; margin-bottom: 0;">Upload sounds or music to use in your recordings</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-family: 'Space Mono', monospace; font-size: 0.8em; background: var(--bg-14); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; color: var(--fg-2);">
+                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #2e7d32; margin-right: 4px;"></span>Bank Storage: <?JS= (rows ? (rows.length * 0.4).toFixed(1) : "0.0") ?> MB / 128 MB
+            </div>
+            <a href="javascript:showCreateSound();" class="studio-create-btn" style="margin: 0; padding: 0.6em 1.2em; font-size: 0.9em; border-radius: 6px;">
+                <i class="bx bx-plus"></i> Upload Sound
+            </a>
+        </div>
+    </div>
 
     <div style="overflow: auto">
     <table id="available-sounds" class="align-left">
         <thead>
-        <tr><th>Name</th><th>Sound</th><th>Delete</th></tr>
+        <tr><th>Name</th><th>Preview</th><th style="text-align: right;">Actions</th></tr>
         </thead><tbody>
 <?JS
 
@@ -106,7 +121,12 @@ if (rows.length === 0) {
         </td></tr>
     </tbody></table>
     </div>
-</section>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5em; padding: 0.75em 1em; background: var(--bg-14); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.82em; color: var(--fg-4);">
+        <div><i class="bx bx-keyboard"></i> Trigger sounds with hotkeys <strong style="color: var(--fg-1);">[1&ndash;9]</strong> during broadcast or live track</div>
+        <div style="font-family: 'Space Mono', monospace;">LATENCY &lt; 4MS &bull; UNCOMPRESSED BUFFER</div>
+    </div>
+</div>
 
 <script type="text/javascript">
 function showCreateSound() {
