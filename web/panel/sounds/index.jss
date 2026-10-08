@@ -37,10 +37,7 @@ await include("../head.jss", {title: "Soundboard"});
             <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Soundboard</h1>
             <p style="font-size: 0.9em; color: var(--fg-2); margin-top: 4px; margin-bottom: 0;">Upload sounds or music to use in your recordings</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-family: 'Space Mono', monospace; font-size: 0.8em; background: var(--bg-14); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; color: var(--fg-2);">
-                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #2e7d32; margin-right: 4px;"></span>Bank Storage: <?JS= (rows ? (rows.length * 0.4).toFixed(1) : "0.0") ?> MB / 128 MB
-            </div>
+        <div>
             <a href="javascript:showCreateSound();" class="studio-create-btn" style="margin: 0; padding: 0.6em 1.2em; font-size: 0.9em; border-radius: 6px;">
                 <i class="bx bx-plus"></i> Upload Sound
             </a>
