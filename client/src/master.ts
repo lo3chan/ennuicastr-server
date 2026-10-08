@@ -35,14 +35,6 @@ import { dce } from "./util";
 import * as nlf from "nonlocal-forage";
 import type * as localforageT from "localforage";
 
-declare let localforage: typeof localforageT;
-
-// Credit information
-const credits = {
-    creditCost: <{currency: number, credits: number}> null,
-    creditRate: <[number, number]> null
-};
-
 export const users = <{
     name: string,
     online: boolean,
@@ -180,26 +172,6 @@ export function createMasterInterface(): void {
         if (msg.byteLength >= p.length)
             val = msg.getUint32(p.value, true);
         switch (key) {
-            case prot.info.creditCost:
-            {
-                // Informing us of the cost of credits
-                const v2 = msg.getUint32(p.value + 4, true);
-                credits.creditCost = {
-                    currency: val,
-                    credits: v2
-                };
-                break;
-            }
-
-            case prot.info.creditRate:
-            {
-                // Informing us of the total cost and rate in credits
-                const v2 = msg.getUint32(p.value + 4, true);
-                credits.creditRate = [val, v2];
-                updateCreditCost();
-                break;
-            }
-
             case prot.info.sounds:
             {
                 // Soundboard items
@@ -335,8 +307,6 @@ function configureMasterInterface() {
             log.popStatus("host-buffering");
 
     }
-
-    updateCreditCost();
 }
 
 
@@ -437,35 +407,6 @@ function copyInvite() {
     log.pushStatus("invite", "Copied invite link", {
         timeout: 3000
     });
-}
-
-// Update the credit cost/rate meter
-function updateCreditCost() {
-    const masterUI = ui.ui.panels.host;
-    if (!masterUI || !masterUI.recordingCost || !masterUI.recordingRate)
-        return;
-    masterUI.recordingCost.value = "Unlimited";
-    masterUI.recordingRate.value = "Unlimited";
-}
-
-// Convert a number of credits to dollars and cents
-function creditsToDollars(c: number, creditCost: {currency: number, credits: number}) {
-    c = Math.ceil(c * creditCost.currency / creditCost.credits);
-
-    // Trivial cases
-    if (c === 0)
-        return "-";
-    else if (c < 100)
-        return c + "¢";
-
-    const d = Math.floor(c / 100);
-    let ce = (c % 100)+"";
-    if (ce === "0") {
-        return "$" + d;
-    } else {
-        if (ce.length === 1) ce = "0" + ce;
-        return "$" + d + "." + ce;
-    }
 }
 
 // Update the administrative interface for the master

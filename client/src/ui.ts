@@ -274,11 +274,7 @@ export const ui = {
             downloadVideoLive: HTMLInputElement,
 
             // Video storage status
-            videoStatus: HTMLElement,
-
-            // Recording cost/rate
-            recordingCost: HTMLInputElement,
-            recordingRate: HTMLInputElement
+            videoStatus: HTMLElement
         }> null,
 
         // User administration interface

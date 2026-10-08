@@ -454,9 +454,7 @@ function loadHostUI() {
         saveVideoInFSDHHider: gebi("ec3-video-rec-save-in-fsdh-hider"),
         saveVideoInFSDH: gebi("ec3-video-rec-save-in-fsdh-chk"),
         downloadVideoLive: gebi("ec3-video-rec-download-chk"),
-        videoStatus: gebi("ec3-video-rec-status"),
-        recordingCost: gebi("ec3-recording-cost-txt"),
-        recordingRate: gebi("ec3-recording-rate-txt")
+        videoStatus: gebi("ec3-video-rec-status")
     };
 }
 

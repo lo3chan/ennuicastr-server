@@ -314,10 +314,6 @@ for (let row of recs) {
                 }
             ?></td>
             <td><?JS
-                if (!row.purchased && row.status >= 0x30 /* finished */) {
-                ?><a href="dl/?i=<?JS= row.rid.toString(36) ?>&s=1" class="button"><i class="bx bxs-download"></i> Sample download</a><?JS
-                    write("<br/><br/>$" + credits.creditsToDollars(row.cost) + "<br/>");
-                }
                 ?><a href="dl/?i=<?JS= row.rid.toString(36) ?>" class="button"><i class="bx bxs-download"></i> Download</a><?JS
             ?></td>
             <td>
