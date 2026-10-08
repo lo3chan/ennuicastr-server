@@ -119,23 +119,6 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
 ?>
 
 <section class="wrapper special">
-    <p onclick="showUID();">You are logged into Studio using <?JS= loginProvider + asLine ?>.</p>
-
-    <?JS if (euid && euid !== ruid) { ?>
-    <p>You are currently logged into the <a href="/panel/org/">organization account</a> for <?JS= await unM.getDisplay(euid) ?>.</p>
-    <?JS } ?>
-
-    <p style="display: none" id="uidbox">
-        Your UID is <?JS= ruid ?>.
-        <?JS if (euid) { ?>
-        Your OID is <?JS= euid ?>.
-        <?JS } ?>
-    </p>
-
-    <script type="text/javascript"><!--
-    function showUID() { $("#uidbox")[0].style.display = ""; }
-    //--></script>
-
     <?JS
     if (warning) {
         ?><div style="background-color: #933; color: #fff; text-align: center; border: 2px solid #fff; border-radius: 0.5em; padding: 0.5em; margin: 1em;"><?JS= warning ?></div><?JS
@@ -144,17 +127,13 @@ if (uid === "8r0yhzg2bawwig7id2h6u0ip6wm2535us") {
     await include("rec/interface.jss");
     ?>
 
-    <p style="line-height: 3.25">
+    <p style="line-height: 3.25; margin-top: 2em">
     <?JS await include("menu.jss", {
         nomain: true,
         username: !!(await unM.getUsername(uid)),
         all: true
     }); ?>
     </p>
-
-    <p><a class="button" href="/panel/logout/?all"><i class="bx bx-log-out"></i> Log out on <em>all</em> devices</a></p>
-
-    <p><a class="button" href="/panel/delete/" style="font-size: 0.75em"><i class="bx bxs-trash"></i> Delete account</a></p>
 </section>
 
 <?JS await include("../tail.jss"); ?>

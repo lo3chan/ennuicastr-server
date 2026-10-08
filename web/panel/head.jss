@@ -34,9 +34,9 @@ await include("../head.jss", config);
 <header id="banner" class="small">
     <p><?JS
         if (config.title)
-            write(`<a href="/panel/">Studio</a>${org} → ${config.title}`);
+            write(`<a href="/panel/">Beacon Studio</a> → ${config.title}`);
         else
-            write(`Studio${org}`);
+            write(`Beacon Studio`);
     ?>
     <a href="#" style="float: right; margin-right: 1em" id="theme-b"><i class="bx bxs-sun"></i></a>
     </p>

@@ -73,16 +73,9 @@ function b(target, icon, text, id) {
 }
 
 if (!config.nomain)
-    b("/panel/", "s-user", "Main panel", "main");
-if (config.all && config.username)
-    b("/panel/username/", "s-rename", "Username", "username");
+    b("/panel/", "s-video", "Studio Panel", "main");
 b("/panel/rec/", "s-microphone", "Recordings", "recordings");
-if (showSharing)
-    b("/panel/share/", "s-share", "Sharing", "sharing");
-if (config.all || showOrg)
-    b("/panel/org/", "s-buildings", "Organizations", "organizations");
 b("/panel/sounds/", "s-music", "Soundboard", "sounds");
-if (!config.nomain)
-    b(econfig.site, "s-home", "Home page", "home");
-b("/panel/logout/", "-log-out", "Log out", "log-out");
+if (config.all && config.username)
+    b("/panel/username/", "s-rename", "Host Name", "username");
 ?>
