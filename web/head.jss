@@ -51,7 +51,7 @@ if ("cookie" in request.headers) {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/assets/css/main.css?v=20261008" />
+        <link rel="stylesheet" href="/assets/css/main.css?v=<?JS= Date.now() ?>" />
         <!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
 
         <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />

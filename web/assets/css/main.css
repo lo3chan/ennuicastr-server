@@ -386,7 +386,7 @@
         position: relative;
         padding-top: 1.5em;
         padding-bottom: 3em;
-        background-color: var(--bg-1);
+        background-color: var(--bg-page);
         min-height: calc(100vh - 120px);
     }
 
@@ -1923,16 +1923,19 @@
 /* Type */
 
     body {
-        background-color: var(--bg-1);
-        color: var(--fg-1);
+        background-color: var(--bg-page) !important;
+        color: var(--text-body) !important;
+        font-family: var(--font-sans) !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        -webkit-font-smoothing: antialiased;
     }
 
     body, input, select, textarea {
-        font-family: "Oxygen", Arial, Helvetica, sans-serif;
-        font-size: 14pt;
-        font-weight: 300;
-        letter-spacing: 0.09em;
-        line-height: 1.65em;
+        font-family: var(--font-sans);
+        font-size: 13px;
+        letter-spacing: normal;
+        line-height: 1.5;
     }
 
         @media screen and (max-width: 1680px) {
