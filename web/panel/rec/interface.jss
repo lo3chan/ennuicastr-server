@@ -337,12 +337,6 @@ const defaults = await (async function() {
         chkRow("videoRec", "v", "Record video", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Studio recording application.");
 
         const showQual = true;
-        const showAdvanced = (defaults.jitsiAudio ||
-                              defaults.jitsiVideo ||
-                              !defaults.rtc ||
-                              defaults.recordOnly ||
-                              defaults.transcription ||
-                              defaults.noDualEC);
 
         // Quality option button
         ?>
@@ -363,74 +357,16 @@ const defaults = await (async function() {
 
         ?></div><br/><?JS
 
-        // Advanced options button
-        ?>
-        <div style="text-align: center">
-        <a id="advanced-b" class="button<?JS= showAdvanced ? " disabled" : "" ?>" href="javascript:showAdvanced();">
-        <i class="bx bx-slider"></i> Advanced options
-        </a></div>
-
-        <div id="advanced"<?JS= showAdvanced ? "" : ' style="display: none"' ?>>
-        <?JS
-
-        chkRow("transcription", "t", "Live captions", "Enable live captions. Currently only English is supported.");
-
-        chkRow("jitsiVideo", "xjv", "Use Jitsi for video", "Disable Ennuicastr's native live video chat system, and use Jitsi Meet for live chat. Use this only if you're having technical issues with live chat. If you're having issues with both video and audio, you can enable Jitsi for audio after enabling Jitsi for video.");
-        ?>
-
-        <div id="jitsi-audio-hider" style="display: none">
-            <?JS
-            chkRow("jitsiAudio", "xja", "Use Jitsi for audio", "Use Jitsi Meet for both video and audio.");
-            ?>
-        </div>
-        <?JS
-
-        chkRow("noDualEC", "xndec", "Disable post hoc EC", "By default, Ennuicastr allows you to enable or disable (or both) echo cancellation when downloading, so that you can decide post hoc which sounds better. That is, Ennuicastr supports “post hoc echo cancellation”. However, this feature doubles the bandwidth requirement while recording. Disabling it will save bandwidth, but limit your audio versatility.");
-
-        chkRow("recordOnly", "x", "Mute live voice chat", "Ennuicastr's primary function is to record, but you probably want to <em>hear</em> who you're recording! If you're going to use some other software to actually chat with your guests, check this so that you don't hear them in both. This only <em>mutes</em> live voice chat by default, so that you can still use it for monitoring. To disable live voice chat entirely (and thus disable monitoring), disable WebRTC (the option will appear when you enable this).");
-        ?>
-
-        <div id="rtc-hider" style="display: none">
-            <?JS
-            chkRow("rtc", "r", "Enable WebRTC", "WebRTC is the technology used by Ennuicastr for live voice chat. Normally, even if you don't need live voice chat, WebRTC is still enabled so that you can use it to monitor the recording. If you really wish to disable WebRTC entirely, uncheck this. The only reason to do so is if it causes undue strain on your bandwidth.");
-            ?>
-        </div>
-
-        </div><br/>
-
         <a id="launch-b" class="studio-create-btn" href="javascript:launchRecording();">
             <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #c88265; margin-right: 4px;"></span> Create Recording &rarr;
         </a>
     </span>
-
-    <p id="no-rtc-warn" class="warning" style="margin-top: 1em">WARNING: Ennuicastr will record, but you will not be able to actually hear any other users! Only disable voice chat if you're using some other program for voice communication.</p>
 </div>
 </div>
 </div>
 
 <script type="text/javascript">
 var clientUrl, clientWindow;
-
-function updateJitsiVideo() {
-    var v = $("#r-jitsiVideo")[0].checked;
-    $("#jitsi-audio-hider")[0].style.display = v ? "" : "none";
-}
-
-$("#r-jitsiVideo")[0].onchange = updateJitsiVideo;
-updateJitsiVideo();
-
-function updateRecordOnly() {
-    var v = $("#r-recordOnly")[0].checked;
-    $("#rtc-hider")[0].style.display = v ? "" : "none";
-    if (!v)
-        $("#r-rtc")[0].checked = true;
-    $("#no-rtc-warn")[0].style.display =
-        (v ? "block" : "none");
-}
-
-$("#r-recordOnly")[0].onchange = updateRecordOnly;
-$("#r-rtc")[0].onchange = updateRecordOnly;
-updateRecordOnly();
 
 function createRecording() {
     $("#create-recording-b")[0].classList.add("disabled");
@@ -443,27 +379,20 @@ function showQuality() {
     $("#quality")[0].style.display = "block";
 }
 
-function showAdvanced() {
-    $("#advanced-b")[0].classList.add("disabled");
-    $("#advanced")[0].style.display = "block";
-}
-
 function launchRecording() {
     $("#launch-b")[0].classList.add("disabled");
     try {
         $("#quality-b")[0].classList.add("disabled");
-    } catch (ex) {}
-    try {
-        $("#advanced-b")[0].classList.add("disabled");
     } catch (ex) {}
 
     clientWindow = window.open("/panel/rec/loading.jss", "",
         "width=800,height=600,menubar=0,toolbar=0,location=0,personalbar=0,status=0");
 
     var els = <?JS= JSON.stringify(els) ?>;
-    var q = {};
+    var q = { r: 1 };
     els.forEach(function(el) {
         var h = $("#r-"+el[0])[0];
+        if (!h) return;
         if (h.type === "checkbox")
             q[el[1]] = (h.checked?1:0);
         else
