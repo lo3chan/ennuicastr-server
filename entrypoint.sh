@@ -4,7 +4,7 @@ set -e
 echo "Starting Ennuicastr..."
 
 # --- Defaults ---
-DOMAIN="${DOMAIN:-ennui.gettysburgbeacon.com}"
+DOMAIN="${DOMAIN:-studio.gettysburgbeacon.com}"
 SHORT_DOMAIN="${SHORT_DOMAIN:-$DOMAIN}"
 CLIENT_REPO_PATH="/app/ennuicastr"
 SERVER_REPO_PATH="/app/ennuicastr-server"
