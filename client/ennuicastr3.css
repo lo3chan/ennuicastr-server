@@ -1,54 +1,57 @@
 /* General */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
-/* Color scheme - Sahara / E-Ink Tactile Broadcast Palette */
+/* Color scheme - Diagnostics White & Graphite Grey Palette */
 :root {
-    --bg: #1c1e22;
-    --bg-t: rgba(28, 30, 34, 0);
-    --bg-panel: #23272d;
-    --bg-surface: #2a2e36;
-    --bg-button-bright: #353b45;
-    --bg-button-bright-hover: #404754;
-    --bg-button: #2a2e36;
-    --bg-button-hover: #353b45;
-    --bg-rec: #c88265;
-    --bg-rec-hover: #b47257;
-    --bg-rec-active: #943a28;
-    --bg-label: #23272d;
-    --bg-label-t: rgba(35, 39, 45, 0);
-    --bg-status: #f3ede1;
-    --bg-status-t: rgba(35, 39, 45, 0.95);
-    --bg-dim: #16181b;
-    --bg-dimmish: #3a404c;
-    --fg: #f5f0e6;
-    --fg-dim: #8c94a0;
-    --fg-dimmish: #b0b8c4;
-    --fg-dimmish-t: rgba(176, 184, 196, 0);
+    --bg: #0a0a0c;
+    --bg-t: rgba(10, 10, 12, 0);
+    --bg-panel: #121215;
+    --bg-surface: #18181c;
+    --bg-button-bright: #1e1e22;
+    --bg-button-bright-hover: #ffffff;
+    --bg-button: #18181c;
+    --bg-button-hover: #1e1e22;
+    --bg-rec: #7f1d1d;
+    --bg-rec-hover: #991b1b;
+    --bg-rec-active: #b91c1c;
+    --bg-label: #121215;
+    --bg-label-t: rgba(18, 18, 21, 0);
+    --bg-status: #121215;
+    --bg-status-t: rgba(18, 18, 21, 0.95);
+    --bg-dim: #0a0a0c;
+    --bg-dimmish: #18181c;
+    --fg: #ffffff;
+    --fg-dim: #8e8e93;
+    --fg-dimmish: #a1a1aa;
+    --fg-dimmish-t: rgba(161, 161, 170, 0);
     --fg-selected: #ffffff;
-    --fg-status: #16181b;
-    --border-color: #383f4b;
-    --accent-sage: #8da399;
-    --accent-clay: #c88265;
+    --fg-status: #ffffff;
+    --border-color: #333338;
+    --border-subtle: #222226;
+    --border-strong: #333338;
+    --border-highlight: #52525b;
+    --accent-sage: #ffffff;
+    --accent-clay: #e4e4e7;
 
-    --user-list-silent: #23272d;
-    --user-list-speaking: #8da399;
-    --user-list-conn-unknown: #23272d;
-    --user-list-conn-unreliable: #c88265;
-    --user-list-conn-semireliable: #d4a373;
-    --user-list-conn-reliable: #8da399;
-    --video-silent: #16181b;
-    --video-silent-sel: #2a2e36;
-    --video-speaking: #2d3b34;
-    --video-speaking-sel: #8da399;
+    --user-list-silent: #121215;
+    --user-list-speaking: #22c55e;
+    --user-list-conn-unknown: #18181c;
+    --user-list-conn-unreliable: #ef4444;
+    --user-list-conn-semireliable: #eab308;
+    --user-list-conn-reliable: #22c55e;
+    --video-silent: #0a0a0c;
+    --video-silent-sel: #18181c;
+    --video-speaking: #14532d;
+    --video-speaking-sel: #22c55e;
 
-    --wave-too-soft: #23272d;
-    --wave-too-loud: #c88265;
-    --nopeak-1: #2c2220;
-    --peak-1:   #8a4b38;
-    --nopeak-2: #2d2a20;
-    --peak-2:   #9c833d;
-    --nopeak-3: #1f2a24;
-    --peak-3:   #5b7e6d;
+    --wave-too-soft: #18181c;
+    --wave-too-loud: #ef4444;
+    --nopeak-1: #18181c;
+    --peak-1:   #3f3f46;
+    --nopeak-2: #27272a;
+    --peak-2:   #52525b;
+    --nopeak-3: #3f3f46;
+    --peak-3:   #71717a;
 
     --scale-main: 32px;
     --scale-main-2: 16px;
@@ -1044,7 +1047,7 @@ body {
     }
 }
 
-/* Studio Login & Reconnect Overlay (Sahara tactile aesthetic) */
+/* Studio Login & Reconnect Overlay (Diagnostics White & Graphite Aesthetic) */
 .studio-login-overlay {
     position: fixed;
     top: 0;
@@ -1054,19 +1057,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #16181b;
+    background-color: #0a0a0c;
     padding: 1.5rem;
     z-index: 10000;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     box-sizing: border-box;
 }
 
 .studio-login-card {
-    background-color: #23272d;
-    border: 1.5px solid #383f4b;
-    border-radius: 12px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-    max-width: 420px;
+    background-color: #121215;
+    border: 1px solid #333338;
+    border-radius: 2px;
+    box-shadow: none;
+    max-width: 440px;
     width: 100%;
     padding: 2.5rem 2rem;
     box-sizing: border-box;
@@ -1078,30 +1081,33 @@ body {
 }
 
 .studio-login-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    background-color: #c88265;
+    width: 48px;
+    height: 48px;
+    border-radius: 2px;
+    background-color: #1e1e22;
+    border: 1px solid #333338;
     color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 1.2rem;
-    box-shadow: 0 4px 12px rgba(200, 130, 101, 0.3);
+    box-shadow: none;
 }
 
 .studio-login-title {
-    font-size: 1.6rem;
+    font-size: 15px;
     font-weight: 700;
-    color: #f5f0e6;
+    color: #ffffff;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     margin: 0 0 0.4rem 0;
-    letter-spacing: -0.02em;
 }
 
 .studio-login-subtitle {
-    font-size: 0.9rem;
-    color: #8c94a0;
+    font-size: 12px;
+    color: #8e8e93;
     margin: 0;
     line-height: 1.4;
 }
@@ -1113,10 +1119,11 @@ body {
 
 .studio-input-label {
     display: block;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    color: #8c94a0;
-    letter-spacing: 0.06em;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #8e8e93;
+    letter-spacing: 0.04em;
     margin-bottom: 8px;
     text-transform: uppercase;
 }
@@ -1124,43 +1131,46 @@ body {
 .studio-login-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 12px 14px;
-    font-size: 1rem;
-    font-family: inherit;
-    border-radius: 8px;
-    border: 1.5px solid #383f4b;
-    background-color: #16181b;
-    color: #f5f0e6;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    border-radius: 2px;
+    border: 1px solid #333338;
+    background-color: #18181c;
+    color: #ffffff;
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.12s ease;
 }
 
 .studio-login-input:focus {
-    border-color: #c88265;
-    box-shadow: 0 0 0 3px rgba(200, 130, 101, 0.2);
+    border-color: #ffffff;
 }
 
 .studio-login-submit {
     width: 100%;
     box-sizing: border-box;
-    padding: 13px 20px;
-    font-size: 1rem;
+    padding: 10px 16px;
+    font-size: 11px;
     font-weight: 600;
-    font-family: inherit;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: #ffffff;
-    background-color: #c88265;
-    border: none;
-    border-radius: 8px;
+    background-color: #1e1e22;
+    border: 1px solid #333338;
+    border-radius: 2px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.15s ease, transform 0.05s ease;
+    box-shadow: none;
+    transition: all 0.12s ease;
 }
 
 .studio-login-submit:hover {
-    background-color: #b47257;
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
 }
 
 .studio-login-submit:active {
-    transform: translateY(1px);
+    transform: none;
 }
 

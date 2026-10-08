@@ -131,22 +131,24 @@ function localDate(date) {
 }
 </script>
 
-<div style="max-width: 1100px; margin: 1.5em auto; padding: 0 1.5em; text-align: left;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5em;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Available Recordings</h1>
-            <span style="font-family: 'Space Mono', monospace; font-size: 0.75em; background: var(--bg-14); border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 12px; color: var(--fg-2);">
-                <?JS= recs.length ?> Active
-            </span>
+<div class="layout" style="max-width: 1280px; margin: 0 auto; padding: 24px; text-align: left;">
+    <div class="section-label">01 // ACTIVE & ARCHIVED RECORDINGS</div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h1 class="brand-title" style="margin: 0;">Recordings Catalog</h1>
+                <span class="port-tag"><?JS= recs.length ?> SESSIONS</span>
+            </div>
+            <div class="brand-desc">Master multi-track recordings and ingestion rooms</div>
         </div>
         <div>
-            <a href="/panel/" class="studio-create-btn" style="margin: 0; padding: 0.6em 1.2em; font-size: 0.9em; border-radius: 6px;">
-                <i class="bx bx-plus"></i> Create a New Recording
+            <a href="/panel/" class="btn-link">
+                <i class="bx bx-plus"></i> New Recording
             </a>
         </div>
     </div>
 
-    <div style="overflow: auto">
+    <div class="table-wrap">
     <table id="available-recordings">
         <thead>
         <tr><th>Name</th><th>Start Date / Expiry Date</th><th>Status</th>
@@ -255,7 +257,7 @@ function joinButton(rec, opts) {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;"));
 
-    write(`<button onclick='joinRecording(${url});'>` +
+    write(`<button class="btn-link" onclick='joinRecording(${url});'>` +
           `<i class="bx bxs-door-open"></i> Join</button>`);
 }
 

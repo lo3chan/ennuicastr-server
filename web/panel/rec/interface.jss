@@ -63,215 +63,185 @@ const defaults = await (async function() {
     position: absolute;
     z-index: 10;
     max-width: 28em;
-    background-color: var(--bg-14);
-    color: var(--fg-1);
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1em;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.15);
-    font-size: 0.88em;
+    background-color: var(--bg-panel-alt);
+    color: var(--text-body);
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
     line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 .studio-card-container {
-    max-width: 620px;
-    margin: 2em auto;
+    max-width: 680px;
+    margin: 24px auto;
     text-align: left;
 }
 .studio-card {
-    background: var(--bg-14);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.12);
-    padding: 2.2em;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    padding: 24px;
+    box-shadow: none;
+}
+.studio-card:hover {
+    border-color: var(--border-highlight);
 }
 .studio-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.8em;
-    padding-bottom: 1.2em;
-    border-bottom: 1px solid var(--border-color);
+    align-items: baseline;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
 }
 .studio-card-title {
-    font-size: 1.6em;
+    font-size: 14px;
     font-weight: 700;
-    color: var(--fg-1);
+    color: var(--text-title);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     margin: 0;
-    letter-spacing: -0.02em;
 }
 .studio-card-subtitle {
-    font-size: 0.88em;
-    color: var(--fg-2);
-    margin-top: 0.25em;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    margin-top: 4px;
     margin-bottom: 0;
 }
-.studio-card-badge {
-    background: var(--bg-15);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--fg-2);
-}
 .studio-form-group {
-    margin-bottom: 1.4em;
+    margin-bottom: 14px;
 }
 .studio-form-label-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.4em;
+    margin-bottom: 6px;
 }
 .studio-form-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
     font-weight: 600;
-    font-size: 0.9em;
-    color: var(--fg-1);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
 }
 .studio-tag-required {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72em;
-    background: var(--bg-15);
-    border: 1px solid var(--border-color);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--fg-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-title);
+    background: #202024;
+    border: 1px solid #303036;
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 .studio-text-input, .studio-select-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.75em 1em;
-    background: var(--bg-15) !important;
-    border: 1.5px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    color: var(--fg-1) !important;
-    font-size: 0.95em !important;
-    font-family: inherit;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    padding: 8px 12px;
+    background: var(--bg-panel-alt) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 2px !important;
+    color: var(--text-title) !important;
+    font-size: 12px !important;
+    font-family: var(--font-mono) !important;
+    box-shadow: none !important;
+    transition: border-color 0.12s ease;
 }
 .studio-text-input:focus, .studio-select-input:focus {
     outline: none;
-    border-color: var(--accent-clay) !important;
-    box-shadow: 0 0 0 2px rgba(200, 130, 101, 0.2);
+    border-color: #ffffff !important;
+    box-shadow: none !important;
 }
 .studio-checkbox-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75em 1em;
-    background: var(--bg-15);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    margin-bottom: 0.75em;
+    padding: 8px 12px;
+    background: var(--bg-panel-alt);
+    border: 1px solid var(--border-subtle);
+    border-radius: 2px;
+    margin-bottom: 6px;
     cursor: pointer;
+    transition: border-color 0.12s ease, background 0.12s ease;
+}
+.studio-checkbox-row:hover {
+    border-color: var(--border-strong);
+    background: #202025;
 }
 .studio-checkbox-left {
     display: flex;
     align-items: center;
-    gap: 0.75em;
+    gap: 10px;
 }
 .studio-checkbox-left input[type="checkbox"] {
     margin: 0;
     cursor: pointer;
+    accent-color: #ffffff;
 }
 .studio-checkbox-label {
     font-weight: 500;
-    font-size: 0.92em;
-    color: var(--fg-1);
+    font-size: 12px;
+    color: var(--text-body);
+    font-family: var(--font-sans);
     margin: 0;
     cursor: pointer;
 }
 .studio-help-link {
-    color: var(--fg-4);
-    font-size: 1.1em;
+    color: var(--text-dim);
+    font-size: 13px;
 }
 .studio-help-link:hover {
-    color: var(--fg-1);
-}
-.studio-section-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.75em 1em;
-    margin-top: 1.2em;
-    margin-bottom: 0.75em;
-    cursor: pointer;
-    font-size: 0.85em;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--fg-2);
-}
-.studio-section-toggle:hover {
-    background: var(--bg-15);
-    color: var(--fg-1);
+    color: var(--text-title);
 }
 .studio-create-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5em;
+    gap: 8px;
     width: 100%;
-    margin-top: 1.5em;
-    padding: 0.9em 1.5em;
-    background-color: var(--bg-7) !important;
+    margin-top: 18px;
+    padding: 10px 16px;
+    background: #1e1e22 !important;
     color: #ffffff !important;
-    border: 2px solid #23342d !important;
-    border-radius: 8px !important;
-    font-weight: 700 !important;
-    font-size: 1.05em !important;
-    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 2px !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    box-shadow: none !important;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    transition: all 0.12s ease;
 }
 .studio-create-btn:hover {
-    background-color: #2e3e36 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
 }
 .studio-create-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.25) !important;
-}
-.studio-footer-shortcuts {
-    display: flex;
-    justify-content: center;
-    gap: 1em;
-    margin-top: 1.5em;
-}
-.studio-shortcut-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    background: var(--bg-15);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.85em;
-    font-weight: 500;
-    color: var(--fg-2);
-    text-decoration: none;
-}
-.studio-shortcut-pill:hover {
-    border-color: var(--fg-2);
-    color: var(--fg-1);
+    transform: none !important;
 }
 </style>
 
 <div class="studio-card-container">
+    <div class="section-label">01 // CREATE NEW RECORDING SESSION</div>
     <div class="studio-card">
         <div class="studio-card-header">
             <div>
                 <h1 class="studio-card-title">Create a new recording</h1>
                 <p class="studio-card-subtitle">Configure session acoustics and ingestion parameters</p>
             </div>
-            <div class="studio-card-badge">
-                <i class="bx bx-microphone" style="font-size: 1.25em;"></i>
+            <div>
+                <span class="port-tag">WEBRTC • 48KHZ</span>
             </div>
         </div>
 

@@ -31,20 +31,24 @@ var rows = await db.allP("SELECT * FROM sounds WHERE uid=@UID ORDER BY name ASC;
 await include("../head.jss", {title: "Soundboard"});
 ?>
 
-<div style="max-width: 1000px; margin: 2em auto; padding: 0 1.5em; text-align: left;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5em;">
+<div class="layout" style="max-width: 1280px; margin: 0 auto; padding: 24px; text-align: left;">
+    <div class="section-label">01 // SOUNDBOARD AUDIO ASSETS</div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
         <div>
-            <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Soundboard</h1>
-            <p style="font-size: 0.9em; color: var(--fg-2); margin-top: 4px; margin-bottom: 0;">Upload sounds or music to use in your recordings</p>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h1 class="brand-title" style="margin: 0;">Soundboard Library</h1>
+                <span class="port-tag"><?JS= rows.length ?> SOUNDS</span>
+            </div>
+            <div class="brand-desc">Upload sounds and audio cues to play live during session recordings</div>
         </div>
         <div>
-            <a href="javascript:showCreateSound();" class="studio-create-btn" style="margin: 0; padding: 0.6em 1.2em; font-size: 0.9em; border-radius: 6px;">
+            <a href="javascript:showCreateSound();" class="btn-link">
                 <i class="bx bx-plus"></i> Upload Sound
             </a>
         </div>
     </div>
 
-    <div style="overflow: auto">
+    <div class="table-wrap">
     <table id="available-sounds" class="align-left">
         <thead>
         <tr><th>Name</th><th>Preview</th><th style="text-align: right;">Actions</th></tr>
