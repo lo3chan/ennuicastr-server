@@ -484,10 +484,12 @@ button.streamer-interface {
     position: relative;
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
     border: 2px solid var(--border-color);
     background-color: var(--bg-dim);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ec3-video-container {
@@ -498,21 +500,24 @@ button.streamer-interface {
 
 .ec3-video-video, .ec3-video-standin {
     flex: auto;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .ec3-video .ec3-name-label {
     position: absolute;
-    left: 8px;
-    bottom: 8px;
-    background-color: rgba(22, 24, 27, 0.85);
+    left: 10px;
+    bottom: 10px;
+    background-color: rgba(22, 24, 27, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--fg);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.85em;
     font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .ec3-studio-admin-button, .ec3-studio-video-waveform {
@@ -1037,5 +1042,125 @@ body {
     #ec3-recording-info {
         min-width: 3.5em;
     }
+}
+
+/* Studio Login & Reconnect Overlay (Sahara tactile aesthetic) */
+.studio-login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #16181b;
+    padding: 1.5rem;
+    z-index: 10000;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-sizing: border-box;
+}
+
+.studio-login-card {
+    background-color: #23272d;
+    border: 1.5px solid #383f4b;
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    max-width: 420px;
+    width: 100%;
+    padding: 2.5rem 2rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.studio-login-header {
+    margin-bottom: 1.8rem;
+}
+
+.studio-login-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: #c88265;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 12px rgba(200, 130, 101, 0.3);
+}
+
+.studio-login-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f5f0e6;
+    margin: 0 0 0.4rem 0;
+    letter-spacing: -0.02em;
+}
+
+.studio-login-subtitle {
+    font-size: 0.9rem;
+    color: #8c94a0;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.studio-input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.studio-input-label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: #8c94a0;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.studio-login-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-family: inherit;
+    border-radius: 8px;
+    border: 1.5px solid #383f4b;
+    background-color: #16181b;
+    color: #f5f0e6;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.studio-login-input:focus {
+    border-color: #c88265;
+    box-shadow: 0 0 0 3px rgba(200, 130, 101, 0.2);
+}
+
+.studio-login-submit {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #ffffff;
+    background-color: #c88265;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.studio-login-submit:hover {
+    background-color: #b47257;
+}
+
+.studio-login-submit:active {
+    transform: translateY(1px);
 }
 

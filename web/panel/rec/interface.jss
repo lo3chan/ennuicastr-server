@@ -406,16 +406,6 @@ const defaults = await (async function() {
     <p id="no-rtc-warn" class="warning" style="margin-top: 1em">WARNING: Ennuicastr will record, but you will not be able to actually hear any other users! Only disable voice chat if you're using some other program for voice communication.</p>
 </div>
 </div>
-
-<div class="studio-footer-shortcuts">
-    <a href="/panel/rec/" class="studio-shortcut-pill">
-        <i class="bx bx-microphone"></i> Recordings
-    </a>
-    <span style="color: var(--fg-4);">&bull;</span>
-    <a href="/panel/sounds/" class="studio-shortcut-pill">
-        <i class="bx bx-music"></i> Soundboard
-    </a>
-</div>
 </div>
 
 <script type="text/javascript">

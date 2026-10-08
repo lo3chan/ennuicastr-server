@@ -1040,20 +1040,36 @@ export function videoAdd(idx: number, name: string): void {
     box.appendChild(waveformWrapper);
 }
 
+// Palette for circular initials avatars
+const AVATAR_PALETTE = [
+    "#c88265", // clay/terracotta
+    "#3f5e56", // sage/forest
+    "#4a6572", // slate blue
+    "#b87333", // warm copper/amber
+    "#535c91", // muted indigo
+    "#a26769", // dusty rose
+    "#6b705c", // cedar
+    "#465b66"  // deep slate
+];
+
 // Style a video element given a user's name
 function styleVideoEl(ctx: {video: HTMLElement, box: HTMLElement, standin: HTMLElement}, name: string) {
     if (!name) return;
-    let x = parseInt(btoa(unescape(encodeURIComponent(name.slice(-6)))).replace(/[^A-Za-z0-9]/g, ""), 36);
-    const r = x % 4;
-    x = Math.floor(x / 4);
-    const g = x % 4;
-    x = Math.floor(x / 4);
-    const b = x % 4;
-    x = Math.floor(x / 4);
-    const s = x % standinSVG.length;
-    ctx.video.style.backgroundColor =
-        ctx.box.style.backgroundColor = "#" + r + g + b;
-    ctx.standin.innerHTML = standinSVG[s].replace("##", genStandinName(name || ""));
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
+    }
+    const color = AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+    ctx.video.style.backgroundColor = "var(--bg-dim)";
+    ctx.box.style.backgroundColor = "var(--bg-dim)";
+    const initials = genStandinName(name || "").toUpperCase();
+    ctx.standin.innerHTML =
+        '<svg viewBox="0 0 200 200" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(110px, 45%);height:min(110px, 45%);max-height:85%;">' +
+        '<circle cx="100" cy="100" r="90" fill="' + color + '" />' +
+        '<text x="100" y="112" font-family="\'Plus Jakarta Sans\', system-ui, -apple-system, sans-serif" font-size="64" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">' +
+        initials +
+        '</text>' +
+        '</svg>';
 }
 
 // Remove a user from the user list

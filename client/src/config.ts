@@ -133,7 +133,13 @@ export async function load(): Promise<boolean> {
     config.id = iconfig.id = Number.parseInt(config.id, 36);
     if (config.key === null) {
         const div = dce("div");
-        div.innerHTML = "Invalid key!";
+        div.className = "studio-login-overlay";
+        div.innerHTML =
+            '<div class="studio-login-card">' +
+                '<div class="studio-login-icon" style="background:#c88265"><i class="bx bx-error"></i></div>' +
+                '<h2 class="studio-login-title">Invalid Key</h2>' +
+                '<p class="studio-login-subtitle">The recording invite key is missing or invalid.</p>' +
+            '</div>';
         loginTarget.appendChild(div);
         if (preEc) preEc.style.display = "";
         return false;
@@ -150,31 +156,37 @@ export async function load(): Promise<boolean> {
     // If we're using the selector, just do that
     if (selector) {
         let div = dce("div");
-        div.innerText = "Client links:";
-        loginTarget.appendChild(div);
-        if (preEc) preEc.style.display = "";
-
+        div.className = "studio-login-overlay";
         const sb = "?i=" + config.id.toString(36) + "&k=" + config.key.toString(36) + "&p=" + config.port.toString(36);
+        let linksHtml = "";
 
         for (let opt = 0; opt <= config.format; opt++) {
             if ((opt&config.format)!==opt) continue;
             // We don't let the menu decide to just not use WebRTC communication
             if ((opt&features.rtc)!==(config.format&features.rtc)) continue;
 
-            div = dce("div");
-            const a = dce("a");
+            let optUrl = new URL(url.toString());
             if (opt === 0)
-                url.search = sb;
+                optUrl.search = sb;
             else
-                url.search = sb + "&f=" + opt.toString(36);
-            a.href = url.toString();
+                optUrl.search = sb + "&f=" + opt.toString(36);
 
-            a.innerText = (((opt&prot.flags.dataTypeMask)===prot.flags.dataType.flac) ? "FLAC" : "Opus") +
-                ((opt&features.continuous)?" continuous":"");
+            const optLabel = (((opt&prot.flags.dataTypeMask)===prot.flags.dataType.flac) ? "FLAC (Lossless Studio Master)" : "Opus (High Quality Audio)") +
+                ((opt&features.continuous)?" [Continuous]":"");
 
-            div.appendChild(a);
-            loginTarget.appendChild(div);
+            linksHtml += '<div style="margin: 8px 0;"><a href="' + optUrl.toString() + '" class="studio-login-submit" style="display:block; text-decoration:none; box-sizing:border-box;">' + optLabel + '</a></div>';
         }
+
+        div.innerHTML =
+            '<div class="studio-login-card">' +
+                '<div class="studio-login-icon"><i class="bx bx-link"></i></div>' +
+                '<h2 class="studio-login-title">Client Links</h2>' +
+                '<p class="studio-login-subtitle">Select recording format to connect:</p>' +
+                linksHtml +
+            '</div>';
+
+        loginTarget.appendChild(div);
+        if (preEc) preEc.style.display = "";
 
         return false;
     }
@@ -191,55 +203,69 @@ export async function load(): Promise<boolean> {
 
     // Hide the extraneous details
     url.search = "?i=" + config.id.toString(36);
-    window.history.pushState({}, "Ennuicastr", url.toString());
+    window.history.pushState({}, "Beacon Studio", url.toString());
 
     // If they were disconnected, just show them that message
     if (params.get("dc")) {
-        const sp = dce("span");
-        sp.innerText = "Disconnected! ";
-        const a = dce("a");
+        const div = dce("div");
+        div.className = "studio-login-overlay";
         let href = "?";
         for (const key in config)
             href += key[0] + "=" + (<any> config)[key].toString(36) + "&";
         href += "nm=" + encodeURIComponent(username);
-        a.href = href;
-        a.innerText = "Attempt reconnection";
-        sp.appendChild(a);
-        loginTarget.appendChild(sp);
+        div.innerHTML =
+            '<div class="studio-login-card">' +
+                '<div class="studio-login-icon" style="background:#c88265"><i class="bx bx-wifi-off"></i></div>' +
+                '<h2 class="studio-login-title">Disconnected</h2>' +
+                '<p class="studio-login-subtitle">Connection to the broadcast session was lost.</p>' +
+                '<a href="' + href + '" class="studio-login-submit" style="display:block; text-decoration:none; box-sizing:border-box; margin-top: 1.5rem;">Attempt Reconnection</a>' +
+            '</div>';
+        loginTarget.appendChild(div);
         if (preEc) preEc.style.display = "";
         return false;
     }
 
     // Next, check if we have a username
     if (username === null || username === "") {
-        // Just ask for a username
         const div = dce("div");
+        div.className = "studio-login-overlay";
         const quick = !!params.get("quick");
 
-        // Tell them what's going on
-        const span = dce("span");
-        span.innerHTML =
-            (quick?"":
-                "You have been invited to join a recording on Ennuicastr. ") +
-            "Please enter a username.<br/><br/>";
-        div.appendChild(span);
-
-        // Ask for their name
-        const form = dce("form");
-        form.action = "?";
-        form.method = "GET";
         let def = "";
         if (typeof localStorage !== "undefined")
             def = localStorage.getItem("username") || "";
         def = escape(def);
-        let html =
-            "<label for=\"nm\">Username: </label><input name=\"nm\" id=\"nm\" type=\"text\" value=\"" + def + "\" /> ";
-        for (const key in config)
-            html += "<input name=\"" + key[0] + "\" type=\"hidden\" value=\"" + config[key].toString(36) + "\" />";
-        html += "<input type=\"submit\" value=\"Join\" class=\"pill-button\" />";
-        form.innerHTML = html;
 
+        let hiddenInputs = "";
+        for (const key in config)
+            hiddenInputs += "<input name=\"" + key[0] + "\" type=\"hidden\" value=\"" + config[key].toString(36) + "\" />";
+
+        div.innerHTML =
+            '<div class="studio-login-card">' +
+                '<div class="studio-login-header">' +
+                    '<div class="studio-login-icon"><i class="bx bx-broadcast"></i></div>' +
+                    '<h2 class="studio-login-title">Beacon Studio</h2>' +
+                    '<p class="studio-login-subtitle">' +
+                        (quick ? 'Enter your name to connect.' : 'You have been invited to join this recording session.') +
+                    '</p>' +
+                '</div>' +
+                '<form class="studio-login-form" action="?" method="GET">' +
+                    '<div class="studio-input-group">' +
+                        '<label for="nm" class="studio-input-label">DISPLAY NAME</label>' +
+                        '<input name="nm" id="nm" type="text" class="studio-login-input" value="' + def + '" placeholder="e.g. Alex" autofocus required autocomplete="off" />' +
+                    '</div>' +
+                    hiddenInputs +
+                    '<button type="submit" class="studio-login-submit">Join Studio &rarr;</button>' +
+                '</form>' +
+            '</div>';
+
+        const form = div.querySelector("form");
         form.onsubmit = function(ev: Event) {
+            const enteredName = (<HTMLInputElement> gebi("nm")).value.trim();
+            if (typeof localStorage !== "undefined" && enteredName) {
+                try { localStorage.setItem("username", enteredName); } catch (e) {}
+            }
+
             // Quick mode = same window
             if (quick)
                 return true;
@@ -248,7 +274,7 @@ export async function load(): Promise<boolean> {
             let target = "?";
             for (const key in config)
                 target += key[0] + "=" + config[key].toString(36) + "&";
-            target += "nm=" + encodeURIComponent(gebi("nm").value);
+            target += "nm=" + encodeURIComponent(enteredName);
             if (params.get("debug"))
                 target += "&debug=1";
             if (window.open(target, "", "width=800,height=600,menubar=0,toolbar=0,location=0,personalbar=0,status=0") === null) {
@@ -256,19 +282,25 @@ export async function load(): Promise<boolean> {
                 return true;
             }
 
-            div.innerHTML = "Connecting in a new window. You may now close this tab.";
+            div.innerHTML =
+                '<div class="studio-login-card">' +
+                    '<div class="studio-login-icon" style="background:#4a7c68"><i class="bx bx-check"></i></div>' +
+                    '<h2 class="studio-login-title">Connected</h2>' +
+                    '<p class="studio-login-subtitle">Studio is active in a new window. You may close this tab.</p>' +
+                '</div>';
 
             ev.preventDefault();
             return false;
         };
 
-        div.appendChild(form);
         loginTarget.appendChild(div);
         if (preEc) preEc.style.display = "";
 
         const nmBox = gebi("nm");
-        nmBox.focus();
-        nmBox.select();
+        if (nmBox) {
+            nmBox.focus();
+            nmBox.select();
+        }
 
         return false;
 

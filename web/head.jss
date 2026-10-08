@@ -75,12 +75,6 @@ if ("cookie" in request.headers) {
                 <nav id="menu" role="navigation" class="studio-nav-pills">
                     <?JS await include(config.menu); ?>
                 </nav>
-                <div class="studio-topbar-actions">
-                    <div class="studio-status-badge">
-                        <span class="studio-status-dot"></span>
-                        <span class="studio-status-text">STUDIO READY</span>
-                    </div>
-                </div>
             </div>
         </header>
 

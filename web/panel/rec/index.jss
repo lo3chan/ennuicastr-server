@@ -27,6 +27,7 @@ const creditsj = await include("../credits.jss");
 const edb = require("../db.js");
 const db = edb.db;
 const log = edb.log;
+const recM = require("../rec.js");
 const accountCredits = await creditsj.accountCredits(uid);
 
 // Read out current lobbies and recordings
@@ -96,10 +97,6 @@ for (let row of recs) {
 
 await include("../head.jss", {title: "Recordings"});
 ?>
-
-<section class="wrapper special">
-    <?JS await include("interface.jss"); ?>
-</section>
 
 <script type="text/javascript">
 function joinRecording(url) {

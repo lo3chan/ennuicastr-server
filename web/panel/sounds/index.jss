@@ -34,9 +34,6 @@ await include("../head.jss", {title: "Soundboard"});
 <div style="max-width: 1000px; margin: 2em auto; padding: 0 1.5em; text-align: left;">
     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5em;">
         <div>
-            <div style="font-family: 'Space Mono', monospace; font-size: 0.78em; color: var(--fg-4); text-transform: uppercase; margin-bottom: 4px;">
-                <i class="bx bx-broadcast"></i> Audio Routing &bull; Bus B
-            </div>
             <h1 style="font-size: 1.8em; font-weight: 700; color: var(--fg-1); margin: 0; letter-spacing: -0.02em;">Soundboard</h1>
             <p style="font-size: 0.9em; color: var(--fg-2); margin-top: 4px; margin-bottom: 0;">Upload sounds or music to use in your recordings</p>
         </div>
@@ -119,11 +116,6 @@ if (rows.length === 0) {
             </div>
         </td></tr>
     </tbody></table>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5em; padding: 0.75em 1em; background: var(--bg-14); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.82em; color: var(--fg-4);">
-        <div><i class="bx bx-keyboard"></i> Trigger sounds with hotkeys <strong style="color: var(--fg-1);">[1&ndash;9]</strong> during broadcast or live track</div>
-        <div style="font-family: 'Space Mono', monospace;">LATENCY &lt; 4MS &bull; UNCOMPRESSED BUFFER</div>
     </div>
 </div>
 

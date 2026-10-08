@@ -1,11 +1,4 @@
 <?JS! ?>
-        <!-- Footer -->
-            <footer id="footer">
-                <div class="copyright">
-                    Beacon Studio &bull; Private Broadcast &amp; Recording Environment
-                </div>
-            </footer>
-
         </div>
 
         <!-- Scripts -->
