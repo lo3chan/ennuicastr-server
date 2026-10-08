@@ -27,9 +27,72 @@ const creditsj = await include("../credits.jss");
 const edb = require("../db.js");
 const db = edb.db;
 const log = edb.log;
-const recM = require("../rec.js");
-
 const accountCredits = await creditsj.accountCredits(uid);
+
+// Read out current lobbies and recordings
+let lobbies = await db.allP("SELECT * FROM lobbies2 WHERE uid=@UID ORDER BY name ASC;", {
+    "@UID": uid
+});
+let recs = await db.allP("SELECT * FROM recordings WHERE uid=@UID ORDER BY init DESC;", {
+    "@UID": uid
+});
+
+// Fix any weird states in the database
+for (let row of recs) {
+    if (!row.purchased && accountCredits.subscription) {
+        if ((row.format !== "flac" && !row.continuous) ||
+            accountCredits.subscription >= 2) {
+            // Auto-purchase
+            row.purchased = "1";
+            await db.runP("UPDATE recordings SET purchased='1' WHERE uid=@UID AND rid=@RID;", {
+                "@UID": uid,
+                "@RID": row.rid
+            });
+            log("subscription-auto-purchase", row, {uid, rid: row.rid});
+        }
+    }
+
+    if (row.status >= 0x30) continue;
+
+    // It's not finished, so should be running
+    let running = await new Promise(function (resolve) {
+        var sock = net.createConnection(row.port);
+
+        sock.on("connect", () => {
+            sock.end();
+            resolve(true);
+        });
+
+        sock.on("error", () => {
+            resolve(false);
+        });
+    });
+
+    if (!running) {
+        // Fix the state in the database
+        row.status = 0x30;
+        await db.runP("UPDATE recordings SET status=@STATUS WHERE uid=@UID AND rid=@RID;", {
+            "@UID": uid,
+            "@RID": row.rid,
+            "@STATUS": row.status
+        });
+    }
+}
+
+// Add any shared lobbies/recordings
+{
+    const sharedLobbies = await db.allP(
+        `SELECT * FROM lobbies2 INNER JOIN lobby_share ON lobbies2.lid = lobby_share.lid
+        WHERE lobby_share.uid_to=@UID
+        AND lobbies2.uid=lobby_share.uid_from;`, {
+        "@UID": uid
+    });
+    if (sharedLobbies.length) {
+        lobbies = lobbies.concat(sharedLobbies).sort((a, b) => {
+            return (a.name < b.name) ? -1 : 1;
+        });
+    }
+}
 
 await include("../head.jss", {title: "Recordings"});
 ?>
@@ -95,14 +158,6 @@ function localDate(date) {
         <th data-sort-method="none" class="no-sort" style="text-align: right;">Actions</th></tr>
         </thead><tbody>
 <?JS
-
-// Read out current lobbies and recordings
-let lobbies = await db.allP("SELECT * FROM lobbies2 WHERE uid=@UID ORDER BY name ASC;", {
-    "@UID": uid
-});
-let recs = await db.allP("SELECT * FROM recordings WHERE uid=@UID ORDER BY init DESC;", {
-    "@UID": uid
-});
 
 // Fix any weird states in the database
 for (let row of recs) {

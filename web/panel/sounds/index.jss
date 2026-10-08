@@ -23,6 +23,11 @@ const edb = require("../db.js");
 const db = edb.db;
 const log = edb.log;
 
+// Read out current sounds
+var rows = await db.allP("SELECT * FROM sounds WHERE uid=@UID ORDER BY name ASC;", {
+    "@UID": uid
+});
+
 await include("../head.jss", {title: "Soundboard"});
 ?>
 
@@ -51,12 +56,6 @@ await include("../head.jss", {title: "Soundboard"});
         <tr><th>Name</th><th>Preview</th><th style="text-align: right;">Actions</th></tr>
         </thead><tbody>
 <?JS
-
-// Read out current sounds
-var rows = await db.allP("SELECT * FROM sounds WHERE uid=@UID ORDER BY name ASC;", {
-    "@UID": uid
-});
-
 for (var ri = 0; ri < rows.length; ri++) {
     var row = rows[ri];
 ?>

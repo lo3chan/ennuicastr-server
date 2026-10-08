@@ -139,6 +139,24 @@ const defaults = await (async function() {
     border-radius: 4px;
     color: var(--fg-2);
 }
+.studio-text-input, .studio-select-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75em 1em;
+    background: var(--bg-15) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    color: var(--fg-1) !important;
+    font-size: 0.95em !important;
+    font-family: inherit;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.studio-text-input:focus, .studio-select-input:focus {
+    outline: none;
+    border-color: var(--accent-clay) !important;
+    box-shadow: 0 0 0 2px rgba(200, 130, 101, 0.2);
+}
 .studio-checkbox-row {
     display: flex;
     align-items: center;
@@ -271,7 +289,7 @@ const defaults = await (async function() {
 
         function txt(id, q, limit) {
             write('<div class="studio-form-group">' +
-                  '<input id="r-' + id + '" type="text" style="width: 100%; box-sizing: border-box;"' +
+                  '<input id="r-' + id + '" type="text" class="studio-text-input"' +
                   (limit ? (' maxlength=' + limit) : '') +
                   ' />' +
                   '<script type="text/javascript"><!--\n' +
@@ -282,7 +300,7 @@ const defaults = await (async function() {
 
         function sel(id, q, opts) {
             write('<div class="studio-form-group">' +
-                  '<select id="r-' + id + '" style="width: 100%; box-sizing: border-box;">');
+                  '<select id="r-' + id + '" class="studio-select-input">');
             opts.forEach((opt) => {
                 write('<option value="' + opt[0] + '"' +
                       (defaults[id]===opt[0]?' selected':'') +
@@ -293,29 +311,26 @@ const defaults = await (async function() {
             els.push([id, q]);
         }
 
-        function chk(id, q) {
-            // Note: chk is called right after l() in the existing code, but let's make it render nicely
-            write('<input id="r-' + id + '" type="checkbox"' +
-                  (defaults[id]?' checked':'') +
-                  ' style="margin-left: 0.5em;" /><br/>');
-
+        function chkRow(id, q, labelText, altText) {
+            write('<div class="studio-checkbox-row" onclick="var c=$(\'#r-' + id + '\')[0]; if(event.target!==c) c.click();">' +
+                  '  <div class="studio-checkbox-left">' +
+                  '    <input id="r-' + id + '" type="checkbox"' + (defaults[id]?' checked':'') + ' onclick="event.stopPropagation();" />' +
+                  '    <label class="studio-checkbox-label" for="r-' + id + '">' + labelText + '</label>' +
+                  '  </div>' +
+                  (altText ? '  <a class="studio-help-link" href="javascript:void(0)" onclick="event.stopPropagation(); toggle(\'' + id + '\')" aria-label="Help"><i class="bx bx-help-circle"></i></a>' : '') +
+                  '</div>');
+            if (altText) {
+                write('<div id="alt-' + id + '" class="explainer" style="display: none" role="alert">' + altText + '</div>');
+            }
             els.push([id, q]);
-        }
-
-        function alt(id, text) {
-            write('<div id="alt-' + id + '" class="explainer" style="display: none" role="alert">' + text + '</div>');
         }
 
         l("name", "Recording name");
         txt("name", "n", config.limits.recNameLength);
 
-        l("persist", "Persistent room", true);
-        chk("persist", "persist");
-        alt("persist", "If checked, the link to join the recording will be persistent, and new recordings will be created by that link on demand. If unchecked, the link to join the recording is temporary, and is only valid for the duration of a single recording session.");
+        chkRow("persist", "persist", "Persistent room", "If checked, the link to join the recording will be persistent, and new recordings will be created by that link on demand. If unchecked, the link to join the recording is temporary, and is only valid for the duration of a single recording session.");
 
-        l("videoRec", "Record video", true);
-        chk("videoRec", "v");
-        alt("videoRec", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Studio recording application.");
+        chkRow("videoRec", "v", "Record video", "If checked, participants who enable their camera or share their screen will also have their video recorded by default, and sent to the host. This can be changed within the Studio recording application.");
 
         const showQual = true;
         const showAdvanced = (defaults.jitsiAudio ||
@@ -340,9 +355,7 @@ const defaults = await (async function() {
         sel("format", "f", [["flac", "Ultra quality (Lossless FLAC)"], ["opus", "High quality (Opus)"]]);
         alt("format", "Format that guests will use to record locally. Lossless FLAC captures bit-perfect studio master audio. Opus offers high-efficiency compressed audio.");
 
-        l("continuous", "Continuous recording", true);
-        chk("continuous", "c");
-        alt("continuous", "By default, the recorder uses voice activity detection (VAD) to conserve space. Check this to disable VAD and record a continuous, gap-free master track.");
+        chkRow("continuous", "c", "Continuous recording", "By default, the recorder uses voice activity detection (VAD) to conserve space. Check this to disable VAD and record a continuous, gap-free master track.");
 
         ?></div><br/><?JS
 
@@ -356,38 +369,26 @@ const defaults = await (async function() {
         <div id="advanced"<?JS= showAdvanced ? "" : ' style="display: none"' ?>>
         <?JS
 
-        l("transcription", "Live captions", true);
-        chk("transcription", "t");
-        alt("transcription", "Enable live captions. Currently only English is supported.");
+        chkRow("transcription", "t", "Live captions", "Enable live captions. Currently only English is supported.");
 
-        l("jitsiVideo", "Use Jitsi for video", true);
-        chk("jitsiVideo", "xjv");
-        alt("jitsiVideo", "Disable Ennuicastr's native live video chat system, and use Jitsi Meet for live chat. Use this only if you're having technical issues with live chat. If you're having issues with both video and audio, you can enable Jitsi for audio after enabling Jitsi for video.");
+        chkRow("jitsiVideo", "xjv", "Use Jitsi for video", "Disable Ennuicastr's native live video chat system, and use Jitsi Meet for live chat. Use this only if you're having technical issues with live chat. If you're having issues with both video and audio, you can enable Jitsi for audio after enabling Jitsi for video.");
         ?>
 
         <div id="jitsi-audio-hider" style="display: none">
             <?JS
-            l("jitsiAudio", "Use Jitsi for audio", true);
-            chk("jitsiAudio", "xja");
-            alt("jitsiAudio", "Use Jitsi Meet for both video and audio.");
+            chkRow("jitsiAudio", "xja", "Use Jitsi for audio", "Use Jitsi Meet for both video and audio.");
             ?>
         </div>
         <?JS
 
-        l("noDualEC", "Disable post hoc EC", true);
-        chk("noDualEC", "xndec");
-        alt("noDualEC", "By default, Ennuicastr allows you to enable or disable (or both) echo cancellation when downloading, so that you can decide post hoc which sounds better. That is, Ennuicastr supports “post hoc echo cancellation”. However, this feature doubles the bandwidth requirement while recording. Disabling it will save bandwidth, but limit your audio versatility.");
+        chkRow("noDualEC", "xndec", "Disable post hoc EC", "By default, Ennuicastr allows you to enable or disable (or both) echo cancellation when downloading, so that you can decide post hoc which sounds better. That is, Ennuicastr supports “post hoc echo cancellation”. However, this feature doubles the bandwidth requirement while recording. Disabling it will save bandwidth, but limit your audio versatility.");
 
-        l("recordOnly", "Mute live voice chat", true);
-        chk("recordOnly", "x");
-        alt("recordOnly", "Ennuicastr's primary function is to record, but you probably want to <em>hear</em> who you're recording! If you're going to use some other software to actually chat with your guests, check this so that you don't hear them in both. This only <em>mutes</em> live voice chat by default, so that you can still use it for monitoring. To disable live voice chat entirely (and thus disable monitoring), disable WebRTC (the option will appear when you enable this).");
+        chkRow("recordOnly", "x", "Mute live voice chat", "Ennuicastr's primary function is to record, but you probably want to <em>hear</em> who you're recording! If you're going to use some other software to actually chat with your guests, check this so that you don't hear them in both. This only <em>mutes</em> live voice chat by default, so that you can still use it for monitoring. To disable live voice chat entirely (and thus disable monitoring), disable WebRTC (the option will appear when you enable this).");
         ?>
 
         <div id="rtc-hider" style="display: none">
             <?JS
-            l("rtc", "Enable WebRTC");
-            chk("rtc", "r");
-            alt("rtc", "WebRTC is the technology used by Ennuicastr for live voice chat. Normally, even if you don't need live voice chat, WebRTC is still enabled so that you can use it to monitor the recording. If you really wish to disable WebRTC entirely, uncheck this. The only reason to do so is if it causes undue strain on your bandwidth.");
+            chkRow("rtc", "r", "Enable WebRTC", "WebRTC is the technology used by Ennuicastr for live voice chat. Normally, even if you don't need live voice chat, WebRTC is still enabled so that you can use it to monitor the recording. If you really wish to disable WebRTC entirely, uncheck this. The only reason to do so is if it causes undue strain on your bandwidth.");
             ?>
         </div>
 
