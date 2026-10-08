@@ -325,6 +325,10 @@ const defaults = await (async function() {
             els.push([id, q]);
         }
 
+        function alt(id, text) {
+            write('<div id="alt-' + id + '" class="explainer" style="display: none" role="alert">' + text + '</div>');
+        }
+
         l("name", "Recording name");
         txt("name", "n", config.limits.recNameLength);
 
