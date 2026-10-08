@@ -233,16 +233,9 @@ const defaults = await (async function() {
 </style>
 
 <div class="studio-card-container">
-    <div class="section-label">01 // CREATE NEW RECORDING SESSION</div>
     <div class="studio-card">
         <div class="studio-card-header">
-            <div>
-                <h1 class="studio-card-title">Create a new recording</h1>
-                <p class="studio-card-subtitle">Configure session acoustics and ingestion parameters</p>
-            </div>
-            <div>
-                <span class="port-tag">WEBRTC • 48KHZ</span>
-            </div>
+            <h1 class="studio-card-title">Create a new recording</h1>
         </div>
 
         <div id="create-recording" style="display: block;">

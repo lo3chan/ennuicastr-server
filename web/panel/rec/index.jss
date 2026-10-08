@@ -132,14 +132,9 @@ function localDate(date) {
 </script>
 
 <div class="layout" style="max-width: 1280px; margin: 0 auto; padding: 24px; text-align: left;">
-    <div class="section-label">01 // ACTIVE & ARCHIVED RECORDINGS</div>
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <h1 class="brand-title" style="margin: 0;">Recordings Catalog</h1>
-                <span class="port-tag"><?JS= recs.length ?> SESSIONS</span>
-            </div>
-            <div class="brand-desc">Master multi-track recordings and ingestion rooms</div>
+            <h1 class="brand-title" style="margin: 0;">Recordings</h1>
         </div>
         <div>
             <a href="/panel/" class="btn-link">

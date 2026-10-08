@@ -68,20 +68,12 @@ if ("cookie" in request.headers) {
             <div class="studio-topbar-inner">
                 <div class="studio-brand">
                     <a href="/panel/" class="studio-logo-link">
-                        <div class="brand-title">GETTYSBURG BEACON // STUDIO OPERATIONS</div>
-                        <div class="brand-desc">Low-latency multi-track audio recording, soundboard, and WebRTC studio engine</div>
+                        <span class="brand-title">BEACON STUDIO</span>
                     </a>
                 </div>
-                <div class="header-right">
-                    <div class="header-meta">
-                        <div class="meta-col">HOST: <strong>jelly</strong></div>
-                        <div class="meta-col">ENGINE: <strong>Ennuicastr 3</strong></div>
-                        <div class="meta-col">SECURITY: <strong>TLS / WebRTC</strong></div>
-                    </div>
-                    <nav id="menu" role="navigation" class="studio-nav-pills">
-                        <?JS await include(config.menu); ?>
-                    </nav>
-                </div>
+                <nav id="menu" role="navigation" class="studio-nav-pills">
+                    <?JS await include(config.menu); ?>
+                </nav>
             </div>
         </header>
 
